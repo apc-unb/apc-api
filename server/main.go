@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
@@ -21,32 +24,52 @@ type Teste struct {
 	City string
 }
 
-func main() {
-	fmt.Println("HELLO")
-	client, err := mongo.Connect(context.TODO(), "mongodb://localhost:27017")
+type App struct {
+	Router *mux.Router
+	DB     *mongo.Client
+}
+
+func (a *App) Initialize(host, port string) {
+
+	var err error
+
+	a.DB, err = mongo.Connect(context.TODO(), "mongodb://"+host+":"+port)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Check the connection
-	err = client.Ping(context.TODO(), nil)
+	err = a.DB.Ping(context.TODO(), nil)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Connected to MongoDB!")
 
-	collection := client.Database("apc_database").Collection("apc_collection")
+	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+}
 
-	aluno := Teste{"Dullens Viado", 10, "Babaca"}
+func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/users", a.getUsers).Methods("GET")
+	a.Router.HandleFunc("/users", a.createUsers).Methods("POST")
+	// a.Router.HandleFunc("/users", a.updateUsers).Methods("PUT")
+	// a.Router.HandleFunc("/users", a.deleteUsers).Methods("DELETE")
+	// a.Router.HandleFunc("/users/{id}", a.getUser).Methods("GET")
+}
 
-	insertResult, err := collection.InsertOne(context.TODO(), aluno)
-	if err != nil {
-		log.Fatal(err)
-	}
+func (a *App) Run(addr string) {
+	log.Fatal(http.ListenAndServe(addr, a.Router))
+}
 
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+func main() {
+	a := App{}
+
+	a.Initialize("localhost", "27017")
+
+	defer a.DB.Disconnect(nil)
+
+	a.Run(":8080")
 
 }
