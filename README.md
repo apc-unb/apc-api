@@ -50,7 +50,9 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 ### Semana 5~6 (29 abril ~ 13 maio)
 
-- Implementar BD
+- Implementar testes das classes de BD
+
+- Implementar BD e classes
 
 - Fazer telas de login/senha
 
