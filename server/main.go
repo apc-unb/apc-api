@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -33,18 +32,12 @@ func (a *App) Initialize(host, port string) {
 
 	var err error
 
-	a.DB, err = mongo.Connect(context.TODO(), "mongodb://"+host+":"+port)
+	a.DB, err = GetMongoDB(host, port)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Check the connection
-	err = a.DB.Ping(context.TODO(), nil)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 	fmt.Println("Connected to MongoDB!")
 
 	a.Router = mux.NewRouter()
