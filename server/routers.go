@@ -40,7 +40,7 @@ func (a *App) createUsers(w http.ResponseWriter, r *http.Request) {
 
 	defer a.DB.Disconnect(context.TODO())
 
-	if err := student.CreateStudent(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}); err != nil {
+	if err := student.CreateStudent(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
