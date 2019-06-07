@@ -1,22 +1,25 @@
 package config
 
-import{
-	"os"
+import (
+	"context"
+	"log"
 
-	mgo "gopkg.in/mgo.v2"
-}
+	"github.com/mongodb/mongo-go-driver/mongo"
+)
 
-func GetMongoDB() (*mgo.Database, error) {
-	host := os.Getenv("MONGO_HOST")
-	dbName := os.Getenv("MONGO_DB_NAME")
+func GetMongoDB(host, port string) (*mongo.Client, error) {
 
-	session, err := mgo.Dial(host)
+	db, err := mongo.Connect(context.TODO(), "mongodb://"+host+":"+port)
 
-	if err != nill{
-		return nil, err
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	db := session.DB(dbName)
+	err = db.Ping(context.TODO(), nil)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return db, nil
 }
