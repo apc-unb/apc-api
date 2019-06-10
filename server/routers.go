@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"plataforma-apc/components/student"
 )
@@ -38,8 +37,6 @@ func (a *App) createUsers(w http.ResponseWriter, r *http.Request) {
 		Grade:     9.98,
 	}
 
-	defer a.DB.Disconnect(context.TODO())
-
 	if err := student.CreateStudent(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -50,5 +47,10 @@ func (a *App) createUsers(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	students, err := student.GetStudents(a.DB, "apc_database", "student")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, students)
 }
