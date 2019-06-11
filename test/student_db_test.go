@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func GetMongoDB(host, port string) (*mongo.Client, error) {
@@ -55,6 +56,7 @@ func TestStudentDB(t *testing.T) {
 	// Instantiate some students objects
 
 	studentClass1 := student.Student{
+		ID:        bson.NewObjectId(),
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
@@ -65,6 +67,7 @@ func TestStudentDB(t *testing.T) {
 	}
 
 	studentClass2 := student.Student{
+		ID:        bson.NewObjectId(),
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
 		Matricula: "160571946",
@@ -75,6 +78,7 @@ func TestStudentDB(t *testing.T) {
 	}
 
 	studentClass3 := student.Student{
+		ID:        bson.NewObjectId(),
 		FirstName: "Giovanni",
 		LastName:  "Guidini",
 		Matricula: "136246666",
@@ -83,22 +87,52 @@ func TestStudentDB(t *testing.T) {
 		PhotoUrl:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
 		Grade:     9.98,
 	}
-
-	// 					INSERT TEST
-	//
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 								 INSERT STUDENTS DB TEST 								 //
+	///////////////////////////////////////////////////////////////////////////////////////////
 	// Test if student class array can be inserted in test database
-	// Checks if err variable is not null, then existis an error
+	// Checks if err variable is not null
 
 	if err := student.CreateStudent(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to insert students in Database : %s", err)
 	}
 
-	// 					SELECT TEST
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							UPDATE LIST OF STUDENTS FROM DB TEST   		         		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
 	//
+	// Test if student class array can be updated in test database
+	// Change some students name, then update that class on DB
+	// Checks if err variable is not null
+
+	studentClass1.FirstName = "Guilherme"
+	studentClass1.LastName = "Carvalho"
+
+	studentClass3.FirstName = "Henrique"
+	studentClass3.LastName = "Machado"
+
+	if err := student.UpdateStudent(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
+		t.Errorf("Failed to update students in Database : %s", err)
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							DELETE LIST OF STUDENTS FROM DB TEST   		         		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//
+	// Test if student class array can be deleted in test database
+	// Checks if err variable is not null
+
+	if err := student.DeleteStudent(db, []student.Student{studentClass2}, "apc_database_test", "student_test"); err != nil {
+		t.Errorf("Failed to delete students in Database : %s", err)
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							   GET ALL STUDENTS FROM DB TEST 				      		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
 	// 1º
 	//
 	// Test if can get all students from database
-	// Checks if err variable is not null, then existis an error
+	// Checks if err variable is not null
 	//
 	// 2º
 	//
@@ -115,19 +149,15 @@ func TestStudentDB(t *testing.T) {
 		t.Errorf("Failed to get students from Database : %s", err)
 	}
 
-	if len(students) != 3 {
+	if len(students) != 2 {
 		t.Errorf("Invalid students size, got: %d, want: %d.", len(students), 3)
 	}
 
-	if students[0].FirstName != "Thiago" {
+	if students[0].FirstName != "Guilherme" {
 		t.Errorf("Invalid students[0] first name, got: %s, want: %s.", students[0].FirstName, "Thiago")
 	}
 
-	if students[1].FirstName != "Vitor" {
-		t.Errorf("Invalid students[1] first name, got: %s, want: %s.", students[1].FirstName, "Vitor")
-	}
-
-	if students[2].FirstName != "Giovanni" {
+	if students[1].FirstName != "Henrique" {
 		t.Errorf("Invalid students[2] first name, got: %s, want: %s.", students[2].FirstName, "Giovanni")
 	}
 
