@@ -10,19 +10,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
-// You will be using this Trainer type later in the program
-type Trainer struct {
-	Name string
-	Age  int
-	City string
-}
-
-type Teste struct {
-	Name string
-	Age  int
-	City string
-}
-
 type App struct {
 	Router *mux.Router
 	DB     *mongo.Client
