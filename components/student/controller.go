@@ -17,7 +17,7 @@ import (
 // @param	collection_name	name of collection
 // @return 	error 			function error
 
-func CreateStudent(db *mongo.Client, students []Student, database_name, collection_name string) error {
+func CreateStudents(db *mongo.Client, students []Student, database_name, collection_name string) error {
 
 	if len(students) == 0 {
 		return nil
@@ -93,7 +93,7 @@ func GetStudents(db *mongo.Client, database_name, collection_name string) ([]Stu
 // @return 	[]Student		list of all students
 // @return 	error 			function error
 
-func UpdateStudent(db *mongo.Client, students []Student, database_name, collection_name string) error {
+func UpdateStudents(db *mongo.Client, students []Student, database_name, collection_name string) error {
 
 	if len(students) == 0 {
 		return nil
@@ -122,7 +122,7 @@ func UpdateStudent(db *mongo.Client, students []Student, database_name, collecti
 // @return 	[]Student		list of all students
 // @return 	error 			function error
 
-func DeleteStudent(db *mongo.Client, students []Student, database_name, collection_name string) error {
+func DeleteStudents(db *mongo.Client, students []Student, database_name, collection_name string) error {
 
 	if len(students) == 0 {
 		return nil
