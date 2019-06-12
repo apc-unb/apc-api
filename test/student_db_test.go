@@ -93,7 +93,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := student.CreateStudent(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.CreateStudents(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to insert students in Database : %s", err)
 	}
 
@@ -111,7 +111,7 @@ func TestStudentDB(t *testing.T) {
 	studentClass3.FirstName = "Henrique"
 	studentClass3.LastName = "Machado"
 
-	if err := student.UpdateStudent(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.UpdateStudents(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to update students in Database : %s", err)
 	}
 
@@ -122,7 +122,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be deleted in test database
 	// Checks if err variable is not null
 
-	if err := student.DeleteStudent(db, []student.Student{studentClass2}, "apc_database_test", "student_test"); err != nil {
+	if err := student.DeleteStudents(db, []student.Student{studentClass2}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to delete students in Database : %s", err)
 	}
 
