@@ -113,12 +113,45 @@ func TestClassDB(t *testing.T) {
 	// 							UPDATE LIST OF CLASSES FROM DB TEST   		         		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
 
+	apc2019_1.ProfessorFirstName = "Marcos"
+	apc2019_1.ProfessorLastName = "Caetano"
+
+	if err := schoolClass.UpdateClasses(db, []schoolClass.SchoolClass{apc2019_1}, "apc_database_test", "schoolClass_test"); err != nil {
+		t.Errorf("Failed to update class in Database : %s", err)
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// 							DELETE LIST OF CLASSES FROM DB TEST   		         		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
 
+	if err := schoolClass.DeleteClasses(db, []schoolClass.SchoolClass{apc2018_2}, "apc_database_test", "schoolClass_test"); err != nil {
+		t.Errorf("Failed to delete class in Database : %s", err)
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// 							   GET ALL CLASSES FROM DB TEST 				      		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
+
+	var class []schoolClass.SchoolClass
+
+	if class, err = schoolClass.GetClasses(db, "apc_database_test", "schoolClass_test"); err != nil {
+		t.Errorf("Failed to get class from Database : %s", err)
+	}
+
+	if len(class) != 2 {
+		t.Errorf("Invalid students size, got: %d, want: %d.", len(class), 1)
+	}
+
+	if class[0].ProfessorFirstName != "Marcos" {
+		t.Errorf("Invalid class[0] professor first name, got: %s, want: %s.", class[0].ProfessorFirstName, "Marcos")
+	}
+
+	if class[1].ProfessorLastName != "Caetano" {
+		t.Errorf("Invalid class[0] professor first name, got: %s, want: %s.", class[2].ProfessorLastName, "Caetano")
+	}
+
+	if len(class[0].Students) != 2 {
+		t.Errorf("Invalid students size from class, got: %d, want: %d.", len(class[0].Students), 2)
+	}
 
 }
