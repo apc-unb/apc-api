@@ -32,11 +32,32 @@ func (a *App) Initialize(host, port string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/users", a.getUsers).Methods("GET")
-	a.Router.HandleFunc("/users", a.createUsers).Methods("POST")
-	// a.Router.HandleFunc("/users", a.updateUsers).Methods("PUT")
-	// a.Router.HandleFunc("/users", a.deleteUsers).Methods("DELETE")
-	// a.Router.HandleFunc("/users/{id}", a.getUser).Methods("GET")
+
+	a.Router.HandleFunc("/students", a.getStudents).Methods("GET")
+	a.Router.HandleFunc("/students", a.createStudents).Methods("POST")
+	a.Router.HandleFunc("/students", a.updateStudents).Methods("PUT")
+	a.Router.HandleFunc("/students", a.deleteStudents).Methods("DELETE")
+
+	a.Router.HandleFunc("/classes", a.getClasses).Methods("GET")
+	a.Router.HandleFunc("/classes", a.createClasses).Methods("POST")
+	a.Router.HandleFunc("/classes", a.updateClasses).Methods("PUT")
+	a.Router.HandleFunc("/classes", a.deleteClasses).Methods("DELETE")
+
+	a.Router.HandleFunc("/submissions", a.getSubmissions).Methods("GET")
+	a.Router.HandleFunc("/submissions", a.createSubmissions).Methods("POST")
+	a.Router.HandleFunc("/submissions", a.updateSubmissions).Methods("PUT")
+	a.Router.HandleFunc("/submissions", a.deleteSubmissions).Methods("DELETE")
+
+	a.Router.HandleFunc("/tasks", a.getTasks).Methods("GET")
+	a.Router.HandleFunc("/tasks", a.createTasks).Methods("POST")
+	a.Router.HandleFunc("/tasks", a.updateTasks).Methods("PUT")
+	a.Router.HandleFunc("/tasks", a.deleteTasks).Methods("DELETE")
+
+	a.Router.HandleFunc("/contests", a.getContests).Methods("GET")
+	a.Router.HandleFunc("/contests", a.createContests).Methods("POST")
+	a.Router.HandleFunc("/contests", a.updateContests).Methods("PUT")
+	a.Router.HandleFunc("/contests", a.deleteContests).Methods("DELETE")
+
 }
 
 func (a *App) Run(addr string) {
