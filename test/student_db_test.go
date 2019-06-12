@@ -150,7 +150,7 @@ func TestStudentDB(t *testing.T) {
 	}
 
 	if len(students) != 2 {
-		t.Errorf("Invalid students size, got: %d, want: %d.", len(students), 3)
+		t.Errorf("Invalid students size, got: %d, want: %d.", len(students), 2)
 	}
 
 	if students[0].FirstName != "Guilherme" {
