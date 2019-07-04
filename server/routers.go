@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"plataforma-apc/components/student"
+	"plataforma-apc/components/schoolClass"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -41,6 +42,16 @@ var studentClass3 = student.Student{
 	Grade:     9.98,
 }
 
+var class1 = schoolClass.SchoolClass{
+
+	ProfessorFirstName : "Carla",
+	ProfessorLastName  : "Castanho",
+	Year               : 2019,
+	Season             : 2,
+	Students           : []student.Student{studentClass1, studentClass2, studentClass3},
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // 									 STUDENTS			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +59,7 @@ var studentClass3 = student.Student{
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	// Temporary
-	collection := a.DB.Database("apc_database_test").Collection("student_test")
+	collection := a.DB.Database("apc_database").Collection("student")
 	collection.Drop(context.TODO())
 
 	if err := student.CreateStudents(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database", "student"); err != nil {
@@ -96,11 +107,20 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// 								   STUDENT CLASS			 							 //
+// 								   CLASS OF STUDENTS         							 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "function not implemented"})
+	// Temporary
+	collection := a.DB.Database("apc_database").Collection("schoolClass")
+	collection.Drop(context.TODO())
+
+	if err :=  schoolClass.CreateClasses(a.DB, []schoolClass.SchoolClass{class1}, "apc_database", "schoolClass"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
