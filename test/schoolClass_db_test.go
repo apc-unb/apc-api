@@ -6,9 +6,27 @@ import (
 	"plataforma-apc/components/schoolClass"
 	"plataforma-apc/components/student"
 	"testing"
-
+	"github.com/mongodb/mongo-go-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
+
+
+func GetMongoDB(host, port string) (*mongo.Client, error) {
+
+	db, err := mongo.Connect(context.TODO(), "mongodb://"+host+":"+port)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Ping(context.TODO(), nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
 
 func TestClassDB(t *testing.T) {
 
@@ -36,7 +54,7 @@ func TestClassDB(t *testing.T) {
 
 	collection.Drop(context.TODO())
 
-	// Instantiate some students objects
+	// Instantiate some school class objects
 
 	student_1 := student.Student{
 		ID:        bson.NewObjectId(),
@@ -82,7 +100,7 @@ func TestClassDB(t *testing.T) {
 		Grade:     6.27,
 	}
 
-	apc2019_1 := schoolClass.SchoolClass{
+	class_1 := schoolClass.SchoolClass{
 		ID:                 bson.NewObjectId(),
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
@@ -90,7 +108,7 @@ func TestClassDB(t *testing.T) {
 		Season:             1,
 		Students:           []student.Student{student_1, student_2},
 	}
-	apc2018_2 := schoolClass.SchoolClass{
+	class_2 := schoolClass.SchoolClass{
 		ID:                 bson.NewObjectId(),
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
@@ -105,7 +123,7 @@ func TestClassDB(t *testing.T) {
 	// Test if class class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := schoolClass.CreateClasses(db, []schoolClass.SchoolClass{apc2019_1, apc2018_2}, "apc_database_test", "schoolClass_test"); err != nil {
+	if err := schoolClass.CreateClasses(db, []schoolClass.SchoolClass{class_1, class_2}, "apc_database_test", "schoolClass_test"); err != nil {
 		t.Errorf("Failed to insert class in Database : %s", err)
 	}
 
@@ -113,10 +131,10 @@ func TestClassDB(t *testing.T) {
 	// 							UPDATE LIST OF CLASSES FROM DB TEST   		         		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	apc2019_1.ProfessorFirstName = "Marcos"
-	apc2019_1.ProfessorLastName = "Caetano"
+	class_1.ProfessorFirstName = "Marcos"
+	class_1.ProfessorLastName = "Caetano"
 
-	if err := schoolClass.UpdateClasses(db, []schoolClass.SchoolClass{apc2019_1}, "apc_database_test", "schoolClass_test"); err != nil {
+	if err := schoolClass.UpdateClasses(db, []schoolClass.SchoolClass{class_1}, "apc_database_test", "schoolClass_test"); err != nil {
 		t.Errorf("Failed to update class in Database : %s", err)
 	}
 
@@ -124,7 +142,7 @@ func TestClassDB(t *testing.T) {
 	// 							DELETE LIST OF CLASSES FROM DB TEST   		         		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	if err := schoolClass.DeleteClasses(db, []schoolClass.SchoolClass{apc2018_2}, "apc_database_test", "schoolClass_test"); err != nil {
+	if err := schoolClass.DeleteClasses(db, []schoolClass.SchoolClass{class_2}, "apc_database_test", "schoolClass_test"); err != nil {
 		t.Errorf("Failed to delete class in Database : %s", err)
 	}
 
@@ -138,7 +156,7 @@ func TestClassDB(t *testing.T) {
 		t.Errorf("Failed to get class from Database : %s", err)
 	}
 
-	if len(class) != 2 {
+	if len(class) != 1 {
 		t.Errorf("Invalid students size, got: %d, want: %d.", len(class), 1)
 	}
 
@@ -146,7 +164,7 @@ func TestClassDB(t *testing.T) {
 		t.Errorf("Invalid class[0] professor first name, got: %s, want: %s.", class[0].ProfessorFirstName, "Marcos")
 	}
 
-	if class[1].ProfessorLastName != "Caetano" {
+	if class[0].ProfessorLastName != "Caetano" {
 		t.Errorf("Invalid class[0] professor first name, got: %s, want: %s.", class[2].ProfessorLastName, "Caetano")
 	}
 

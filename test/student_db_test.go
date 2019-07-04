@@ -6,26 +6,8 @@ import (
 	"plataforma-apc/components/student"
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
-
-func GetMongoDB(host, port string) (*mongo.Client, error) {
-
-	db, err := mongo.Connect(context.TODO(), "mongodb://"+host+":"+port)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = db.Ping(context.TODO(), nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
 
 func TestStudentDB(t *testing.T) {
 
@@ -55,7 +37,7 @@ func TestStudentDB(t *testing.T) {
 
 	// Instantiate some students objects
 
-	studentClass1 := student.Student{
+	student_1 := student.Student{
 		ID:        bson.NewObjectId(),
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
@@ -66,7 +48,7 @@ func TestStudentDB(t *testing.T) {
 		Grade:     8.98,
 	}
 
-	studentClass2 := student.Student{
+	student_2 := student.Student{
 		ID:        bson.NewObjectId(),
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
@@ -77,7 +59,7 @@ func TestStudentDB(t *testing.T) {
 		Grade:     9.08,
 	}
 
-	studentClass3 := student.Student{
+	student_3 := student.Student{
 		ID:        bson.NewObjectId(),
 		FirstName: "Giovanni",
 		LastName:  "Guidini",
@@ -93,7 +75,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := student.CreateStudents(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.CreateStudents(db, []student.Student{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to insert students in Database : %s", err)
 	}
 
@@ -105,13 +87,13 @@ func TestStudentDB(t *testing.T) {
 	// Change some students name, then update that class on DB
 	// Checks if err variable is not null
 
-	studentClass1.FirstName = "Guilherme"
-	studentClass1.LastName = "Carvalho"
+	student_1.FirstName = "Guilherme"
+	student_1.LastName = "Carvalho"
 
-	studentClass3.FirstName = "Henrique"
-	studentClass3.LastName = "Machado"
+	student_3.FirstName = "Henrique"
+	student_3.LastName = "Machado"
 
-	if err := student.UpdateStudents(db, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.UpdateStudents(db, []student.Student{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to update students in Database : %s", err)
 	}
 
@@ -122,7 +104,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be deleted in test database
 	// Checks if err variable is not null
 
-	if err := student.DeleteStudents(db, []student.Student{studentClass2}, "apc_database_test", "student_test"); err != nil {
+	if err := student.DeleteStudents(db, []student.Student{student_2}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to delete students in Database : %s", err)
 	}
 
@@ -162,3 +144,4 @@ func TestStudentDB(t *testing.T) {
 	}
 
 }
+	
