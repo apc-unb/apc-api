@@ -1,23 +1,100 @@
 package schoolClass
 
 import (
-	"errors"
-
+	"context"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func CreateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	return errors.New("Function not implemented")
+	
+	if len(schoolClass) == 0 {
+		return nil
+	}
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	for _, class := range schoolClass {
+		if _, err := collection.InsertOne(context.TODO(), class); err != nil {
+			return err
+		}
+	}
+
+	return nil
+	
 }
 
 func GetClasses(db *mongo.Client, database_name, collection_name string) ([]SchoolClass, error) {
-	return nil, errors.New("Function not implemented")
+	
+	collection := db.Database(database_name).Collection(collection_name)
+
+	// Here's an array in which you can store the decoded documents
+	classes := []SchoolClass{}
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(context.TODO(), bson.D{{}}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem SchoolClass
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push school class inside student array
+		classes = append(classes, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return classes, nil
+
 }
 
 func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	return errors.New("Function not implemented")
+	
+	if len(schoolClass) == 0 {
+		return nil
+	}
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	for _, schoolClass := range schoolClass {
+		filter := bson.M{"_id": schoolClass.ID}
+		update := bson.M{"$set": schoolClass}
+		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func DeleteClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	return errors.New("Function not implemented")
+	
+	if len(schoolClass) == 0 {
+		return nil
+	}
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	for _, schoolClass := range schoolClass {
+		filter := bson.M{"_id": schoolClass.ID}
+		if _, err := collection.DeleteOne(context.TODO(), filter); err != nil {
+			return err
+		}
+	}
+	return nil
 }
