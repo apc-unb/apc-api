@@ -9,7 +9,7 @@ import (
 
 func TestTask(t *testing.T) {
 
-	studentClass := student.Student{
+	student_1 := student.Student{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
@@ -19,20 +19,20 @@ func TestTask(t *testing.T) {
 		Grade:     8.98,
 	}
 
-	submissionClass1 := submission.Submission{
-		Student:  studentClass,
+	submission_1 := submission.Submission{
+		Student:  student_1,
 		Veredict: "WA",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	submissionClass2 := submission.Submission{
-		Student:  studentClass,
+	submission_2 := submission.Submission{
+		Student:  student_1,
 		Veredict: "TLE",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	submissionClass3 := submission.Submission{
-		Student:  studentClass,
+	submission_3 := submission.Submission{
+		Student:  student_1,
 		Veredict: "AC",
 		Time:     "Jun/04/2019 03:51",
 	}
@@ -41,7 +41,7 @@ func TestTask(t *testing.T) {
 		Statement:   "Deivis Express",
 		Score:       4.5,
 		Tags:        []string{"String", "Matrix", "Array"},
-		Submissions: []submission.Submission{submissionClass1, submissionClass2, submissionClass3},
+		Submissions: []submission.Submission{submission_1, submission_2, submission_3},
 	}
 
 	if taskClass.Statement != "Deivis Express" {
