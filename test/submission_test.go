@@ -8,7 +8,7 @@ import (
 
 func TestSubmission(t *testing.T) {
 
-	studentClass := student.Student{
+	student_1 := student.Student{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
@@ -18,22 +18,22 @@ func TestSubmission(t *testing.T) {
 		Grade:     8.98,
 	}
 
-	submissionClass := submission.Submission{
-		Student:  studentClass,
+	class_1 := submission.Submission{
+		Student:  student_1,
 		Veredict: "AC",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	if submissionClass.Student.FirstName != "Thiago" {
-		t.Errorf("Invalid Submission student first name, got: %s, want: %s.", submissionClass.Student.FirstName, "Thiago")
+	if class_1.Student.FirstName != "Thiago" {
+		t.Errorf("Invalid Submission student first name, got: %s, want: %s.", class_1.Student.FirstName, "Thiago")
 	}
 
-	if submissionClass.Veredict != "AC" {
-		t.Errorf("Invalid Submission veredicit, got: %s, want: %s.", submissionClass.Veredict, "AC")
+	if class_1.Veredict != "AC" {
+		t.Errorf("Invalid Submission veredicit, got: %s, want: %s.", class_1.Veredict, "AC")
 	}
 
-	if submissionClass.Time != "Jun/04/2019 03:51" {
-		t.Errorf("Invalid Submission time, got: %s, want: %s.", submissionClass.Time, "Jun/04/2019 03:51")
+	if class_1.Time != "Jun/04/2019 03:51" {
+		t.Errorf("Invalid Submission time, got: %s, want: %s.", class_1.Time, "Jun/04/2019 03:51")
 	}
 
 }
