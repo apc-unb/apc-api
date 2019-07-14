@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"plataforma-apc/config"
 
 	"github.com/gorilla/mux"
-
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
@@ -19,7 +19,7 @@ func (a *App) Initialize(host, port string) {
 
 	var err error
 
-	a.DB, err = GetMongoDB(host, port)
+	a.DB, err = config.GetMongoDB(host, port)
 
 	if err != nil {
 		log.Fatal(err)
@@ -32,6 +32,8 @@ func (a *App) Initialize(host, port string) {
 }
 
 func (a *App) initializeRoutes() {
+
+	a.Router.HandleFunc("/student", a.getStudent).Methods("POST")
 
 	a.Router.HandleFunc("/students", a.getStudents).Methods("GET")
 	a.Router.HandleFunc("/students", a.createStudents).Methods("POST")
