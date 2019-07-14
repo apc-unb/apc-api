@@ -2,55 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
-	"plataforma-apc/components/student"
 	"plataforma-apc/components/schoolClass"
-
-	"gopkg.in/mgo.v2/bson"
+	"plataforma-apc/components/student"
 )
-
-var studentClass1 = student.Student{
-	ID:        bson.NewObjectId(),
-	FirstName: "Thiago",
-	LastName:  "Veras Machado",
-	Matricula: "160156666",
-	Handles:   []string{"Veras", "113065"},
-	Password:  "HQFnf-1234",
-	PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
-	Grade:     8.98,
-}
-
-var studentClass2 = student.Student{
-	ID:        bson.NewObjectId(),
-	FirstName: "Vitor",
-	LastName:  "Fernandes Dullens",
-	Matricula: "160571946",
-	Handles:   []string{"vitordullens", "2353251"},
-	Password:  "Hgqwge1234",
-	PhotoUrl:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
-	Grade:     9.08,
-}
-
-var studentClass3 = student.Student{
-	ID:        bson.NewObjectId(),
-	FirstName: "Giovanni",
-	LastName:  "Guidini",
-	Matricula: "136246666",
-	Handles:   []string{"Gguidini", "11165"},
-	Password:  "12rw-1234",
-	PhotoUrl:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
-	Grade:     9.98,
-}
-
-var class1 = schoolClass.SchoolClass{
-
-	ProfessorFirstName : "Carla",
-	ProfessorLastName  : "Castanho",
-	Year               : 2019,
-	Season             : 2,
-	Students           : []student.Student{studentClass1, studentClass2, studentClass3},
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // 									 STUDENTS			 								 //
@@ -58,11 +14,18 @@ var class1 = schoolClass.SchoolClass{
 
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
-	// Temporary
-	collection := a.DB.Database("apc_database").Collection("student")
-	collection.Drop(context.TODO())
+	var students []student.StudentCreate
 
-	if err := student.CreateStudents(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database", "student"); err != nil {
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&students); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := student.CreateStudents(a.DB, students, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -70,25 +33,54 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
+func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
+
+	var studentLogin student.StudentLogin
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&studentLogin); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if student, err := student.AuthStudent(a.DB, studentLogin, "apc_database", "student"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	} else {
+		respondWithJSON(w, http.StatusOK, student)
+	}
+
+}
+
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
+
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	respondWithJSON(w, http.StatusOK, students)
 }
 
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
-	studentClass1.FirstName = "Guilherme"
-	studentClass1.LastName = "Carvalho"
+	var students []student.StudentUpdate
 
-	studentClass3.FirstName = "Henrique"
-	studentClass3.LastName = "Machado"
+	decoder := json.NewDecoder(r.Body)
 
-	if err := student.UpdateStudents(a.DB, []student.Student{studentClass1, studentClass2, studentClass3}, "apc_database", "student"); err != nil {
+	if err := decoder.Decode(&students); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := student.UpdateStudents(a.DB, students, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -98,7 +90,7 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
-	if err := student.DeleteStudents(a.DB, []student.Student{studentClass2}, "apc_database", "student"); err != nil {
+	if err := student.DeleteStudents(a.DB, []student.Student{}, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -115,7 +107,7 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 	collection := a.DB.Database("apc_database").Collection("schoolClass")
 	collection.Drop(context.TODO())
 
-	if err :=  schoolClass.CreateClasses(a.DB, []schoolClass.SchoolClass{class1}, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.CreateClasses(a.DB, []schoolClass.SchoolClass{}, "apc_database", "schoolClass"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
