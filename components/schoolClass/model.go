@@ -1,7 +1,7 @@
 package schoolClass
 
 import (
-	"plataforma-apc/components/student"
+	"github.com/plataforma-apc/components/student"
 	"gopkg.in/mgo.v2/bson"
 )
 

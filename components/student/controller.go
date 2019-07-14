@@ -160,5 +160,7 @@ func AuthStudent(db *mongo.Client, student StudentLogin, databaseName, collectio
 		return findStudent, err
 	}
 
+	findStudent.Password = ""
+
 	return findStudent, nil
 }

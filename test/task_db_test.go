@@ -3,9 +3,10 @@ package test
 import (
 	"context"
 	"log"
-	"plataforma-apc/components/task"
-	"plataforma-apc/components/submission"
 	"testing"
+
+	"github.com/plataforma-apc/components/submission"
+	"github.com/plataforma-apc/components/task"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,39 +40,39 @@ func TestTaskDB(t *testing.T) {
 	// Instantiate some tasks objects
 
 	task_1 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 2 números inteiros",
-		Score       : 2.5,
-		Tags		: []string{"String", "Matrix", "Array"},
-		Submissions : []submission.Submission{},
+		ID:          bson.NewObjectId(),
+		Statement:   "Some 2 números inteiros",
+		Score:       2.5,
+		Tags:        []string{"String", "Matrix", "Array"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_2 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 3 números inteiros",
-		Score       : 4.5,
-		Tags		: []string{"Dp", "Array"},
-		Submissions : []submission.Submission{},
+		ID:          bson.NewObjectId(),
+		Statement:   "Some 3 números inteiros",
+		Score:       4.5,
+		Tags:        []string{"Dp", "Array"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_3 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 4 números inteiros",
-		Score       : 5.5,
-		Tags		: []string{"Sement Tree", "Trie"},
-		Submissions : []submission.Submission{},
+		ID:          bson.NewObjectId(),
+		Statement:   "Some 4 números inteiros",
+		Score:       5.5,
+		Tags:        []string{"Sement Tree", "Trie"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_4 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some",
-		Score       : 1.5,
-		Tags		: []string{"Ad Hoc"},
-		Submissions : []submission.Submission{},
+		ID:          bson.NewObjectId(),
+		Statement:   "Some",
+		Score:       1.5,
+		Tags:        []string{"Ad Hoc"},
+		Submissions: []submission.Submission{},
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
-	// 								 INSERT TASKS DB TEST 								     // 
+	// 								 INSERT TASKS DB TEST 								     //
 	///////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Test if task class array can be inserted in test database
@@ -91,7 +92,6 @@ func TestTaskDB(t *testing.T) {
 
 	task_2.Tags[0] = "Recursion"
 	task_2.Tags[1] = "Matrix"
-
 
 	if err := task.UpdateTasks(db, []task.Task{task_2}, "apc_database_test", "task_test"); err != nil {
 		t.Errorf("Failed to update tasks in Database : %s", err)
@@ -130,7 +130,7 @@ func TestTaskDB(t *testing.T) {
 	}
 
 	if len(tasks) != 3 {
-		t.Errorf("Invalid tasks size, got: %d, want: %d.", len(tasks),3)
+		t.Errorf("Invalid tasks size, got: %d, want: %d.", len(tasks), 3)
 	}
 
 	if tasks[1].Tags[0] != "Recursion" {

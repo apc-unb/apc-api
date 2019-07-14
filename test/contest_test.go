@@ -1,12 +1,13 @@
 package test
 
 import (
-	"plataforma-apc/components/contest"
-	"plataforma-apc/components/schoolClass"
-	"plataforma-apc/components/student"
-	"plataforma-apc/components/submission"
-	"plataforma-apc/components/task"
 	"testing"
+
+	"github.com/plataforma-apc/components/contest"
+	"github.com/plataforma-apc/components/schoolClass"
+	"github.com/plataforma-apc/components/student"
+	"github.com/plataforma-apc/components/submission"
+	"github.com/plataforma-apc/components/task"
 )
 
 func TestContest(t *testing.T) {

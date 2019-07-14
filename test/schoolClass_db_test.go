@@ -3,9 +3,10 @@ package test
 import (
 	"context"
 	"log"
-	"plataforma-apc/components/schoolClass"
-	"plataforma-apc/components/student"
 	"testing"
+
+	"github.com/plataforma-apc/components/schoolClass"
+	"github.com/plataforma-apc/components/student"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
