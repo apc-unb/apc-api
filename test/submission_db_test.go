@@ -3,10 +3,9 @@ package test
 import (
 	"context"
 	"log"
-	"plataforma-apc/components/submission"
 	"plataforma-apc/components/student"
+	"plataforma-apc/components/submission"
 	"testing"
-	"gopkg.in/mgo.v2/bson"
 )
 
 func TestSubmissionDB(t *testing.T) {
@@ -36,84 +35,75 @@ func TestSubmissionDB(t *testing.T) {
 	collection.Drop(context.TODO())
 
 	// Instantiate some submissions objects
-	
+
 	student_1 := student.Student{
-		ID			: bson.NewObjectId(),
-		FirstName	: "Thiago",
-		LastName	: "Veras Machado",
-		Matricula	: "160156666",
-		Handles		: []string{"Veras", "113065"},
-		Password	: "HQFnf-1234",
-		PhotoUrl	: "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
-		Grade		: 8.98,
+		FirstName: "Thiago",
+		LastName:  "Veras Machado",
+		Matricula: "160156666",
+		Handles:   []string{"Veras", "113065"},
+		Password:  "HQFnf-1234",
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		Grade:     8.98,
 	}
 
 	student_2 := student.Student{
-		ID			: bson.NewObjectId(),
-		FirstName	: "Vitor",
-		LastName	: "Fernandes Dullens",
-		Matricula	: "160571946",
-		Handles		: []string{"vitordullens", "2353251"},
-		Password	: "Hgqwge1234",
-		PhotoUrl	: "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
-		Grade		: 9.08,
+		FirstName: "Vitor",
+		LastName:  "Fernandes Dullens",
+		Matricula: "160571946",
+		Handles:   []string{"vitordullens", "2353251"},
+		Password:  "Hgqwge1234",
+		PhotoURL:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
+		Grade:     9.08,
 	}
 
 	student_3 := student.Student{
-		ID			: bson.NewObjectId(),
-		FirstName	: "Giovanni",
-		LastName	: "Guidini",
-		Matricula	: "136246666",
-		Handles		: []string{"Gguidini", "11165"},
-		Password	: "12rw-1234",
-		PhotoUrl	: "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
-		Grade		: 9.98,
+		FirstName: "Giovanni",
+		LastName:  "Guidini",
+		Matricula: "136246666",
+		Handles:   []string{"Gguidini", "11165"},
+		Password:  "12rw-1234",
+		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
+		Grade:     9.98,
 	}
 
 	student_4 := student.Student{
-		ID			: bson.NewObjectId(),
-		FirstName	: "Manoel",
-		LastName	: "Josias",
-		Matricula	: "135426666",
-		Handles		: []string{"Hehe", "11525"},
-		Password	: "121521hh1234",
-		PhotoUrl	: "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
-		Grade		: 6.27,
+		FirstName: "Manoel",
+		LastName:  "Josias",
+		Matricula: "135426666",
+		Handles:   []string{"Hehe", "11525"},
+		Password:  "121521hh1234",
+		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
+		Grade:     6.27,
 	}
 
 	submission_1 := submission.Submission{
-		ID			: bson.NewObjectId(),
-		Student  	: student_1,
-		Veredict 	: "WA",
-		Time     	: "19:03:55",
+		Student:  student_1,
+		Veredict: "WA",
+		Time:     "19:03:55",
 	}
 
 	submission_2 := submission.Submission{
-		ID			: bson.NewObjectId(),
-		Student  	: student_2,
-		Veredict 	: "AC",
-		Time     	: "19:07:55",
+		Student:  student_2,
+		Veredict: "AC",
+		Time:     "19:07:55",
 	}
 
 	submission_3 := submission.Submission{
-		ID			: bson.NewObjectId(),
-		Student  	: student_3,
-		Veredict 	: "TLE",
-		Time     	: "19:23:55",
+		Student:  student_3,
+		Veredict: "TLE",
+		Time:     "19:23:55",
 	}
 
 	submission_4 := submission.Submission{
-		ID			: bson.NewObjectId(),
-		Student  	: student_3,
-		Veredict 	: "AC",
-		Time     	: "19:24:00",
+		Student:  student_3,
+		Veredict: "AC",
+		Time:     "19:24:00",
 	}
 
 	submission_5 := submission.Submission{
-		ID			: bson.NewObjectId(),
-		Student  	: student_4,
-		Veredict 	: "AC",
-		Time     	: "19:33:55",
+		Student:  student_4,
+		Veredict: "AC",
+		Time:     "19:33:55",
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +125,6 @@ func TestSubmissionDB(t *testing.T) {
 
 	submission_2.Student = student_1
 
-
 	if err := submission.UpdateSubmissions(db, []submission.Submission{submission_1, submission_2}, "apc_database_test", "submission_test"); err != nil {
 		t.Errorf("Failed to update submission in Database : %s", err)
 	}
@@ -144,7 +133,7 @@ func TestSubmissionDB(t *testing.T) {
 	// 							DELETE LIST OF SUBMISSIONS FROM DB TEST   		       		 //
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	if err := submission.DeleteSubmissions(db, []submission.Submission{submission_3,submission_4}, "apc_database_test", "submission_test"); err != nil {
+	if err := submission.DeleteSubmissions(db, []submission.Submission{submission_3, submission_4}, "apc_database_test", "submission_test"); err != nil {
 		t.Errorf("Failed to delete submissions in Database : %s", err)
 	}
 
@@ -173,9 +162,9 @@ func TestSubmissionDB(t *testing.T) {
 	if submissions[1].Student.FirstName != "Thiago" {
 		t.Errorf("Invalid submissions[1] student name, got: %s, want: %s.", submissions[1].Student.FirstName, "Thiago")
 	}
-	
+
 	if submissions[1].Veredict != "AC" {
 		t.Errorf("Invalid submissions[0] veredict, got: %s, want: %s.", submissions[0].Veredict, "AC")
 	}
-	
+
 }
