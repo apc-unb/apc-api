@@ -14,7 +14,7 @@ func TestSubmission(t *testing.T) {
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
 		Grade:     8.98,
 	}
 

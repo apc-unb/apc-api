@@ -6,10 +6,9 @@ import (
 	"plataforma-apc/components/schoolClass"
 	"plataforma-apc/components/student"
 	"testing"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"gopkg.in/mgo.v2/bson"
-)
 
+	"github.com/mongodb/mongo-go-driver/mongo"
+)
 
 func GetMongoDB(host, port string) (*mongo.Client, error) {
 
@@ -57,51 +56,46 @@ func TestClassDB(t *testing.T) {
 	// Instantiate some school class objects
 
 	student_1 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
 		Grade:     8.98,
 	}
 
 	student_2 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
 		Matricula: "160571946",
 		Handles:   []string{"vitordullens", "2353251"},
 		Password:  "Hgqwge1234",
-		PhotoUrl:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
 		Grade:     9.08,
 	}
 
 	student_3 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Giovanni",
 		LastName:  "Guidini",
 		Matricula: "136246666",
 		Handles:   []string{"Gguidini", "11165"},
 		Password:  "12rw-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
 		Grade:     9.98,
 	}
 
 	student_4 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Manoel",
 		LastName:  "Josias",
 		Matricula: "135426666",
 		Handles:   []string{"Hehe", "11525"},
 		Password:  "121521hh1234",
-		PhotoUrl:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
 		Grade:     6.27,
 	}
 
 	class_1 := schoolClass.SchoolClass{
-		ID:                 bson.NewObjectId(),
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
 		Year:               2019,
@@ -109,7 +103,6 @@ func TestClassDB(t *testing.T) {
 		Students:           []student.Student{student_1, student_2},
 	}
 	class_2 := schoolClass.SchoolClass{
-		ID:                 bson.NewObjectId(),
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
 		Year:               2018,

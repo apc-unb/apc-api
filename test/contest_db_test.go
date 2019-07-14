@@ -4,11 +4,12 @@ import (
 	"context"
 	"log"
 	"plataforma-apc/components/contest"
-	"plataforma-apc/components/task"
 	"plataforma-apc/components/schoolClass"
-	"plataforma-apc/components/submission"
 	"plataforma-apc/components/student"
+	"plataforma-apc/components/submission"
+	"plataforma-apc/components/task"
 	"testing"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -40,64 +41,55 @@ func TestContestDB(t *testing.T) {
 
 	// Instantiate some students objects
 
-
 	task_1 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 2 números inteiros",
-		Score       : 2.5,
-		Tags		: []string{"String", "Matrix", "Array"},
-		Submissions : []submission.Submission{},
+		Statement:   "Some 2 números inteiros",
+		Score:       2.5,
+		Tags:        []string{"String", "Matrix", "Array"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_2 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 3 números inteiros",
-		Score       : 4.5,
-		Tags		: []string{"Dp", "Array"},
-		Submissions : []submission.Submission{},
+		Statement:   "Some 3 números inteiros",
+		Score:       4.5,
+		Tags:        []string{"Dp", "Array"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_3 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some 5 números inteiros",
-		Score       : 5.5,
-		Tags		: []string{"Sement Tree", "Trie"},
-		Submissions : []submission.Submission{},
+		Statement:   "Some 5 números inteiros",
+		Score:       5.5,
+		Tags:        []string{"Sement Tree", "Trie"},
+		Submissions: []submission.Submission{},
 	}
 
 	task_4 := task.Task{
-		ID			: bson.NewObjectId(),
-		Statement   : "Some",
-		Score       : 1.5,
-		Tags		: []string{"Ad Hoc"},
-		Submissions : []submission.Submission{},
+		Statement:   "Some",
+		Score:       1.5,
+		Tags:        []string{"Ad Hoc"},
+		Submissions: []submission.Submission{},
 	}
 
 	student_1 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
 		Grade:     8.98,
 	}
 
 	student_2 := student.Student{
-		ID:        bson.NewObjectId(),
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
 		Matricula: "160571946",
 		Handles:   []string{"vitordullens", "2353251"},
 		Password:  "Hgqwge1234",
-		PhotoUrl:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
 		Grade:     9.08,
 	}
 
-
 	class_1 := schoolClass.SchoolClass{
-		ID			: bson.NewObjectId(),
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
 		Year:               2019,
@@ -106,7 +98,6 @@ func TestContestDB(t *testing.T) {
 	}
 
 	class_2 := schoolClass.SchoolClass{
-		ID			: bson.NewObjectId(),
 		ProfessorFirstName: "Marcos",
 		ProfessorLastName:  "Caetano",
 		Year:               2018,
@@ -115,17 +106,17 @@ func TestContestDB(t *testing.T) {
 	}
 
 	contest_1 := contest.Contest{
-		ID	  : bson.NewObjectId(),
-		Date  : "25/11/1997",
-		Class : class_1,
-		Tasks : []task.Task{task_1, task_2, task_3},
+		ID:    bson.NewObjectId(),
+		Date:  "25/11/1997",
+		Class: class_1,
+		Tasks: []task.Task{task_1, task_2, task_3},
 	}
 
 	contest_2 := contest.Contest{
-		ID	  : bson.NewObjectId(),
-		Date  : "25/11/2018",
-		Class : class_2,
-		Tasks : []task.Task{task_3, task_4},
+		ID:    bson.NewObjectId(),
+		Date:  "25/11/2018",
+		Class: class_2,
+		Tasks: []task.Task{task_3, task_4},
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////

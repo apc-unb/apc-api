@@ -5,8 +5,6 @@ import (
 	"log"
 	"plataforma-apc/components/student"
 	"testing"
-
-	"gopkg.in/mgo.v2/bson"
 )
 
 func TestStudentDB(t *testing.T) {
@@ -37,37 +35,34 @@ func TestStudentDB(t *testing.T) {
 
 	// Instantiate some students objects
 
-	student_1 := student.Student{
-		ID:        bson.NewObjectId(),
+	student_1 := student.StudentCreate{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
-		Grade:     8.98,
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		Email:     "teste@gmail.com",
 	}
 
-	student_2 := student.Student{
-		ID:        bson.NewObjectId(),
+	student_2 := student.StudentCreate{
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
 		Matricula: "160571946",
 		Handles:   []string{"vitordullens", "2353251"},
 		Password:  "Hgqwge1234",
-		PhotoUrl:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
-		Grade:     9.08,
+		PhotoURL:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
+		Email:     "teste@gmail.com",
 	}
 
-	student_3 := student.Student{
-		ID:        bson.NewObjectId(),
+	student_3 := student.StudentCreate{
 		FirstName: "Giovanni",
 		LastName:  "Guidini",
 		Matricula: "136246666",
 		Handles:   []string{"Gguidini", "11165"},
 		Password:  "12rw-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
-		Grade:     9.98,
+		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
+		Email:     "teste@gmail.com",
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// 								 INSERT STUDENTS DB TEST 								 //
@@ -75,7 +70,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := student.CreateStudents(db, []student.Student{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.CreateStudents(db, []student.StudentCreate{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to insert students in Database : %s", err)
 	}
 
@@ -93,7 +88,7 @@ func TestStudentDB(t *testing.T) {
 	student_3.FirstName = "Henrique"
 	student_3.LastName = "Machado"
 
-	if err := student.UpdateStudents(db, []student.Student{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.UpdateStudents(db, []student.StudentUpdate{}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to update students in Database : %s", err)
 	}
 
@@ -104,7 +99,7 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be deleted in test database
 	// Checks if err variable is not null
 
-	if err := student.DeleteStudents(db, []student.Student{student_2}, "apc_database_test", "student_test"); err != nil {
+	if err := student.DeleteStudents(db, []student.Student{}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to delete students in Database : %s", err)
 	}
 
@@ -144,4 +139,3 @@ func TestStudentDB(t *testing.T) {
 	}
 
 }
-	

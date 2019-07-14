@@ -4,8 +4,8 @@ import (
 	"plataforma-apc/components/contest"
 	"plataforma-apc/components/schoolClass"
 	"plataforma-apc/components/student"
-	"plataforma-apc/components/task"
 	"plataforma-apc/components/submission"
+	"plataforma-apc/components/task"
 	"testing"
 )
 
@@ -17,7 +17,7 @@ func TestContest(t *testing.T) {
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
-		PhotoUrl:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
+		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
 		Grade:     8.98,
 	}
 
@@ -36,16 +36,16 @@ func TestContest(t *testing.T) {
 	}
 
 	task_1 := task.Task{
-		Statement   : "Some",
-		Score       : 1.5,
-		Tags		: []string{"Ad Hoc"},
-		Submissions : []submission.Submission{submission_1},
+		Statement:   "Some",
+		Score:       1.5,
+		Tags:        []string{"Ad Hoc"},
+		Submissions: []submission.Submission{submission_1},
 	}
 
 	contest := contest.Contest{
-		Date  : "25/11/1997",
-		Class : class,
-		Tasks : []task.Task{task_1},
+		Date:  "25/11/1997",
+		Class: class,
+		Tasks: []task.Task{task_1},
 	}
 
 	if contest.Date != "25/11/1997" {
@@ -67,5 +67,5 @@ func TestContest(t *testing.T) {
 	if contest.Tasks[0].Submissions[0].Veredict != "AC" {
 		t.Errorf("Invalid contest task 0 submission 0 veredict, got: %s, want: %s.", contest.Tasks[0].Submissions[0].Veredict, "AC")
 	}
-	
+
 }
