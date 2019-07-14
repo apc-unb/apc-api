@@ -3,9 +3,10 @@ package test
 import (
 	"context"
 	"log"
-	"plataforma-apc/components/student"
-	"plataforma-apc/components/submission"
 	"testing"
+
+	"github.com/plataforma-apc/components/student"
+	"github.com/plataforma-apc/components/submission"
 )
 
 func TestSubmissionDB(t *testing.T) {

@@ -1,9 +1,10 @@
 package test
 
 import (
-	"plataforma-apc/components/schoolClass"
-	"plataforma-apc/components/student"
 	"testing"
+
+	"github.com/plataforma-apc/components/schoolClass"
+	"github.com/plataforma-apc/components/student"
 )
 
 func TestSchoolClass(t *testing.T) {
