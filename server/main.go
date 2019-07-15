@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"plataforma-apc/config"
+
+	"github.com/plataforma-apc/config"
 
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -59,6 +60,11 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/contests", a.createContests).Methods("POST")
 	a.Router.HandleFunc("/contests", a.updateContests).Methods("PUT")
 	a.Router.HandleFunc("/contests", a.deleteContests).Methods("DELETE")
+
+	a.Router.HandleFunc("/news", a.getNews).Methods("GET")
+	a.Router.HandleFunc("/news", a.createNews).Methods("POST")
+	a.Router.HandleFunc("/news", a.updateNews).Methods("PUT")
+	a.Router.HandleFunc("/news", a.deleteNews).Methods("DELETE")
 
 }
 
