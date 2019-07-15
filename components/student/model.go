@@ -2,6 +2,7 @@ package student
 
 import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/plataforma-apc/components/news"
 )
 
 type Student struct {
@@ -47,4 +48,10 @@ type StudentUpdate struct {
 type StudentLogin struct {
 	Matricula string `json:"matricula"`
 	Password  string `json:"password"`
+}
+
+type StudentPage struct {
+	UserExist bool        `json:"userexist"`
+	User      StudentInfo `json:"student"`
+	News      []news.News `json:"news"`
 }
