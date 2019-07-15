@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateNews(db *mongo.Client, news []News, databaseName, collectionName string) error {
+func CreateNews(db *mongo.Client, news []NewsCreate, databaseName, collectionName string) error {
 
 	if len(news) == 0 {
 		return nil
@@ -34,6 +34,7 @@ func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, err
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(context.TODO(), bson.D{{}}, nil)
+
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +51,7 @@ func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, err
 			return nil, err
 		}
 
-		// Push school class inside student array
+		// Push student inside student array
 		news = append(news, elem)
 	}
 
@@ -62,7 +63,6 @@ func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, err
 	cursor.Close(context.TODO())
 
 	return news, nil
-
 }
 
 func UpdateNews(db *mongo.Client, news []News, databaseName, collectionName string) error {
