@@ -35,9 +35,11 @@ func (a *App) Initialize(host, port string) {
 func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/student", a.getStudent).Methods("POST")
+	a.Router.HandleFunc("/student", a.getOptions).Methods("OPTIONS")
 
 	a.Router.HandleFunc("/students", a.getStudents).Methods("GET")
 	a.Router.HandleFunc("/students", a.createStudents).Methods("POST")
+	a.Router.HandleFunc("/students", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/students", a.updateStudents).Methods("PUT")
 	a.Router.HandleFunc("/students", a.deleteStudents).Methods("DELETE")
 
