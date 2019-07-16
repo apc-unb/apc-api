@@ -47,8 +47,8 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 	enableCORS(&w)
 
 	var studentLogin student.StudentLogin
-	var singleStudent student.Student
-	var aux student.StudentInfo
+	var singleStudent student.StudentInfo
+	//var aux student.StudentInfo
 	var newsArray []news.News
 	var err error
 
@@ -73,12 +73,12 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aux.ID = singleStudent.ID
-	aux.FirstName = singleStudent.FirstName
-	aux.LastName = singleStudent.LastName
-	aux.Matricula = singleStudent.Matricula
-	aux.Handles = singleStudent.Handles
-	aux.PhotoURL = singleStudent.PhotoURL
+	// aux.ID = singleStudent.ID
+	// aux.FirstName = singleStudent.FirstName
+	// aux.LastName = singleStudent.LastName
+	// aux.Matricula = singleStudent.Matricula
+	// aux.Handles = singleStudent.Handles
+	// aux.PhotoURL = singleStudent.PhotoURL
 
 	if newsArray, err = news.GetNews(a.DB, "apc_database", "news"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -87,7 +87,7 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 
 	ret := student.StudentPage{
 		UserExist: true,
-		User:      aux,
+		User:      singleStudent,
 		News:      newsArray,
 	}
 
