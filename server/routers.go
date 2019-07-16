@@ -15,13 +15,15 @@ import (
 // 									 STUDENTS			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
+	respondWithJSON(w, http.StatusOK, nil)
+}
+
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
 
 	var students []student.StudentCreate
-
-	// Temporary
-	collection := a.DB.Database("apc_database").Collection("student")
-	collection.Drop(context.TODO())
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -42,6 +44,8 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var studentLogin student.StudentLogin
 	var singleStudent student.Student
 	var aux student.StudentInfo
@@ -58,7 +62,14 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if singleStudent, err = student.AuthStudent(a.DB, studentLogin, "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error()+"AAAAAAAAA")
+		if err.Error() == "mongo: no documents in result" {
+			ret := student.StudentPage{
+				UserExist: false,
+			}
+			respondWithJSON(w, http.StatusOK, ret)
+		} else {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
@@ -70,7 +81,7 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 	aux.PhotoURL = singleStudent.PhotoURL
 
 	if newsArray, err = news.GetNews(a.DB, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error()+"XXXXXX")
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -85,6 +96,7 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
 
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
 
@@ -92,7 +104,6 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	respondWithJSON(w, http.StatusOK, students)
 }
 
