@@ -17,6 +17,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
+func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
+	respondWithJSON(w, http.StatusOK, nil)
+}
+
 func enableCORS(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
