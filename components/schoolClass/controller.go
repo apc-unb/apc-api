@@ -2,12 +2,13 @@ package schoolClass
 
 import (
 	"context"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	
+func CreateClasses(db *mongo.Client, schoolClass []SchoolClassCreate, database_name, collection_name string) error {
+
 	if len(schoolClass) == 0 {
 		return nil
 	}
@@ -21,11 +22,11 @@ func CreateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, c
 	}
 
 	return nil
-	
+
 }
 
 func GetClasses(db *mongo.Client, database_name, collection_name string) ([]SchoolClass, error) {
-	
+
 	collection := db.Database(database_name).Collection(collection_name)
 
 	// Here's an array in which you can store the decoded documents
@@ -65,7 +66,7 @@ func GetClasses(db *mongo.Client, database_name, collection_name string) ([]Scho
 }
 
 func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	
+
 	if len(schoolClass) == 0 {
 		return nil
 	}
@@ -83,7 +84,7 @@ func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, c
 }
 
 func DeleteClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
-	
+
 	if len(schoolClass) == 0 {
 		return nil
 	}

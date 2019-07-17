@@ -2,12 +2,13 @@ package submission
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateSubmissions(db *mongo.Client, submissions []Submission, database_name, collection_name string) error {
-	
+func CreateSubmissions(db *mongo.Client, submissions []SubmissionCreate, database_name, collection_name string) error {
+
 	if len(submissions) == 0 {
 		return nil
 	}
@@ -24,7 +25,7 @@ func CreateSubmissions(db *mongo.Client, submissions []Submission, database_name
 }
 
 func GetSubmissions(db *mongo.Client, database_name, collection_name string) ([]Submission, error) {
-	
+
 	collection := db.Database(database_name).Collection(collection_name)
 
 	// Here's an array in which you can store the decoded documents
@@ -83,9 +84,9 @@ func UpdateSubmissions(db *mongo.Client, submissions []Submission, database_name
 }
 
 func DeleteSubmissions(db *mongo.Client, submissions []Submission, database_name, collection_name string) error {
-	
+
 	if len(submissions) == 0 {
-		return nil	
+		return nil
 	}
 
 	collection := db.Database(database_name).Collection(collection_name)

@@ -2,12 +2,13 @@ package task
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateTasks(db *mongo.Client, tasks []Task, database_name, collection_name string) error {
-	
+func CreateTasks(db *mongo.Client, tasks []TaskCreate, database_name, collection_name string) error {
+
 	if len(tasks) == 0 {
 		return nil
 	}
@@ -25,7 +26,7 @@ func CreateTasks(db *mongo.Client, tasks []Task, database_name, collection_name 
 }
 
 func GetTasks(db *mongo.Client, database_name, collection_name string) ([]Task, error) {
-	
+
 	collection := db.Database(database_name).Collection(collection_name)
 
 	// Here's an array in which you can store the decoded documents
@@ -65,7 +66,7 @@ func GetTasks(db *mongo.Client, database_name, collection_name string) ([]Task, 
 }
 
 func UpdateTasks(db *mongo.Client, tasks []Task, database_name, collection_name string) error {
-	
+
 	if len(tasks) == 0 {
 		return nil
 	}
@@ -84,7 +85,7 @@ func UpdateTasks(db *mongo.Client, tasks []Task, database_name, collection_name 
 }
 
 func DeleteTasks(db *mongo.Client, tasks []Task, database_name, collection_name string) error {
-	
+
 	if len(tasks) == 0 {
 		return nil
 	}

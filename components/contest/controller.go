@@ -2,12 +2,13 @@ package contest
 
 import (
 	"context"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateContests(db *mongo.Client, contests []Contest, database_name, collection_name string) error {
-	
+func CreateContests(db *mongo.Client, contests []ContestCreate, database_name, collection_name string) error {
+
 	if len(contests) == 0 {
 		return nil
 	}
@@ -21,11 +22,11 @@ func CreateContests(db *mongo.Client, contests []Contest, database_name, collect
 	}
 
 	return nil
-	
+
 }
 
 func GetContests(db *mongo.Client, database_name, collection_name string) ([]Contest, error) {
-	
+
 	collection := db.Database(database_name).Collection(collection_name)
 
 	// Here's an array in which you can store the decoded documents
@@ -65,7 +66,7 @@ func GetContests(db *mongo.Client, database_name, collection_name string) ([]Con
 }
 
 func UpdateContests(db *mongo.Client, contests []Contest, database_name, collection_name string) error {
-	
+
 	if len(contests) == 0 {
 		return nil
 	}
@@ -84,7 +85,7 @@ func UpdateContests(db *mongo.Client, contests []Contest, database_name, collect
 }
 
 func DeleteContests(db *mongo.Client, contests []Contest, database_name, collection_name string) error {
-	
+
 	if len(contests) == 0 {
 		return nil
 	}
@@ -98,5 +99,5 @@ func DeleteContests(db *mongo.Client, contests []Contest, database_name, collect
 		}
 	}
 	return nil
-	
+
 }
