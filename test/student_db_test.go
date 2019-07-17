@@ -12,31 +12,32 @@ func TestStudentDB(t *testing.T) {
 
 	//	Get conection with database
 	//	Use config mongo function
-
 	db, err := GetMongoDB("localhost", "27017")
 
 	// Close conection in the end
-
 	defer db.Disconnect(context.TODO())
 
 	// Checks if creating conection with mongo db
 	// doesn't return any errors
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Get test collection of student
-
 	collection := db.Database("apc_database_test").Collection("student_test")
 
 	// Drop all content to start testing
-
 	collection.Drop(context.TODO())
 
-	// Instantiate some students objects
+	// Instantiate grades for test
+	grades := student.StudentGrades{
+		Exams:    []float64{1.4, 2.3, 2.4},
+		Projects: []float64{1.6, 3.1, 2.4},
+		Lists:    []float64{1.2, 1.2, 1.2},
+	}
 
-	student_1 := student.StudentCreate{
+	// Instantiate some students objects
+	student1 := student.StudentCreate{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
@@ -44,9 +45,10 @@ func TestStudentDB(t *testing.T) {
 		Password:  "HQFnf-1234",
 		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
 		Email:     "teste@gmail.com",
+		Grades:    grades,
 	}
 
-	student_2 := student.StudentCreate{
+	student2 := student.StudentCreate{
 		FirstName: "Vitor",
 		LastName:  "Fernandes Dullens",
 		Matricula: "160571946",
@@ -54,9 +56,10 @@ func TestStudentDB(t *testing.T) {
 		Password:  "Hgqwge1234",
 		PhotoURL:  "https://userpic.codeforces.com/551311/title/95d04d8b95b95302.jpg",
 		Email:     "teste@gmail.com",
+		Grades:    grades,
 	}
 
-	student_3 := student.StudentCreate{
+	student3 := student.StudentCreate{
 		FirstName: "Giovanni",
 		LastName:  "Guidini",
 		Matricula: "136246666",
@@ -64,6 +67,7 @@ func TestStudentDB(t *testing.T) {
 		Password:  "12rw-1234",
 		PhotoURL:  "https://userpic.codeforces.com/765049/title/2075d6432eadaae9.jpg",
 		Email:     "teste@gmail.com",
+		Grades:    grades,
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// 								 INSERT STUDENTS DB TEST 								 //
@@ -71,8 +75,22 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := student.CreateStudents(db, []student.StudentCreate{student_1, student_2, student_3}, "apc_database_test", "student_test"); err != nil {
+	if err := student.CreateStudents(db, []student.StudentCreate{student1, student2, student3}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to insert students in Database : %s", err)
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							   GET ALL STUDENTS FROM DB TEST 				      		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//
+	// Test if can get all students from database
+	// Checks if err variable is not null
+	//
+
+	var students []student.Student
+
+	if students, err = student.GetStudents(db, "apc_database_test", "student_test"); err != nil {
+		t.Errorf("Failed to get students from Database : %s", err)
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -83,14 +101,28 @@ func TestStudentDB(t *testing.T) {
 	// Change some students name, then update that class on DB
 	// Checks if err variable is not null
 
-	student_1.FirstName = "Guilherme"
-	student_1.LastName = "Carvalho"
+	students[0].FirstName = "Guilherme"
+	students[0].LastName = "Carvalho"
 
-	student_3.FirstName = "Henrique"
-	student_3.LastName = "Machado"
+	students[2].FirstName = "Henrique"
+	students[2].LastName = "Machado"
 
-	if err := student.UpdateStudents(db, []student.StudentUpdate{}, "apc_database_test", "student_test"); err != nil {
+	if err := student.UpdateStudents(db, []student.Student{students[0], students[2]}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to update students in Database : %s", err)
+	}
+
+	students = nil
+
+	if students, err = student.GetStudents(db, "apc_database_test", "student_test"); err != nil {
+		t.Errorf("Failed to get students from Database : %s", err)
+	}
+
+	if students[0].FirstName != "Guilherme" {
+		t.Errorf("Invalid students[0] first name, got: %s, want: %s.", students[0].FirstName, "Thiago")
+	}
+
+	if students[2].LastName != "Machado" {
+		t.Errorf("Invalid students[2] last name, got: %s, want: %s.", students[2].LastName, "Machado")
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -100,28 +132,11 @@ func TestStudentDB(t *testing.T) {
 	// Test if student class array can be deleted in test database
 	// Checks if err variable is not null
 
-	if err := student.DeleteStudents(db, []student.Student{}, "apc_database_test", "student_test"); err != nil {
+	if err := student.DeleteStudents(db, []student.Student{students[0]}, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to delete students in Database : %s", err)
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////
-	// 							   GET ALL STUDENTS FROM DB TEST 				      		 //
-	///////////////////////////////////////////////////////////////////////////////////////////
-	// 1º
-	//
-	// Test if can get all students from database
-	// Checks if err variable is not null
-	//
-	// 2º
-	//
-	// Test if students array len equals to 3 because INSERT TEST only insert 3 students
-	//
-	// 3º, 4º, 5º
-	//
-	// Test if first name of each respective student are correct
-	// It is expected that the output is in the same order as the input
-
-	var students []student.Student
+	students = nil
 
 	if students, err = student.GetStudents(db, "apc_database_test", "student_test"); err != nil {
 		t.Errorf("Failed to get students from Database : %s", err)
@@ -129,14 +144,6 @@ func TestStudentDB(t *testing.T) {
 
 	if len(students) != 2 {
 		t.Errorf("Invalid students size, got: %d, want: %d.", len(students), 2)
-	}
-
-	if students[0].FirstName != "Guilherme" {
-		t.Errorf("Invalid students[0] first name, got: %s, want: %s.", students[0].FirstName, "Thiago")
-	}
-
-	if students[1].FirstName != "Henrique" {
-		t.Errorf("Invalid students[2] first name, got: %s, want: %s.", students[2].FirstName, "Giovanni")
 	}
 
 }

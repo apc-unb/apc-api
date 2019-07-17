@@ -7,64 +7,52 @@ import (
 
 	"github.com/plataforma-apc/components/submission"
 	"github.com/plataforma-apc/components/task"
-
-	"gopkg.in/mgo.v2/bson"
 )
 
 func TestTaskDB(t *testing.T) {
 
 	//	Get conection with database
 	//	Use config mongo function
-
 	db, err := GetMongoDB("localhost", "27017")
 
 	// Close conection in the end
-
 	defer db.Disconnect(context.TODO())
 
 	// Checks if creating conection with mongo db
 	// doesn't return any errors
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Get test collection of student
-
 	collection := db.Database("apc_database_test").Collection("task_test")
 
 	// Drop all content to start testing
-
 	collection.Drop(context.TODO())
 
 	// Instantiate some tasks objects
-
-	task_1 := task.Task{
-		ID:          bson.NewObjectId(),
+	task1 := task.TaskCreate{
 		Statement:   "Some 2 números inteiros",
 		Score:       2.5,
 		Tags:        []string{"String", "Matrix", "Array"},
 		Submissions: []submission.Submission{},
 	}
 
-	task_2 := task.Task{
-		ID:          bson.NewObjectId(),
+	task2 := task.TaskCreate{
 		Statement:   "Some 3 números inteiros",
 		Score:       4.5,
 		Tags:        []string{"Dp", "Array"},
 		Submissions: []submission.Submission{},
 	}
 
-	task_3 := task.Task{
-		ID:          bson.NewObjectId(),
+	task3 := task.TaskCreate{
 		Statement:   "Some 4 números inteiros",
 		Score:       5.5,
 		Tags:        []string{"Sement Tree", "Trie"},
 		Submissions: []submission.Submission{},
 	}
 
-	task_4 := task.Task{
-		ID:          bson.NewObjectId(),
+	task4 := task.TaskCreate{
 		Statement:   "Some",
 		Score:       1.5,
 		Tags:        []string{"Ad Hoc"},
@@ -78,34 +66,8 @@ func TestTaskDB(t *testing.T) {
 	// Test if task class array can be inserted in test database
 	// Checks if err variable is not null
 
-	if err := task.CreateTasks(db, []task.Task{task_1, task_2, task_3, task_4}, "apc_database_test", "task_test"); err != nil {
+	if err := task.CreateTasks(db, []task.TaskCreate{task1, task2, task3, task4}, "apc_database_test", "task_test"); err != nil {
 		t.Errorf("Failed to insert tasks in Database : %s", err)
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////
-	// 							UPDATE LIST OF TASKS FROM DB TEST   		         		 //
-	///////////////////////////////////////////////////////////////////////////////////////////
-	//
-	// Test if task class array can be updated in test database
-	// Change some task name, then update that class on DB
-	// Checks if err variable is not null
-
-	task_2.Tags[0] = "Recursion"
-	task_2.Tags[1] = "Matrix"
-
-	if err := task.UpdateTasks(db, []task.Task{task_2}, "apc_database_test", "task_test"); err != nil {
-		t.Errorf("Failed to update tasks in Database : %s", err)
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////
-	// 							DELETE LIST OF TASKS FROM DB TEST   		         		 //
-	///////////////////////////////////////////////////////////////////////////////////////////
-	//
-	// Test if task class array can be deleted in test database
-	// Checks if err variable is not null
-
-	if err := task.DeleteTasks(db, []task.Task{task_3}, "apc_database_test", "task_test"); err != nil {
-		t.Errorf("Failed to delete task in Database : %s", err)
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -129,8 +91,29 @@ func TestTaskDB(t *testing.T) {
 		t.Errorf("Failed to get tasks from Database : %s", err)
 	}
 
-	if len(tasks) != 3 {
-		t.Errorf("Invalid tasks size, got: %d, want: %d.", len(tasks), 3)
+	if tasks[0].Score != 2.5 {
+		t.Errorf("Invalid tasks[0].Score, got: %f, want: %f.", tasks[1].Score, 2.5)
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							UPDATE LIST OF TASKS FROM DB TEST   		         		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//
+	// Test if task class array can be updated in test database
+	// Change some task name, then update that class on DB
+	// Checks if err variable is not null
+
+	tasks[1].Tags[0] = "Recursion"
+	tasks[1].Tags[1] = "Matrix"
+
+	if err := task.UpdateTasks(db, []task.Task{tasks[1]}, "apc_database_test", "task_test"); err != nil {
+		t.Errorf("Failed to update tasks in Database : %s", err)
+	}
+
+	tasks = nil
+
+	if tasks, err = task.GetTasks(db, "apc_database_test", "task_test"); err != nil {
+		t.Errorf("Failed to get tasks from Database : %s", err)
 	}
 
 	if tasks[1].Tags[0] != "Recursion" {
@@ -141,8 +124,25 @@ func TestTaskDB(t *testing.T) {
 		t.Errorf("Invalid tasks[1].Tags[1], got: %s, want: %s.", tasks[1].Tags[1], "Matrix")
 	}
 
-	if tasks[0].Score != 2.5 {
-		t.Errorf("Invalid tasks[0].Score, got: %f, want: %f.", tasks[1].Score, 2.5)
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// 							DELETE LIST OF TASKS FROM DB TEST   		         		 //
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//
+	// Test if task class array can be deleted in test database
+	// Checks if err variable is not null
+
+	if err := task.DeleteTasks(db, []task.Task{tasks[2]}, "apc_database_test", "task_test"); err != nil {
+		t.Errorf("Failed to delete task in Database : %s", err)
+	}
+
+	tasks = nil
+
+	if tasks, err = task.GetTasks(db, "apc_database_test", "task_test"); err != nil {
+		t.Errorf("Failed to get tasks from Database : %s", err)
+	}
+
+	if len(tasks) != 3 {
+		t.Errorf("Invalid tasks size, got: %d, want: %d.", len(tasks), 3)
 	}
 
 }
