@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -148,19 +149,28 @@ func DeleteStudents(db *mongo.Client, students []Student, databaseName, collecti
 // @param	collectionName	name of collection
 // @return 	[]bool			user exist veredict
 // @return 	error 			function error
-func AuthStudent(db *mongo.Client, student StudentLogin, databaseName, collectionName string) (Student, error) {
+func AuthStudent(db *mongo.Client, student StudentLogin, databaseName, collectionName string) (StudentInfo, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	findStudent := Student{}
+	findStudent := StudentInfo{}
 
-	filter := bson.D{{"matricula", student.Matricula}, {"password", student.Password}}
-
-	if err := collection.FindOne(context.TODO(), filter).Decode(&findStudent); err != nil {
-		return findStudent, err
+	filter := bson.D{
+		{"matricula", student.Matricula},
+		{"password", student.Password},
 	}
 
-	findStudent.Password = ""
+	projection := bson.D{
+		{"password", 0},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne().SetProjection(projection),
+	).Decode(&findStudent); err != nil {
+		return findStudent, err
+	}
 
 	return findStudent, nil
 }
