@@ -10,30 +10,37 @@ import (
 
 func TestTask(t *testing.T) {
 
-	student_1 := student.Student{
+	// Instantiate grades for test
+	grades := student.StudentGrades{
+		Exams:    []float64{8.98, 2.3, 2.4},
+		Projects: []float64{1.6, 3.1, 2.4},
+		Lists:    []float64{1.2, 1.2, 1.2},
+	}
+
+	student1 := student.Student{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
 		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
-		Grade:     8.98,
+		Grade:     grades,
 	}
 
-	submission_1 := submission.Submission{
-		Student:  student_1,
+	submission1 := submission.Submission{
+		Student:  student1,
 		Veredict: "WA",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	submission_2 := submission.Submission{
-		Student:  student_1,
+	submission2 := submission.Submission{
+		Student:  student1,
 		Veredict: "TLE",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	submission_3 := submission.Submission{
-		Student:  student_1,
+	submission3 := submission.Submission{
+		Student:  student1,
 		Veredict: "AC",
 		Time:     "Jun/04/2019 03:51",
 	}
@@ -42,7 +49,7 @@ func TestTask(t *testing.T) {
 		Statement:   "Deivis Express",
 		Score:       4.5,
 		Tags:        []string{"String", "Matrix", "Array"},
-		Submissions: []submission.Submission{submission_1, submission_2, submission_3},
+		Submissions: []submission.Submission{submission1, submission2, submission3},
 	}
 
 	if taskClass.Statement != "Deivis Express" {

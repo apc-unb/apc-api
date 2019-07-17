@@ -12,14 +12,20 @@ import (
 
 func TestContest(t *testing.T) {
 
-	student_1 := student.Student{
+	grades := student.StudentGrades{
+		Exams:    []float64{1.4, 2.3, 2.4},
+		Projects: []float64{1.6, 3.1, 2.4},
+		Lists:    []float64{1.2, 1.2, 1.2},
+	}
+
+	student1 := student.Student{
 		FirstName: "Thiago",
 		LastName:  "Veras Machado",
 		Matricula: "160156666",
 		Handles:   []string{"Veras", "113065"},
 		Password:  "HQFnf-1234",
 		PhotoURL:  "https://userpic.codeforces.com/546204/title/d2ac05baf39339f.jpg",
-		Grade:     8.98,
+		Grade:     grades,
 	}
 
 	class := schoolClass.SchoolClass{
@@ -27,26 +33,26 @@ func TestContest(t *testing.T) {
 		ProfessorLastName:  "Castanho",
 		Year:               2019,
 		Season:             1,
-		Students:           []student.Student{student_1},
+		Students:           []student.Student{student1},
 	}
 
-	submission_1 := submission.Submission{
-		Student:  student_1,
+	submission1 := submission.Submission{
+		Student:  student1,
 		Veredict: "AC",
 		Time:     "Jun/04/2019 03:51",
 	}
 
-	task_1 := task.Task{
+	task1 := task.Task{
 		Statement:   "Some",
 		Score:       1.5,
 		Tags:        []string{"Ad Hoc"},
-		Submissions: []submission.Submission{submission_1},
+		Submissions: []submission.Submission{submission1},
 	}
 
 	contest := contest.Contest{
 		Date:  "25/11/1997",
 		Class: class,
-		Tasks: []task.Task{task_1},
+		Tasks: []task.Task{task1},
 	}
 
 	if contest.Date != "25/11/1997" {
