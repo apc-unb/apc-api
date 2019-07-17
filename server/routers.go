@@ -15,13 +15,7 @@ import (
 // 									 STUDENTS			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
-	enableCORS(&w)
-	respondWithJSON(w, http.StatusOK, nil)
-}
-
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
-	enableCORS(&w)
 
 	var students []student.StudentCreate
 
@@ -44,11 +38,8 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
-
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
-	//var aux student.StudentInfo
 	var newsArray []news.News
 	var err error
 
@@ -73,13 +64,6 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// aux.ID = singleStudent.ID
-	// aux.FirstName = singleStudent.FirstName
-	// aux.LastName = singleStudent.LastName
-	// aux.Matricula = singleStudent.Matricula
-	// aux.Handles = singleStudent.Handles
-	// aux.PhotoURL = singleStudent.PhotoURL
-
 	if newsArray, err = news.GetNews(a.DB, "apc_database", "news"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -92,11 +76,9 @@ func (a *App) getStudent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, ret)
-
 }
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
-	enableCORS(&w)
 
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
 
@@ -109,7 +91,7 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
-	var students []student.StudentUpdate
+	var students []student.Student
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -147,7 +129,7 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 	collection := a.DB.Database("apc_database").Collection("schoolClass")
 	collection.Drop(context.TODO())
 
-	if err := schoolClass.CreateClasses(a.DB, []schoolClass.SchoolClass{}, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.CreateClasses(a.DB, []schoolClass.SchoolClassCreate{}, "apc_database", "schoolClass"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
