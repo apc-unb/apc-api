@@ -14,17 +14,18 @@ type Student struct {
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
-	Grade     float64            `json:"grade"`
+	Grade     StudentGrades      `json:"grade"`
 }
 
 type StudentCreate struct {
-	FirstName string   `json:"firstname"`
-	LastName  string   `json:"lastname"`
-	Matricula string   `json:"matricula"`
-	Handles   []string `json:"handles"`
-	Password  string   `json:"password"`
-	PhotoURL  string   `json:"photourl"`
-	Email     string   `json:"email"`
+	FirstName string        `json:"firstname"`
+	LastName  string        `json:"lastname"`
+	Matricula string        `json:"matricula"`
+	Handles   []string      `json:"handles"`
+	Password  string        `json:"password"`
+	PhotoURL  string        `json:"photourl"`
+	Email     string        `json:"email"`
+	Grades    StudentGrades `json:"grades"`
 }
 
 type StudentInfo struct {
@@ -35,7 +36,7 @@ type StudentInfo struct {
 	Handles   []string           `json:"handles"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
-	Grade     float64            `json:"grade"`
+	Grades    StudentGrades      `json:"grades"`
 }
 
 type StudentUpdate struct {
@@ -54,4 +55,10 @@ type StudentPage struct {
 	UserExist bool        `json:"userexist"`
 	User      StudentInfo `json:"student"`
 	News      []news.News `json:"news"`
+}
+
+type StudentGrades struct {
+	Exams    []float64 `json:"exams"`
+	Projects []float64 `json:"projects"`
+	Lists    []float64 `json:"lists"`
 }

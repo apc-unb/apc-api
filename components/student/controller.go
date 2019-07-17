@@ -94,7 +94,7 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 // @return 	[]Student		list of all students
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
-func UpdateStudents(db *mongo.Client, students []StudentUpdate, databaseName, collectionName string) error {
+func UpdateStudents(db *mongo.Client, students []Student, databaseName, collectionName string) error {
 
 	if len(students) == 0 {
 		return nil
