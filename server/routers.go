@@ -112,7 +112,18 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
-	if err := student.DeleteStudents(a.DB, []student.Student{}, "apc_database", "student"); err != nil {
+	var students []student.Student
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&students); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := student.DeleteStudents(a.DB, students, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
