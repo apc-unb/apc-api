@@ -18,6 +18,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
 	respondWithJSON(w, http.StatusOK, nil)
 }
 

@@ -19,6 +19,8 @@ import (
 
 func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
 	var newsArray []news.News
@@ -61,6 +63,8 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var students []student.StudentCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -82,6 +86,8 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
 
 	if err != nil {
@@ -92,6 +98,8 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var students []student.Student
 
@@ -113,6 +121,8 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var students []student.Student
 
@@ -139,6 +149,8 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var classes []schoolClass.SchoolClassCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -160,6 +172,8 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	classes, err := schoolClass.GetClasses(a.DB, "apc_database", "schoolClass")
 
 	if err != nil {
@@ -171,6 +185,8 @@ func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
@@ -192,6 +208,8 @@ func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
@@ -219,6 +237,8 @@ func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var submissions []submission.SubmissionCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -240,6 +260,8 @@ func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	submissions, err := submission.GetSubmissions(a.DB, "apc_database", "submission")
 
 	if err != nil {
@@ -250,6 +272,8 @@ func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var submissions []submission.Submission
 
@@ -271,6 +295,8 @@ func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var submissions []submission.Submission
 
@@ -297,6 +323,8 @@ func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var tasks []task.TaskCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -318,6 +346,8 @@ func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	tasks, err := task.GetTasks(a.DB, "apc_database", "task")
 
 	if err != nil {
@@ -328,6 +358,8 @@ func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var tasks []task.Task
 
@@ -347,6 +379,8 @@ func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var tasks []task.Task
 
@@ -371,6 +405,8 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createContests(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var contests []contest.ContestCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -392,6 +428,8 @@ func (a *App) createContests(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getContests(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	contests, err := contest.GetContests(a.DB, "apc_database", "contest")
 
 	if err != nil {
@@ -402,6 +440,8 @@ func (a *App) getContests(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateContests(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var contests []contest.Contest
 	decoder := json.NewDecoder(r.Body)
@@ -422,6 +462,8 @@ func (a *App) updateContests(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteContests(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var contests []contest.Contest
 	decoder := json.NewDecoder(r.Body)
@@ -447,6 +489,8 @@ func (a *App) deleteContests(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	var newsArray []news.NewsCreate
 
 	body, _ := ioutil.ReadAll(r.Body)
@@ -469,6 +513,8 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 
+	enableCORS(&w)
+
 	newsArray, err := news.GetNews(a.DB, "apc_database", "news")
 
 	if err != nil {
@@ -479,6 +525,8 @@ func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var newsArray []news.News
 
@@ -500,6 +548,8 @@ func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
 
 	var newsArray []news.News
 
