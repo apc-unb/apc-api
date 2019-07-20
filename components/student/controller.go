@@ -104,8 +104,15 @@ func UpdateStudents(db *mongo.Client, students []Student, databaseName, collecti
 
 	for _, student := range students {
 		filter := bson.M{"_id": student.ID}
-		update := bson.M{"$set": student}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+		update := bson.M{}
+		if student.Email != "" {
+			update["email"] = student.Email
+		}
+		if student.Password != "" {
+			update["password"] = student.Password
+		}
+		updateSet := bson.M{"$set": update}
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
 	}
