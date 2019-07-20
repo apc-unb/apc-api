@@ -42,15 +42,20 @@ func CreateStudents(db *mongo.Client, students []StudentCreate, databaseName, co
 // @param	collectionName	name of collection
 // @return 	[]Student		list of all students
 // @return 	error 			function error
-func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Student, error) {
+func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]StudentInfo, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	// Here's an array in which you can store the decoded documents
-	students := []Student{}
+	students := []StudentInfo{}
+
+	//
+	projection := bson.D{
+		{"password", 0},
+	}
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cursor, err := collection.Find(context.TODO(), bson.D{{}}, nil)
+	cursor, err := collection.Find(context.TODO(), bson.D{{}}, options.Find().SetProjection(projection))
 
 	if err != nil {
 		return nil, err
@@ -61,14 +66,12 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	for cursor.Next(context.TODO()) {
 
 		// create a value into which the single document can be decoded
-		var elem Student
+		var elem StudentInfo
 
 		// Checks if decoding method didn't return any errors
 		if err := cursor.Decode(&elem); err != nil {
 			return nil, err
 		}
-
-		elem.Password = ""
 
 		// Push student inside student array
 		students = append(students, elem)
