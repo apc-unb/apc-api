@@ -129,7 +129,11 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	if studentUpdate.Email != "" {
+		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success", "email": studentUpdate.Email})
+	} else {
+		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	}
 }
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
