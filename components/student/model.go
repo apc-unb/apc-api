@@ -40,10 +40,10 @@ type StudentInfo struct {
 }
 
 type StudentUpdate struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	FirstName string             `json:"firstname"`
-	Email     string             `json:"email"`
-	Password  string             `json:"password"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Email       string             `json:"email"`
+	Password    string             `json:"password"`
+	NewPassword string             `json:"newpassword"`
 }
 
 type StudentLogin struct {

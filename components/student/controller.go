@@ -2,6 +2,7 @@ package student
 
 import (
 	"context"
+	"errors"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/options"
@@ -101,7 +102,7 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 // @return 	[]Student		list of all students
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
-func UpdateStudents(db *mongo.Client, students []Student, databaseName, collectionName string) error {
+func UpdateStudents(db *mongo.Client, students []StudentUpdate, databaseName, collectionName string) error {
 
 	if len(students) == 0 {
 		return nil
@@ -110,19 +111,51 @@ func UpdateStudents(db *mongo.Client, students []Student, databaseName, collecti
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, student := range students {
-		filter := bson.M{"_id": student.ID}
+
+		currentStudent := Student{}
+
+		filter := bson.M{
+			"_id":      student.ID,
+			"password": student.Password,
+		}
+
+		projection := bson.M{
+			"_id":      1,
+			"password": 1,
+		}
+
+		if err := collection.FindOne(
+			context.TODO(),
+			filter,
+			options.FindOne().SetProjection(projection),
+		).Decode(&currentStudent); err != nil {
+			if err.Error() == "mongo: no documents in result" {
+				return errors.New("Invalid password")
+			}
+			return err
+		}
+
+		filter = bson.M{
+			"_id": student.ID,
+		}
+
 		update := bson.M{}
+
 		if student.Email != "" {
 			update["email"] = student.Email
 		}
-		if student.Password != "" {
-			update["password"] = student.Password
+
+		if student.NewPassword != "" {
+			update["password"] = student.NewPassword
 		}
+
 		updateSet := bson.M{"$set": update}
+
 		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
