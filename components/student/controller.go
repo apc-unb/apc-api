@@ -55,7 +55,11 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	}
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cursor, err := collection.Find(context.TODO(), bson.D{{}}, options.Find().SetProjection(projection))
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.D{{}},
+		options.Find().SetProjection(projection),
+	)
 
 	if err != nil {
 		return nil, err
