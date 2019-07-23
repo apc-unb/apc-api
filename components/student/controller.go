@@ -92,68 +92,60 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	return students, nil
 }
 
-// UpdateStudents recieve a list of students (updated)
-// Checks if that list is not null (can't update null list)
-// Update each student individually
+// UpdateStudents recieve student (updated)
+// Checks if student old password matches with db to update that student password or email
 // @param	db				pointer to database (updated)
 // @param	students 		list of students
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	[]Student		list of all students
+// @return 	StudentUpdate	student new data
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
-func UpdateStudents(db *mongo.Client, students []StudentUpdate, databaseName, collectionName string) error {
-
-	if len(students) == 0 {
-		return nil
-	}
+func UpdateStudents(db *mongo.Client, student StudentUpdate, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	for _, student := range students {
+	currentStudent := Student{}
 
-		currentStudent := Student{}
+	filter := bson.M{
+		"_id":      student.ID,
+		"password": student.Password,
+	}
 
-		filter := bson.M{
-			"_id":      student.ID,
-			"password": student.Password,
+	projection := bson.M{
+		"_id":      1,
+		"password": 1,
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne().SetProjection(projection),
+	).Decode(&currentStudent); err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			return errors.New("Invalid password")
 		}
+		return err
+	}
 
-		projection := bson.M{
-			"_id":      1,
-			"password": 1,
-		}
+	filter = bson.M{
+		"_id": student.ID,
+	}
 
-		if err := collection.FindOne(
-			context.TODO(),
-			filter,
-			options.FindOne().SetProjection(projection),
-		).Decode(&currentStudent); err != nil {
-			if err.Error() == "mongo: no documents in result" {
-				return errors.New("Invalid password")
-			}
-			return err
-		}
+	update := bson.M{}
 
-		filter = bson.M{
-			"_id": student.ID,
-		}
+	if student.Email != "" {
+		update["email"] = student.Email
+	}
 
-		update := bson.M{}
+	if student.NewPassword != "" {
+		update["password"] = student.NewPassword
+	}
 
-		if student.Email != "" {
-			update["email"] = student.Email
-		}
+	updateSet := bson.M{"$set": update}
 
-		if student.NewPassword != "" {
-			update["password"] = student.NewPassword
-		}
-
-		updateSet := bson.M{"$set": update}
-
-		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
-			return err
-		}
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
 	}
 
 	return nil
