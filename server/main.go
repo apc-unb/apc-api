@@ -43,6 +43,9 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/students", a.updateStudents).Methods("PUT")
 	a.Router.HandleFunc("/students", a.deleteStudents).Methods("DELETE")
 
+	a.Router.HandleFunc("/studentsFile", a.getOptions).Methods("OPTIONS")
+	a.Router.HandleFunc("/studentsFile", a.createStudentsFile).Methods("POST")
+
 	a.Router.HandleFunc("/classes", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/classes", a.getClasses).Methods("GET")
 	a.Router.HandleFunc("/classes", a.createClasses).Methods("POST")
