@@ -23,6 +23,7 @@ func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
 }
 
 func enableCORS(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
