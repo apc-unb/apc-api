@@ -113,7 +113,7 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var students []student.Student
+	var students []student.StudentUpdate
 
 	decoder := json.NewDecoder(r.Body)
 
