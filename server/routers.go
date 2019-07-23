@@ -113,18 +113,18 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var students []student.StudentUpdate
+	var studentUpdate student.StudentUpdate
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&students); err != nil {
+	if err := decoder.Decode(&studentUpdate); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := student.UpdateStudents(a.DB, students, "apc_database", "student"); err != nil {
+	if err := student.UpdateStudents(a.DB, studentUpdate, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
