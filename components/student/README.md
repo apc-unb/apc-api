@@ -8,7 +8,7 @@
         [
 			{
 				"_id"       : ObjectId,
-				"classid" 	: ObjectId,
+				"classid"   : ObjectId,
 				"firstname" : String,
 				"matricula" : String,
 				"password"  : String,
@@ -30,7 +30,7 @@
 ``` 
     [
 			{
-				"classid" 	: ObjectId,
+				"classid"   : ObjectId,
 				"firstname" : String,
 				"matricula" : String,
 				"password"  : String,
@@ -47,7 +47,7 @@
 ``` 
     [
         {  
-            "_id":       ObjectId
+            "_id" : ObjectId
         },...
     ]
 ```
@@ -59,8 +59,8 @@
 ``` 
     [
         {  
-            "_id"		:   ObjectId,
-            "email" 	:	String,
+            "_id".      :   ObjectId,
+            "email" 	:   String,
             "password"	:   String,
         },...
     ]
