@@ -73,6 +73,7 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/news", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/news", a.getNews).Methods("GET")
+	a.Router.HandleFunc("/news/{classid}", a.getNewsClass).Methods("GET")
 	a.Router.HandleFunc("/news", a.createNews).Methods("POST")
 	a.Router.HandleFunc("/news", a.updateNews).Methods("PUT")
 	a.Router.HandleFunc("/news", a.deleteNews).Methods("DELETE")
