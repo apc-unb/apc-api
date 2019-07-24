@@ -2,11 +2,11 @@ package student
 
 import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/news"
 )
 
 type Student struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
@@ -18,17 +18,19 @@ type Student struct {
 }
 
 type StudentCreate struct {
-	FirstName string        `json:"firstname"`
-	LastName  string        `json:"lastname"`
-	Matricula string        `json:"matricula"`
-	Handles   []string      `json:"handles"`
-	Password  string        `json:"password"`
-	PhotoURL  string        `json:"photourl"`
-	Email     string        `json:"email"`
-	Grades    StudentGrades `json:"grades"`
+	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
+	FirstName string             `json:"firstname"`
+	LastName  string             `json:"lastname"`
+	Matricula string             `json:"matricula"`
+	Handles   []string           `json:"handles"`
+	Password  string             `json:"password"`
+	PhotoURL  string             `json:"photourl"`
+	Email     string             `json:"email"`
+	Grades    StudentGrades      `json:"grades"`
 }
 
 type StudentInfo struct {
+	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
@@ -49,12 +51,6 @@ type StudentUpdate struct {
 type StudentLogin struct {
 	Matricula string `json:"matricula"`
 	Password  string `json:"password"`
-}
-
-type StudentPage struct {
-	UserExist bool        `json:"userexist"`
-	User      StudentInfo `json:"student"`
-	News      []news.News `json:"news"`
 }
 
 type StudentGrades struct {

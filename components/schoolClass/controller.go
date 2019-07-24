@@ -3,6 +3,7 @@ package schoolClass
 import (
 	"context"
 
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -23,6 +24,26 @@ func CreateClasses(db *mongo.Client, schoolClass []SchoolClassCreate, database_n
 
 	return nil
 
+}
+
+func GetClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) (SchoolClass, error) {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	findClass := SchoolClass{}
+
+	filter := bson.D{
+		{"_id", classID},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+	).Decode(&findClass); err != nil {
+		return findClass, err
+	}
+
+	return findClass, nil
 }
 
 func GetClasses(db *mongo.Client, database_name, collection_name string) ([]SchoolClass, error) {

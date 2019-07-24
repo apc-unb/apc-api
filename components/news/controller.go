@@ -3,6 +3,7 @@ package news
 import (
 	"context"
 
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -25,7 +26,7 @@ func CreateNews(db *mongo.Client, news []NewsCreate, databaseName, collectionNam
 
 }
 
-func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, error) {
+func GetNews(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]News, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
@@ -33,7 +34,13 @@ func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, err
 	news := []News{}
 
 	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cursor, err := collection.Find(context.TODO(), bson.D{{}}, nil)
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{
+			"classID": classID,
+		},
+		nil,
+	)
 
 	if err != nil {
 		return nil, err
