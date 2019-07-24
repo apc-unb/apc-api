@@ -37,7 +37,7 @@ func GetNews(db *mongo.Client, classID primitive.ObjectID, databaseName, collect
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{
-			"classID": classID,
+			"classid": classID,
 		},
 		nil,
 	)

@@ -6,7 +6,7 @@ import (
 
 type Student struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
@@ -18,7 +18,7 @@ type Student struct {
 }
 
 type StudentCreate struct {
-	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
@@ -30,7 +30,7 @@ type StudentCreate struct {
 }
 
 type StudentInfo struct {
-	ClassID   primitive.ObjectID `bson:"classID,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
