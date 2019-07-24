@@ -66,6 +66,7 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/exams", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/exams", a.getExams).Methods("GET")
+	a.Router.HandleFunc("/exams/{classid}", a.getExamsClass).Methods("GET")
 	a.Router.HandleFunc("/exams", a.createExams).Methods("POST")
 	a.Router.HandleFunc("/exams", a.updateExams).Methods("PUT")
 	a.Router.HandleFunc("/exams", a.deleteExams).Methods("DELETE")
