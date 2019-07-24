@@ -64,11 +64,11 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/tasks", a.updateTasks).Methods("PUT")
 	a.Router.HandleFunc("/tasks", a.deleteTasks).Methods("DELETE")
 
-	a.Router.HandleFunc("/contests", a.getOptions).Methods("OPTIONS")
-	a.Router.HandleFunc("/contests", a.getContests).Methods("GET")
-	a.Router.HandleFunc("/contests", a.createContests).Methods("POST")
-	a.Router.HandleFunc("/contests", a.updateContests).Methods("PUT")
-	a.Router.HandleFunc("/contests", a.deleteContests).Methods("DELETE")
+	a.Router.HandleFunc("/exams", a.getOptions).Methods("OPTIONS")
+	a.Router.HandleFunc("/exams", a.getExams).Methods("GET")
+	a.Router.HandleFunc("/exams", a.createExams).Methods("POST")
+	a.Router.HandleFunc("/exams", a.updateExams).Methods("PUT")
+	a.Router.HandleFunc("/exams", a.deleteExams).Methods("DELETE")
 
 	a.Router.HandleFunc("/news", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/news", a.getNews).Methods("GET")
