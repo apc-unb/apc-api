@@ -2,7 +2,6 @@ package schoolClass
 
 import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/exam"
 	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/student"
 )
@@ -31,5 +30,4 @@ type StudentPage struct {
 	User      student.StudentInfo `json:"student"`
 	Class     SchoolClass         `json:"class"`
 	News      []news.News         `json:"news"`
-	Exams     []exam.Exam         `json:"exams"`
 }
