@@ -7,7 +7,8 @@
     ``` 
         [
 			{
-				"_id"        : ObjectId,
+				"_id"       : ObjectId,
+				"classid" 	: ObjectId,
 				"firstname" : String,
 				"matricula" : String,
 				"password"  : String,
@@ -29,11 +30,11 @@
 ``` 
     [
 			{
+				"classid" 	: ObjectId,
 				"firstname" : String,
 				"matricula" : String,
 				"password"  : String,
 				"handles"   : []String,
-				"photourl"  : String,
 				"email"     : String
 			},...
 	]
