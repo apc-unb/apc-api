@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/plataforma-apc/components/contest"
+	"github.com/plataforma-apc/components/exam"
 	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/schoolClass"
 	"github.com/plataforma-apc/components/student"
@@ -26,6 +26,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 	var singleStudent student.StudentInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
+	var exams []exam.Exam
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -59,11 +60,17 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if exams, err = exam.GetExams(a.DB, singleStudent.ClassID, "apc_database", "exam"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	ret := schoolClass.StudentPage{
 		UserExist: true,
 		User:      singleStudent,
 		Class:     class,
 		News:      newsArray,
+		Exams:     exams,
 	}
 
 	respondWithJSON(w, http.StatusOK, ret)
@@ -423,25 +430,24 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// 								        CONTEST		 				            		 //
+// 								        EXAM		 				            		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createContests(w http.ResponseWriter, r *http.Request) {
+func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var contests []contest.ContestCreate
-
+	var exams []exam.ExamCreate
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&contests); err != nil {
+	if err := decoder.Decode(&exams); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := contest.CreateContests(a.DB, contests, "apc_database", "contest"); err != nil {
+	if err := exam.CreateExams(a.DB, exams, "apc_database", "exam"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -449,34 +455,27 @@ func (a *App) createContests(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getContests(w http.ResponseWriter, r *http.Request) {
+func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
-
-	contests, err := contest.GetContests(a.DB, "apc_database", "contest")
-
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	respondWithJSON(w, http.StatusOK, contests)
+	respondWithError(w, http.StatusInternalServerError, "Function not implemented")
 }
 
-func (a *App) updateContests(w http.ResponseWriter, r *http.Request) {
+func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var contests []contest.Contest
+	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&contests); err != nil {
+	if err := decoder.Decode(&exams); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := contest.UpdateContests(a.DB, contests, "apc_database", "contest"); err != nil {
+	if err := exam.UpdateExams(a.DB, exams, "apc_database", "exam"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -484,21 +483,21 @@ func (a *App) updateContests(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteContests(w http.ResponseWriter, r *http.Request) {
+func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var contests []contest.Contest
+	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&contests); err != nil {
+	if err := decoder.Decode(&exams); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := contest.DeleteContests(a.DB, contests, "apc_database", "contest"); err != nil {
+	if err := exam.DeleteExams(a.DB, exams, "apc_database", "exam"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
