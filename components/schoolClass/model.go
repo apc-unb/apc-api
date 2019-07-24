@@ -2,6 +2,7 @@ package schoolClass
 
 import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/student"
 )
 
@@ -9,15 +10,22 @@ type SchoolClass struct {
 	ID                 primitive.ObjectID `bson:"_id,omitempty"`
 	ProfessorFirstName string             `json:"professorfirstname"`
 	ProfessorLastName  string             `json:"professorlastname"`
+	Address            string             `json:"address"`
 	Year               int                `json:"year"`
 	Season             int                `json:"season"`
-	Students           []student.Student  `json:"students"`
 }
 
 type SchoolClassCreate struct {
-	ProfessorFirstName string            `json:"professorfirstname"`
-	ProfessorLastName  string            `json:"professorlastname"`
-	Year               int               `json:"year"`
-	Season             int               `json:"season"`
-	Students           []student.Student `json:"students"`
+	ProfessorFirstName string `json:"professorfirstname"`
+	ProfessorLastName  string `json:"professorlastname"`
+	Address            string `json:"address"`
+	Year               int    `json:"year"`
+	Season             int    `json:"season"`
+}
+
+type StudentPage struct {
+	UserExist bool                `json:"userexist"`
+	User      student.StudentInfo `json:"student"`
+	Class     SchoolClass         `json:"class"`
+	News      []news.News         `json:"news"`
 }
