@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/gorilla/mux"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/plataforma-apc/components/exam"
 	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/schoolClass"
@@ -26,7 +28,6 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 	var singleStudent student.StudentInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
-	var exams []exam.Exam
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -60,17 +61,11 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if exams, err = exam.GetExams(a.DB, singleStudent.ClassID, "apc_database", "exam"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
 	ret := schoolClass.StudentPage{
 		UserExist: true,
 		User:      singleStudent,
 		Class:     class,
 		News:      newsArray,
-		Exams:     exams,
 	}
 
 	respondWithJSON(w, http.StatusOK, ret)
@@ -455,10 +450,40 @@ func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
+func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
-	respondWithError(w, http.StatusInternalServerError, "Function not implemented")
+
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["classid"])
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		return
+	}
+
+	exams, err := exam.GetExamsClass(a.DB, classID, "apc_database", "exam")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, exams)
+
+}
+
+func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
+	enableCORS(&w)
+
+	exams, err := exam.GetExams(a.DB, "apc_database", "exam")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, exams)
 }
 
 func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
