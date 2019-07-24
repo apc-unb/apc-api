@@ -56,7 +56,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if newsArray, err = news.GetNews(a.DB, singleStudent.ClassID, "apc_database", "news"); err != nil {
+	if newsArray, err = news.GetNewsClass(a.DB, singleStudent.ClassID, "apc_database", "news"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -561,7 +561,38 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
-	respondWithError(w, http.StatusInternalServerError, "Function not implemented")
+
+	news, err := news.GetNews(a.DB, "apc_database", "news")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, news)
+}
+
+func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["classid"])
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		return
+	}
+
+	newsArray, err := news.GetNewsClass(a.DB, classID, "apc_database", "exam")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, newsArray)
+
 }
 
 func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
