@@ -26,7 +26,7 @@ func CreateExams(db *mongo.Client, exams []ExamCreate, database_name, collection
 
 }
 
-func GetExams(db *mongo.Client, classID primitive.ObjectID, database_name, collection_name string) ([]Exam, error) {
+func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, database_name, collection_name string) ([]Exam, error) {
 
 	collection := db.Database(database_name).Collection(collection_name)
 
@@ -39,6 +39,51 @@ func GetExams(db *mongo.Client, classID primitive.ObjectID, database_name, colle
 		bson.M{
 			"classid": classID,
 		},
+		nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem Exam
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push school class inside student array
+		exams = append(exams, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return exams, nil
+
+}
+
+func GetExams(db *mongo.Client, database_name, collection_name string) ([]Exam, error) {
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	// Here's an array in which you can store the decoded documents
+	exams := []Exam{}
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{},
 		nil,
 	)
 
