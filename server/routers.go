@@ -24,6 +24,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
+	var class schoolClass.SchoolClass
 	var newsArray []news.News
 	var err error
 
@@ -38,7 +39,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleStudent, err = student.AuthStudent(a.DB, studentLogin, "apc_database", "student"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := student.StudentPage{
+			ret := schoolClass.StudentPage{
 				UserExist: false,
 			}
 			respondWithJSON(w, http.StatusOK, ret)
@@ -48,14 +49,20 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if newsArray, err = news.GetNews(a.DB, "apc_database", "news"); err != nil {
+	if class, err = schoolClass.GetClass(a.DB, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	ret := student.StudentPage{
+	if newsArray, err = news.GetNews(a.DB, singleStudent.ClassID, "apc_database", "news"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ret := schoolClass.StudentPage{
 		UserExist: true,
 		User:      singleStudent,
+		Class:     class,
 		News:      newsArray,
 	}
 
@@ -530,14 +537,7 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
-
-	newsArray, err := news.GetNews(a.DB, "apc_database", "news")
-
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	respondWithJSON(w, http.StatusOK, newsArray)
+	respondWithError(w, http.StatusInternalServerError, "Function not implemented")
 }
 
 func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
