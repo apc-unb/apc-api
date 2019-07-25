@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/togatoga/goforces"
 
 	"github.com/plataforma-apc/config"
 
@@ -14,21 +17,30 @@ import (
 type App struct {
 	Router *mux.Router
 	DB     *mongo.Client
+	API    *goforces.Client
 }
 
-func (a *App) Initialize(host, port string) {
+func (a *App) Initialize(host, port, codeforcesKey, codeforcesSecret string) {
 
 	var err error
 
-	a.DB, err = config.GetMongoDB(host, port)
-
-	if err != nil {
+	if a.DB, err = config.GetMongoDB(host, port); err != nil {
 		log.Fatal(err)
+	} else {
+		fmt.Println("Connected to MongoDB!")
 	}
 
-	fmt.Println("Connected to MongoDB!")
+	if a.API, err = goforces.NewClient(log.New(os.Stderr, "*** ", log.LstdFlags)); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Connected to Codeforces API!")
+	}
+
+	a.API.SetAPIKey(codeforcesKey)
+	a.API.SetAPISecret(codeforcesSecret)
 
 	a.Router = mux.NewRouter()
+
 	a.initializeRoutes()
 }
 
@@ -87,7 +99,7 @@ func (a *App) Run(addr string) {
 func main() {
 	a := App{}
 
-	a.Initialize("localhost", "27017")
+	a.Initialize("localhost", "27017", "f3d968eea83ad8d5f21cad0365edcc200439c6f0", "b30c206b689d5ba004534c6780aa7be8e234a7f3")
 
 	defer a.DB.Disconnect(nil)
 
