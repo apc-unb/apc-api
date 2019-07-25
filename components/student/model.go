@@ -10,7 +10,7 @@ type Student struct {
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
-	Handles   []string           `json:"handles"`
+	Handles   StudentHandles     `json:"handles"`
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
@@ -22,7 +22,7 @@ type StudentCreate struct {
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
-	Handles   []string           `json:"handles"`
+	Handles   StudentHandles     `json:"handles"`
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
@@ -30,12 +30,12 @@ type StudentCreate struct {
 }
 
 type StudentInfo struct {
-	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
-	Handles   []string           `json:"handles"`
+	Handles   StudentHandles     `json:"handles"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
 	Grades    StudentGrades      `json:"grades"`
@@ -57,4 +57,9 @@ type StudentGrades struct {
 	Exams    []float64 `json:"exams"`
 	Projects []float64 `json:"projects"`
 	Lists    []float64 `json:"lists"`
+}
+
+type StudentHandles struct {
+	Codeforces string `json:"codeforces"`
+	Uri        string `json:"uri"`
 }
