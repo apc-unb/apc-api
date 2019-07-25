@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/togatoga/goforces"
+
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,7 +20,7 @@ import (
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Insert all students at the same time (if possible)
-func CreateStudents(db *mongo.Client, students []StudentCreate, databaseName, collectionName string) error {
+func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCreate, databaseName, collectionName string) error {
 
 	if len(students) == 0 {
 		return nil
@@ -27,6 +29,9 @@ func CreateStudents(db *mongo.Client, students []StudentCreate, databaseName, co
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, student := range students {
+
+		student.PhotoURL = getCodeforcesAvatarURL(student.Handles.Codeforces, api)
+
 		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
 			return err
 		}
@@ -212,4 +217,22 @@ func AuthStudent(db *mongo.Client, student StudentLogin, databaseName, collectio
 	}
 
 	return findStudent, nil
+}
+
+// getCodeforcesAvatarURL recieve handle string
+// Return handle avatar url if exist
+// @param	handle			student codeforces handle
+// @param	api				pointer to goforces client
+// @return 	string 			avatar url
+func getCodeforcesAvatarURL(handle string, api *goforces.Client) string {
+
+	ctx := context.Background()
+
+	var userAvatarURL string
+
+	if handlesArray, err := api.GetUserInfo(ctx, []string{handle}); err == nil {
+		userAvatarURL = "https:" + handlesArray[0].Avatar
+	}
+
+	return userAvatarURL
 }
