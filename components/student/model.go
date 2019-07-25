@@ -46,6 +46,8 @@ type StudentUpdate struct {
 	Email       string             `json:"email"`
 	Password    string             `json:"password"`
 	NewPassword string             `json:"newpassword"`
+	Handles     StudentHandles     `json:"handles"`
+	PhotoURL    string             `json:"photourl"`
 }
 
 type StudentLogin struct {

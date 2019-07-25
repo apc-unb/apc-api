@@ -138,7 +138,7 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := student.UpdateStudents(a.DB, studentUpdate, "apc_database", "student"); err != nil {
+	if err := student.UpdateStudents(a.DB, a.API, studentUpdate, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
