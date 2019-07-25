@@ -584,7 +584,7 @@ func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newsArray, err := news.GetNewsClass(a.DB, classID, "apc_database", "exam")
+	newsArray, err := news.GetNewsClass(a.DB, classID, "apc_database", "news")
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
