@@ -358,8 +358,8 @@ func getStudentsFromFile(db *mongo.Client, request string) ([]StudentCreate, err
 
 		elem := StudentCreate{
 
-			FirstName: names[0],
-			LastName:  names[1],
+			FirstName: strings.Trim(names[0], "\""),
+			LastName:  strings.Trim(names[1], "\""),
 			Matricula: strings.Trim(total[i], "\""),
 			ClassID:   classID,
 			Password:  generateRandomPassword(),
