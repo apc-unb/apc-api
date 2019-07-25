@@ -86,7 +86,7 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := student.CreateStudents(a.DB, students, "apc_database", "student"); err != nil {
+	if err := student.CreateStudents(a.DB, a.API, students, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
