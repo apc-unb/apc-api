@@ -3,9 +3,13 @@ package student
 import (
 	"context"
 	"errors"
+	"math/rand"
+	"strconv"
+	"strings"
 
 	"github.com/togatoga/goforces"
 
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,6 +36,30 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 
 		student.PhotoURL = getCodeforcesAvatarURL(student.Handles.Codeforces, api)
 
+		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func CreateStudentsFile(db *mongo.Client, request string, databaseName, collectionName string) error {
+
+	var students []StudentCreate
+	var err error
+
+	if students, err = getStudentsFromFile(db, request); err != nil {
+		return err
+	}
+
+	if len(students) == 0 {
+		return nil
+	}
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	for _, student := range students {
 		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
 			return err
 		}
@@ -118,8 +146,7 @@ func UpdateStudents(db *mongo.Client, student StudentUpdate, databaseName, colle
 	}
 
 	projection := bson.M{
-		"_id":      1,
-		"password": 1,
+		"_id": 1,
 	}
 
 	if err := collection.FindOne(
@@ -235,4 +262,101 @@ func getCodeforcesAvatarURL(handle string, api *goforces.Client) string {
 	}
 
 	return userAvatarURL
+}
+
+func getClassID(db *mongo.Client, classData []string, databaseName, collectionName string) (primitive.ObjectID, error) {
+
+	type teste struct {
+		ID primitive.ObjectID `bson:"_id,omitempty"`
+	}
+
+	var classID teste
+
+	if len(classData) != 3 {
+		return classID.ID, errors.New("YEAR/SEASON/CLASSNAME header error")
+	}
+
+	year, _ := strconv.Atoi(strings.Trim(classData[0], "\""))
+	season, _ := strconv.Atoi(classData[1])
+	classname := strings.Trim(classData[2], "\"")
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	filter := bson.D{
+		{"year", year},
+		{"season", season},
+		{"classname", classname},
+	}
+
+	projection := bson.D{
+		{"_id", 1},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne().SetProjection(projection),
+	).Decode(&classID); err != nil {
+		return classID.ID, err
+	}
+
+	return classID.ID, nil
+}
+
+func generateRandomPassword() string {
+
+	letters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	numbers := "0123456789"
+	var password string
+
+	for i := 0; i < 3; i++ {
+		password += string(letters[rand.Intn(25)])
+	}
+	for i := 0; i < 3; i++ {
+		password += string(numbers[rand.Intn(9)])
+	}
+
+	return password
+
+}
+
+func getStudentsFromFile(db *mongo.Client, request string) ([]StudentCreate, error) {
+
+	var total []string
+	var students []StudentCreate
+	var classID primitive.ObjectID
+	var err error
+
+	partial := strings.Split(request, ",")
+	total = append(total, strings.Split(partial[1], "\n")[1])
+	classData := strings.Split(strings.Split(partial[1], "\n")[0], "/")
+
+	if classID, err = getClassID(db, classData, "apc_database", "schoolClass"); err != nil {
+		return students, err
+	}
+
+	for i := 2; i < len(partial); i++ {
+		aux := strings.Split(partial[i], "\n")
+		total = append(total, aux[0])
+		total = append(total, aux[1])
+	}
+	total = total[:len(total)-1]
+
+	for i := 0; i < len(total); i += 2 {
+
+		names := strings.SplitAfterN(total[i+1], " ", 2)
+
+		elem := StudentCreate{
+
+			FirstName: names[0],
+			LastName:  names[1],
+			Matricula: strings.Trim(total[i], "\""),
+			ClassID:   classID,
+			Password:  generateRandomPassword(),
+		}
+
+		students = append(students, elem)
+	}
+
+	return students, nil
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -98,11 +97,17 @@ func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	body, _ := ioutil.ReadAll(r.Body)
-	bodyString := string(body)
-	fmt.Println("Deu = ", bodyString)
+	request, _ := ioutil.ReadAll(r.Body)
+
+	defer r.Body.Close()
+
+	if err := student.CreateStudentsFile(a.DB, string(request), "apc_database", "student"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+
 }
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
