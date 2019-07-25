@@ -134,7 +134,7 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 // @return 	StudentUpdate	student new data
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
-func UpdateStudents(db *mongo.Client, student StudentUpdate, databaseName, collectionName string) error {
+func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdate, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
@@ -146,7 +146,8 @@ func UpdateStudents(db *mongo.Client, student StudentUpdate, databaseName, colle
 	}
 
 	projection := bson.M{
-		"_id": 1,
+		"_id":     1,
+		"handles": 1,
 	}
 
 	if err := collection.FindOne(
@@ -172,6 +173,15 @@ func UpdateStudents(db *mongo.Client, student StudentUpdate, databaseName, colle
 
 	if student.NewPassword != "" {
 		update["password"] = student.NewPassword
+	}
+
+	if student.Handles.Codeforces != "" {
+		if currentStudent.Handles.Codeforces != "" {
+			return errors.New("Trying to update handle that already exist")
+		} else {
+			update["photourl"] = getCodeforcesAvatarURL(student.Handles.Codeforces, api)
+			update["handles.codeforces"] = student.Handles.Codeforces
+		}
 	}
 
 	updateSet := bson.M{"$set": update}
