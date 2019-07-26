@@ -387,6 +387,30 @@ func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, tasks)
 }
 
+func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	vars := mux.Vars(r)
+
+	examID, err := primitive.ObjectIDFromHex(vars["examid"])
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Exam ID")
+		return
+	}
+
+	tasks, err := task.GetTasksClass(a.DB, examID, "apc_database", "task")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, tasks)
+
+}
+
 func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
