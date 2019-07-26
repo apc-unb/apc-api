@@ -2,6 +2,7 @@ package schoolClass
 
 import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/plataforma-apc/components/admin"
 	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/student"
 )
@@ -27,7 +28,14 @@ type SchoolClassCreate struct {
 
 type StudentPage struct {
 	UserExist bool                `json:"userexist"`
-	User      student.StudentInfo `json:"student"`
+	Student   student.StudentInfo `json:"student"`
 	Class     SchoolClass         `json:"class"`
 	News      []news.News         `json:"news"`
+}
+
+type AdminPage struct {
+	UserExist bool            `json:"userexist"`
+	Admin     admin.AdminInfo `json:"admin"`
+	Class     SchoolClass     `json:"class"`
+	News      []news.News     `json:"news"`
 }
