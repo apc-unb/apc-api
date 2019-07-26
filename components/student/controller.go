@@ -34,7 +34,7 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 
 	for _, student := range students {
 
-		student.PhotoURL = getCodeforcesAvatarURL(student.Handles.Codeforces, api)
+		student.Password = generateRandomPassword()
 
 		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
 			return err
@@ -181,6 +181,14 @@ func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdat
 		} else {
 			update["photourl"] = getCodeforcesAvatarURL(student.Handles.Codeforces, api)
 			update["handles.codeforces"] = student.Handles.Codeforces
+		}
+	}
+
+	if student.Handles.Uri != "" {
+		if currentStudent.Handles.Uri != "" {
+			return errors.New("Trying to update handle that already exist")
+		} else {
+			update["handles.uri"] = student.Handles.Uri
 		}
 	}
 
