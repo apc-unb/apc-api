@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/plataforma-apc/components/admin"
 	"github.com/plataforma-apc/components/exam"
 	"github.com/plataforma-apc/components/news"
 	"github.com/plataforma-apc/components/schoolClass"
@@ -62,7 +63,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	ret := schoolClass.StudentPage{
 		UserExist: true,
-		User:      singleStudent,
+		Student:   singleStudent,
 		Class:     class,
 		News:      newsArray,
 	}
@@ -663,6 +664,164 @@ func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if err := news.DeleteNews(a.DB, newsArray, "apc_database", "news"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// 									 ADMINS  			 								 //
+///////////////////////////////////////////////////////////////////////////////////////////
+
+func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	var adminLogin admin.AdminLogin
+	var singleAdmin admin.AdminInfo
+	var class schoolClass.SchoolClass
+	var newsArray []news.News
+	var err error
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err = decoder.Decode(&adminLogin); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if singleAdmin, err = admin.AuthAdmin(a.DB, adminLogin, "apc_database", "admin"); err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			ret := schoolClass.AdminPage{
+				UserExist: false,
+			}
+			respondWithJSON(w, http.StatusOK, ret)
+		} else {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	if class, err = schoolClass.GetClass(a.DB, singleAdmin.ClassID, "apc_database", "schoolClass"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if newsArray, err = news.GetNewsClass(a.DB, singleAdmin.ClassID, "apc_database", "news"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ret := schoolClass.AdminPage{
+		UserExist: true,
+		Admin:     singleAdmin,
+		Class:     class,
+		News:      newsArray,
+	}
+
+	respondWithJSON(w, http.StatusOK, ret)
+}
+
+func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	var admins []admin.AdminCreate
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&admins); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := admin.CreateAdmin(a.DB, a.API, admins, "apc_database", "admin"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	request, _ := ioutil.ReadAll(r.Body)
+
+	defer r.Body.Close()
+
+	if err := admin.CreateAdminFile(a.DB, string(request), "apc_database", "admin"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+
+}
+
+func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	admins, err := admin.GetAdmins(a.DB, "apc_database", "admin")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, admins)
+}
+
+func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	var adminUpdate admin.AdminUpdate
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&adminUpdate); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := admin.UpdateAdmins(a.DB, a.API, adminUpdate, "apc_database", "admin"); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if adminUpdate.Email != "" {
+		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success", "email": adminUpdate.Email})
+	} else {
+		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	}
+}
+
+func (a *App) deleteAdmins(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	var admins []admin.Admin
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&admins); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := admin.DeleteStudents(a.DB, admins, "apc_database", "admin"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
