@@ -72,6 +72,7 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/tasks", a.getOptions).Methods("OPTIONS")
 	a.Router.HandleFunc("/tasks", a.getTasks).Methods("GET")
+	a.Router.HandleFunc("/tasks/{examid}", a.getTasksExam).Methods("GET")
 	a.Router.HandleFunc("/tasks", a.createTasks).Methods("POST")
 	a.Router.HandleFunc("/tasks", a.updateTasks).Methods("PUT")
 	a.Router.HandleFunc("/tasks", a.deleteTasks).Methods("DELETE")
