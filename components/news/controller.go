@@ -125,12 +125,37 @@ func UpdateNews(db *mongo.Client, news []News, databaseName, collectionName stri
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, singleNews := range news {
-		filter := bson.M{"_id": singleNews.ID}
-		update := bson.M{"$set": singleNews}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+
+		filter := bson.M{
+			"_id": singleNews.ID,
+		}
+
+		update := bson.M{}
+
+		if !singleNews.ClassID.IsZero() {
+			update["classid"] = singleNews.ClassID
+		}
+
+		if singleNews.Title != "" {
+			update["title"] = singleNews.Title
+		}
+
+		if singleNews.Description != "" {
+			update["description"] = singleNews.Description
+		}
+
+		if len(singleNews.Tags) > 0 {
+			update["tags"] = singleNews.Tags
+		}
+
+		updateSet := bson.M{"$set": update}
+
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
+
 	}
+
 	return nil
 
 }

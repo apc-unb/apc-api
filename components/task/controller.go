@@ -122,11 +122,39 @@ func UpdateTasks(db *mongo.Client, tasks []Task, database_name, collection_name 
 	collection := db.Database(database_name).Collection(collection_name)
 
 	for _, task := range tasks {
-		filter := bson.M{"_id": task.ID}
-		update := bson.M{"$set": task}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+
+		filter := bson.M{
+			"_id": task.ID,
+		}
+
+		update := bson.M{}
+
+		if task.Title != "" {
+			update["title"] = task.Title
+		}
+
+		if task.Statement != "" {
+			update["statement"] = task.Statement
+		}
+
+		if task.Statement != "" {
+			update["statement"] = task.Statement
+		}
+
+		if task.Score > 0.0 {
+			update["score"] = task.Score
+		}
+
+		if len(task.Tags) > 0 {
+			update["tags"] = task.Tags
+		}
+
+		updateSet := bson.M{"$set": update}
+
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
+
 	}
 	return nil
 

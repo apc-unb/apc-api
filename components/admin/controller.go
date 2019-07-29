@@ -3,7 +3,6 @@ package admin
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -247,8 +246,6 @@ func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdat
 	}
 
 	updateSet := bson.M{"$set": update}
-
-	fmt.Println(update["grades.exams"])
 
 	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 		return err
