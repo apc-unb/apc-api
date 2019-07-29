@@ -3,6 +3,7 @@ package admin
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -15,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// CreateStudents recieve a list of students
+// CreateAdmin recieve a list of students
 // Checks if that list is not null (can't insert null list)
 // Insert each student individually in database
 // @param	db				pointer to database
@@ -68,7 +69,7 @@ func CreateAdminFile(db *mongo.Client, request string, databaseName, collectionN
 	return nil
 }
 
-// GetStudents return list of all students from Database
+// GetAdmins return list of all students from Database
 // Get all students at the same time and store inside cursor
 // Decode each student inside student class and append into students array
 // @param	db				pointer to database
@@ -125,7 +126,7 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 	return admins, nil
 }
 
-// UpdateStudents recieve student (updated)
+// UpdateAdmins recieve student (updated)
 // Checks if student old password matches with db to update that student password or email
 // @param	db				pointer to database (updated)
 // @param	students 		list of students
@@ -191,7 +192,72 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 	return nil
 }
 
-// DeleteStudents recieve a list of students (to be deleted)
+func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdateStudent, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	filter := bson.M{
+		"_id": admin.StudentID,
+	}
+
+	update := bson.M{}
+
+	if !admin.ClassID.IsZero() {
+		update["classid"] = admin.ClassID
+	}
+
+	if admin.FirstName != "" {
+		update["firstname"] = admin.FirstName
+	}
+
+	if admin.LastName != "" {
+		update["lastname"] = admin.LastName
+	}
+
+	if admin.Matricula != "" {
+		update["matricula"] = admin.Matricula
+	}
+
+	if admin.Handles.Codeforces != "" {
+		update["handles.codeforces"] = admin.Handles.Codeforces
+	}
+
+	if admin.Handles.Uri != "" {
+		update["handles.uri"] = admin.Handles.Uri
+	}
+
+	if admin.PhotoURL != "" {
+		update["photourl"] = admin.PhotoURL
+	}
+
+	if admin.Email != "" {
+		update["email"] = admin.Email
+	}
+
+	if len(admin.Grades.Exams) > 0 {
+		update["grades.exams"] = admin.Grades.Exams
+	}
+
+	if len(admin.Grades.Lists) > 0 {
+		update["grades.lists"] = admin.Grades.Lists
+	}
+
+	if len(admin.Grades.Projects) > 0 {
+		update["grades.projects"] = admin.Grades.Projects
+	}
+
+	updateSet := bson.M{"$set": update}
+
+	fmt.Println(update["grades.exams"])
+
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteAdminStudents recieve a list of students (to be deleted)
 // Checks if that list is not null (can't delete null list)
 // Delete each student individually
 // @param	db				pointer to database (to be deleted)
@@ -201,7 +267,7 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 // @return 	[]Student		list of all students
 // @return 	error 			function error
 // TODO : Delete all students at the same time (if possible)
-func DeleteStudents(db *mongo.Client, admins []Admin, databaseName, collectionName string) error {
+func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collectionName string) error {
 
 	if len(admins) == 0 {
 		return nil
