@@ -14,7 +14,7 @@ type Student struct {
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
-	Grade     StudentGrades      `json:"grade"`
+	Grades    StudentGrades      `json:"grades"`
 }
 
 type StudentCreate struct {
