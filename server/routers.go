@@ -799,32 +799,29 @@ func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if adminUpdate.Email != "" {
-		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success", "email": adminUpdate.Email})
-	} else {
-		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
-	}
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteAdmins(w http.ResponseWriter, r *http.Request) {
+func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)
 
-	var admins []admin.Admin
+	var adminUpdateStudent admin.AdminUpdateStudent
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&admins); err != nil {
+	if err := decoder.Decode(&adminUpdateStudent); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := admin.DeleteStudents(a.DB, admins, "apc_database", "admin"); err != nil {
+	if err := admin.UpdateAdminStudent(a.DB, a.API, adminUpdateStudent, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+
 }
