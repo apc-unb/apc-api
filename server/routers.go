@@ -431,6 +431,9 @@ func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+
 }
 
 func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
@@ -452,6 +455,9 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
