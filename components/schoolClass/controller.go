@@ -95,9 +95,40 @@ func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, c
 	collection := db.Database(database_name).Collection(collection_name)
 
 	for _, schoolClass := range schoolClass {
-		filter := bson.M{"_id": schoolClass.ID}
-		update := bson.M{"$set": schoolClass}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+
+		filter := bson.M{
+			"_id": schoolClass.ID,
+		}
+
+		update := bson.M{}
+
+		if schoolClass.ProfessorFirstName != "" {
+			update["professorfirstname"] = schoolClass.ProfessorFirstName
+		}
+
+		if schoolClass.ProfessorLastName != "" {
+			update["professorlastname"] = schoolClass.ProfessorLastName
+		}
+
+		if schoolClass.ClassName != "" {
+			update["classname"] = schoolClass.ClassName
+		}
+
+		if schoolClass.Address != "" {
+			update["address"] = schoolClass.Address
+		}
+
+		if schoolClass.Year != 0 {
+			update["year"] = schoolClass.Year
+		}
+
+		if schoolClass.Season != 0 {
+			update["season"] = schoolClass.Season
+		}
+
+		updateSet := bson.M{"$set": update}
+
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
 	}
