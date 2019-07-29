@@ -2,6 +2,9 @@ package submission
 
 import (
 	"context"
+	"reflect"
+
+	"github.com/plataforma-apc/components/student"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -73,9 +76,28 @@ func UpdateSubmissions(db *mongo.Client, submissions []Submission, database_name
 	collection := db.Database(database_name).Collection(collection_name)
 
 	for _, submission := range submissions {
-		filter := bson.M{"_id": submission.ID}
-		update := bson.M{"$set": submission}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+
+		filter := bson.M{
+			"_id": submission.ID,
+		}
+
+		update := bson.M{}
+
+		if reflect.DeepEqual(submission.Student, student.Student{}) {
+			update["student"] = submission.Student
+		}
+
+		if submission.Time != "" {
+			update["time"] = submission.Time
+		}
+
+		if submission.Veredict != "" {
+			update["veredict"] = submission.Veredict
+		}
+
+		updateSet := bson.M{"$set": update}
+
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
 	}

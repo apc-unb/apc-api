@@ -127,9 +127,24 @@ func UpdateExams(db *mongo.Client, exams []Exam, database_name, collection_name 
 	collection := db.Database(database_name).Collection(collection_name)
 
 	for _, exam := range exams {
-		filter := bson.M{"_id": exam.ID}
-		update := bson.M{"$set": exam}
-		if _, err := collection.UpdateOne(context.TODO(), filter, update, nil); err != nil {
+
+		filter := bson.M{
+			"_id": exam.ID,
+		}
+
+		update := bson.M{}
+
+		if exam.Title != "" {
+			update["title"] = exam.Title
+		}
+
+		if !exam.ClassID.IsZero() {
+			update["classid"] = exam.ClassID
+		}
+
+		updateSet := bson.M{"$set": update}
+
+		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
 			return err
 		}
 	}
