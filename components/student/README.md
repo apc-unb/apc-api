@@ -76,11 +76,12 @@
 ## Create Students by CSV file
 * HTTP Request : ```PUT http://api.com//studentsFile```
 * Send data in the request body in the follow format
-	|    ANO/SEMESTE/TURMA   |             2019/2/A 
-	|------------------------|-------------------------------
-	|       160140000        | 			Thiago Veras Machado    
-	|       160140000        | 			Giovanni Guidini       
-	|       160140000        | 			Vitor Dullens     
+
+	|    ANO/SEMESTE/TURMA   |             2019/2/A 	|
+	|------------------------|------------------------------|
+	|       160140000        | 	Thiago Veras Machado    |
+	|       160140000        | 	Giovanni Guidini        |
+	|       160140000        | 	Vitor Dullens           |
 
 	``` 
 		{  
