@@ -129,12 +129,12 @@ func UpdateTasks(db *mongo.Client, tasks []Task, database_name, collection_name 
 
 		update := bson.M{}
 
-		if task.Title != "" {
-			update["title"] = task.Title
+		if !task.ExamID.IsZero() {
+			update["examid"] = task.ExamID
 		}
 
-		if task.Statement != "" {
-			update["statement"] = task.Statement
+		if task.Title != "" {
+			update["title"] = task.Title
 		}
 
 		if task.Statement != "" {
