@@ -27,6 +27,7 @@ type AdminCreate struct {
 }
 
 type AdminInfo struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
