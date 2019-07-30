@@ -11,16 +11,16 @@
 				"_id"       :	ObjectId,
 				"classid"   :	ObjectId,
 				"firstname" :	String,
-				"lastname" 	:	String,
+				"lastname"  :	String,
 				"matricula" :	String,
 				"password"  :	String,
 				"handles"   :	{
-					"codeforces":	String,
-					"uri" 		:	String
+					"codeforces" :	String,
+					"uri" 	     :	String
 				},
 				"photourl"  :	String,
 				"email"     :	String,
-				"grades" :	{
+				"grades"    :	{
 					"exams"    :	[]float64,
 					"projects" :	[]float64,
 					"lists"    :	[]float64
@@ -51,9 +51,9 @@
 
 	|    ANO/SEMESTE/TURMA   |             2019/2/A 
 	|------------------------|-------------------------------
-	|       160140000        | 			Thiago Veras Machado    
-	|       160140000        | 			Giovanni Guidini       
-	|       160140000        | 			Vitor Dullens     
+	|       160140000        | 	Thiago Veras Machado    
+	|       160140000        | 	Giovanni Guidini       
+	|       160140000        | 	Vitor Dullens     
 
 	``` 
 		{  
@@ -72,12 +72,12 @@
 		[
 			{  
 				"_id".      	:   ObjectId,
-				"email" 		:   String,
-				"password"		:   String,
+				"email" 	:   String,
+				"password"	:   String,
 				"newpassword" 	: 	String,
 				"handles"   	: 	{
-						"codeforces":	String,
-						"uri" 		:	String
+						"codeforces" :	String,
+						"uri" 	     :	String
 				},
 			},...
 		]
@@ -114,7 +114,7 @@
 	{
 	    "userexist"	:	Boolean,
 	    "student"	:	StudentInfo,
-	    "class"		:	SchoolClass,
-	    "news"		:	[]News 
+	    "class"	:	SchoolClass,
+	    "news"	:	[]News 
 	}
 	```
