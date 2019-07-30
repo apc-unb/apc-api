@@ -12,7 +12,10 @@
 				"firstname" : String,
 				"matricula" : String,
 				"password"  : String,
-				"handles"   : []String,
+				"handles"   : {
+					"codeforces": String,
+					"uri" 		: String
+				},
 				"photourl"  : String,
 				"email"     : String,
 				"grades" :	{
@@ -27,42 +30,61 @@
 ## Create Students
 * HTTP Request : ```POST http://api.com/students```
 * Send student's data in the request body in the follow format 
-``` 
-    [
-			{
-				"classid"   : ObjectId,
-				"firstname" : String,
-				"matricula" : String,
-				"password"  : String,
-				"handles"   : []String,
-				"email"     : String
-			},...
-	]
-```
+	``` 
+		[
+				{
+					"classid"   : ObjectId,
+					"firstname" : String,
+					"lastname"  : String,
+					"matricula" : String,
+				},...
+		]
+	```
 * http StatusCreated (201) will be sent if the student has been created correctly
     
 ## Delete Students
 * HTTP Request : ```DELETE http://api.com/students```
 * Send data in the request body in the follow format
-``` 
-    [
-        {  
-            "_id" : ObjectId
-        },...
-    ]
-```
+	``` 
+		[
+			{  
+				"_id" : ObjectId
+			},...
+		]
+	```
 * http StatusOK (200) will be sent if the students have been deleted correctly
 
 ## Update Students
 * HTTP Request : ```PUT http://api.com/students```
 * Send data in the request body in the follow format
-``` 
-    [
-        {  
-            "_id".      :   ObjectId,
-            "email" 	:   String,
-            "password"	:   String,
-        },...
-    ]
-```
+* PS : Student can only uptade empty handles
+	``` 
+		[
+			{  
+				"_id".      :   ObjectId,
+				"email" 	:   String,
+				"password"	:   String,
+				"handles"   : {
+					"codeforces": String,
+					"uri" 		: String
+				},
+			},...
+		]
+	```
+* http StatusCreated (201) will be sent if the student has been updated correctly
+
+## Create Students by CSV file
+* HTTP Request : ```PUT http://api.com//studentsFile```
+* Send data in the request body in the follow format
+	|    ANO/SEMESTE/TURMA   |             2019/2/A 
+	|------------------------|-------------------------------
+	|       160140000        | 			Thiago Veras Machado    
+	|       160140000        | 			Giovanni Guidini       
+	|       160140000        | 			Vitor Dullens     
+
+	``` 
+		{  
+			"file"	: file.csv,
+		},...
+	```
 * http StatusCreated (201) will be sent if the student has been updated correctly
