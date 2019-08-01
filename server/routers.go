@@ -124,6 +124,30 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, students)
 }
 
+func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
+
+	enableCORS(&w)
+
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["classid"])
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		return
+	}
+
+	students, err := student.GetStudentsClass(a.DB, classID, "apc_database", "student")
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, students)
+
+}
+
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	enableCORS(&w)

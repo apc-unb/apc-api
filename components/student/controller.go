@@ -125,6 +125,53 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	return students, nil
 }
 
+func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, database_name, collection_name string) ([]Student, error) {
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	// Here's an array in which you can store the decoded documents
+	students := []Student{}
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{
+			"classid": classID,
+		},
+		nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem Student
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push school class inside student array
+		students = append(students, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return students, nil
+
+}
+
 // UpdateStudents recieve student (updated)
 // Checks if student old password matches with db to update that student password or email
 // @param	db				pointer to database (updated)
