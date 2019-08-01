@@ -5,7 +5,7 @@
 * Return a list of object in json format as follow
 
     ``` 
-        [
+		[
 			{
 				"_id"       :	ObjectId,
 				"classid"   :	ObjectId,
