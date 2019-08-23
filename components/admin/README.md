@@ -7,10 +7,10 @@
 	``` 
 		[
 			{
-				"classid"   : 	ObjectId,
-				"firstname" : 	String,
-				"lastname"  : 	String,
-				"matricula" : 	String
+				"classid"	:	ObjectId,
+				"firstname"	:	String,
+				"lastname"	: 	String,
+				"matricula"	: 	String
 			},...
 		]
 	```
@@ -77,21 +77,21 @@
 	``` 
 		[
 			{  
-				"_id"      	:   ObjectId,
-				"classid"   	: 	ObjectId,
-				"firstname" 	:   String,
-				"lastname" 	:   String,
-				"matricula" 	:   String,
-				"handles"   :	{
-					"codeforces" :	String,
-					"uri" 	     :	String
+				"_id"      	:   	ObjectId,
+				"classid"   	:	ObjectId,
+				"firstname" 	:   	String,
+				"lastname" 	:   	String,
+				"matricula" 	:   	String,
+				"handles"   	:	{
+					"codeforces"	:	String,
+					"uri"		:	String
 				},
 				"photourl"  	: 	String,
 				"email"  	: 	String,
-				"grades"    :	{
-					"exams"    :	[]float64,
-					"projects" :	[]float64,
-					"lists"    :	[]float64
+				"grades"    	:	{
+					"exams"		:	[]float64,
+					"projects" 	:	[]float64,
+					"lists"    	:	[]float64
 				}
 			},...
 		]
@@ -105,7 +105,7 @@
 	``` 
 		[
 			{  
-				"_id" :	ObjectId
+				"_id"	:	ObjectId
 			},...
 		]
 	```
@@ -118,7 +118,7 @@
 	``` 
 		[
 			{  
-				"_id" :	ObjectId
+				"_id"	:	ObjectId
 			},...
 		]
 	```
