@@ -7,8 +7,8 @@
 	``` 
 		[
 			{
-				"classid"   :	ObjectId,
-				"title" :	String
+				"classid"	:	ObjectId,
+				"title"     	:	String
 			},...
 		]
 	```
@@ -21,9 +21,9 @@
     ``` 
         [
 			{
-				"_id"       :	ObjectId,
-				"classid"   :	ObjectId,
-				"title" :	String
+				"_id"       	:	ObjectId,
+				"classid"   	:	ObjectId,
+				"title" 	:	String
 			},...
 		]
     ```
@@ -35,9 +35,9 @@
     ``` 
         [
 			{
-				"_id"       :	ObjectId,
-				"classid"   :	ObjectId,
-				"title" :	String
+				"_id"       	:	ObjectId,
+				"classid"	:	ObjectId,
+				"title" 	:	String
 			},...
 		]
     ```
@@ -48,9 +48,9 @@
 	``` 
 		[
 			{  
-				"_id".      	:   ObjectId,
-				"classid"   :	ObjectId,
-				"title" :	String
+				"_id".      	:   	ObjectId,
+				"classid"   	:	ObjectId,
+				"title" 	:	String
 			},...
 		]
 	```
@@ -64,7 +64,7 @@
 	``` 
 		[
 			{  
-				"_id" : ObjectId
+				"_id"	:	ObjectId
 			},...
 		]
 	```
