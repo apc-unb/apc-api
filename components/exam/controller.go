@@ -35,15 +35,15 @@ func CreateExams(db *mongo.Client, exams []ExamCreate, databaseName, collectionN
 
 }
 
-// GetExamsClass return list of all exams from a current class
-// Get class id to filter in mongodb
+// GetExams return list of all exams from Database
+// Get all exams at the same time and store inside cursor
+// Decode each exam inside exam class and append into exams array
 // @param	db				pointer to database
-// @param   classID			class ID
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	[]Exam			list of all exams that match with the given class id
+// @return 	[]Exam		list of all exams
 // @return 	error 			function error
-func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]Exam, error) {
+func GetExams(db *mongo.Client, databaseName, collectionName string) ([]Exam, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
@@ -51,9 +51,7 @@ func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, c
 
 	cursor, err := collection.Find(
 		context.TODO(),
-		bson.M{
-			"classid": classID,
-		},
+		bson.M{},
 		nil,
 	)
 
@@ -82,15 +80,15 @@ func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, c
 
 }
 
-// GetExams return list of all exams from Database
-// Get all exams at the same time and store inside cursor
-// Decode each exam inside exam class and append into exams array
+// GetExamsClass return list of all exams from a current class
+// Get class id to filter in mongodb
 // @param	db				pointer to database
+// @param   classID			class ID
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	[]Exam		list of all exams
+// @return 	[]Exam			list of all exams that match with the given class id
 // @return 	error 			function error
-func GetExams(db *mongo.Client, databaseName, collectionName string) ([]Exam, error) {
+func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]Exam, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
@@ -98,7 +96,9 @@ func GetExams(db *mongo.Client, databaseName, collectionName string) ([]Exam, er
 
 	cursor, err := collection.Find(
 		context.TODO(),
-		bson.M{},
+		bson.M{
+			"classid": classID,
+		},
 		nil,
 	)
 
