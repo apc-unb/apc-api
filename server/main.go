@@ -14,12 +14,17 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
+// App is application struct data
 type App struct {
 	Router *mux.Router
 	DB     *mongo.Client
 	API    *goforces.Client
 }
 
+// Initialize is a function that initialize  all tools for application
+// Connect to mongo DB
+// Connect to Codeforces API
+// Calls function that create all routes
 func (a *App) Initialize(host, port, codeforcesKey, codeforcesSecret string) {
 
 	var err error
@@ -44,6 +49,7 @@ func (a *App) Initialize(host, port, codeforcesKey, codeforcesSecret string) {
 	a.initializeRoutes()
 }
 
+// initializeRoutes create all server routes
 func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/student", a.getOptions).Methods("OPTIONS")
@@ -101,6 +107,7 @@ func (a *App) initializeRoutes() {
 
 }
 
+// Run server
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
