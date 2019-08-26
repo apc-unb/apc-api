@@ -8,24 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateNews(db *mongo.Client, news []NewsCreate, databaseName, collectionName string) error {
-
-	if len(news) == 0 {
-		return nil
-	}
-
-	collection := db.Database(databaseName).Collection(collectionName)
-
-	for _, singleNews := range news {
-		if _, err := collection.InsertOne(context.TODO(), singleNews); err != nil {
-			return err
-		}
-	}
-
-	return nil
-
-}
-
 func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
@@ -114,6 +96,24 @@ func GetNewsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, co
 	cursor.Close(context.TODO())
 
 	return news, nil
+}
+
+func CreateNews(db *mongo.Client, news []NewsCreate, databaseName, collectionName string) error {
+
+	if len(news) == 0 {
+		return nil
+	}
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	for _, singleNews := range news {
+		if _, err := collection.InsertOne(context.TODO(), singleNews); err != nil {
+			return err
+		}
+	}
+
+	return nil
+
 }
 
 func UpdateNews(db *mongo.Client, news []News, databaseName, collectionName string) error {
