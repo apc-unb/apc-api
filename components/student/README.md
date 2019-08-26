@@ -29,6 +29,34 @@
 		]
     ```
 
+## Get all Students from a class
+* HTTP Request : ```GET http://api.com/students/{classID}```
+* Return a list of object in json format as follow
+
+    ``` 
+        [
+			{
+				"_id"       :	ObjectId,
+				"classid"   :	ObjectId,
+				"firstname" :	String,
+				"lastname"  :	String,
+				"matricula" :	String,
+				"password"  :	String,
+				"handles"   :	{
+					"codeforces" :	String,
+					"uri" 	     :	String
+				},
+				"photourl"  :	String,
+				"email"     :	String,
+				"grades"    :	{
+					"exams"    :	[]float64,
+					"projects" :	[]float64,
+					"lists"    :	[]float64
+				}
+			}...
+		]
+    ```
+
 ## Create Students
 * HTTP Request : ```POST http://api.com/students```
 * Send student's data in the request body in the follow format 
