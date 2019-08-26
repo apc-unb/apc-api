@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// CreateAdmin recieve a list of students
+// CreateAdmin receive  a list of students
 // Checks if that list is not null (can't insert null list)
 // Insert each student individually in database
 // @param	db				pointer to database
@@ -44,7 +44,14 @@ func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, d
 	return nil
 }
 
-func CreateAdminFile(db *mongo.Client, request string, databaseName, collectionName string) error {
+// CreateAdminFile receive a csv file in that current format : https://github.com/apc-unb/plataforma-apc/tree/master/components/student
+// calls getAdminFromFile() that return list of AdminCreate and insert into db
+// @param	db				pointer to database
+// @param   request         all data to be parsed
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
+func CreateAdminFile(db *mongo.Client, request, databaseName, collectionName string) error {
 
 	var admins []AdminCreate
 	var err error
@@ -80,15 +87,12 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	// Here's an array in which you can store the decoded documents
 	admins := []AdminInfo{}
 
-	//
 	projection := bson.D{
 		{"password", 0},
 	}
 
-	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.D{{}},
@@ -99,19 +103,14 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 		return nil, err
 	}
 
-	// Finding multiple documents returns a cursor
-	// Iterating through the cursor allows us to decode documents one at a time
 	for cursor.Next(context.TODO()) {
 
-		// create a value into which the single document can be decoded
 		var elem AdminInfo
 
-		// Checks if decoding method didn't return any errors
 		if err := cursor.Decode(&elem); err != nil {
 			return nil, err
 		}
 
-		// Push student inside student array
 		admins = append(admins, elem)
 	}
 
@@ -119,19 +118,18 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 		return nil, err
 	}
 
-	// Close the cursor once finished
 	cursor.Close(context.TODO())
 
 	return admins, nil
 }
 
-// UpdateAdmins recieve student (updated)
-// Checks if student old password matches with db to update that student password or email
+// UpdateAdmins receive admin (updated)
+// Checks if admin old password matches with db to update that admin password or email
 // @param	db				pointer to database (updated)
-// @param	students 		list of students
+// @param	api 			codeforces api
+// @param	admin 			list of admins
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	StudentUpdate	student new data
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
 func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, databaseName, collectionName string) error {
@@ -191,6 +189,13 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 	return nil
 }
 
+// UpdateAdminStudent receive update stundets data, receive a student (updated)
+// @param	db				pointer to database (updated)
+// @param	api				codeforces api
+// @param	admin 			student to be updated
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
 func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdateStudent, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
@@ -258,10 +263,9 @@ func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdat
 // Checks if that list is not null (can't delete null list)
 // Delete each student individually
 // @param	db				pointer to database (to be deleted)
-// @param	students 		list of students
+// @param	admins	 		list of students
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	[]Student		list of all students
 // @return 	error 			function error
 // TODO : Delete all students at the same time (if possible)
 func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collectionName string) error {
@@ -282,14 +286,13 @@ func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collect
 
 }
 
-// AuthStudent recieve a student (to be authenticated)
-// Checks if that date exist in databse
-// Return true if exist
-// @param	db				pointer to database (to be deleted)
-// @param	student			student matricula and password
+// AuthAdmin recieve an admin (to be authenticated)
+// Checks if that login and password exist in database
+// @param	db				pointer to database
+// @param	admin			admin matricula and password
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
-// @return 	[]bool			user exist veredict
+// @return 	AdminInfo		json if exist plus all admin data
 // @return 	error 			function error
 func AuthAdmin(db *mongo.Client, admin AdminLogin, databaseName, collectionName string) (AdminInfo, error) {
 
@@ -317,6 +320,13 @@ func AuthAdmin(db *mongo.Client, admin AdminLogin, databaseName, collectionName 
 	return findAdmin, nil
 }
 
+// getClassID receive year, season and class name then return id of that current class
+// @param	db				pointer to database
+// @param	classData		year, season and class name
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	ObjectID		class ID
+// @return 	error 			function error
 func getClassID(db *mongo.Client, classData []string, databaseName, collectionName string) (primitive.ObjectID, error) {
 
 	type teste struct {
@@ -356,6 +366,8 @@ func getClassID(db *mongo.Client, classData []string, databaseName, collectionNa
 	return classID.ID, nil
 }
 
+// generateRandomPassword generate a random password using Pimenta Judge style
+// @return 	string		random password
 func generateRandomPassword() string {
 
 	letters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -373,6 +385,11 @@ func generateRandomPassword() string {
 
 }
 
+// getAdminFromFile receive a string and return list of admins data
+// @param	db				pointer to database
+// @param	request			all the csv file to be converted
+// @return 	AdminCreate		list of admins
+// @return 	error 			function error
 func getAdminFromFile(db *mongo.Client, request string) ([]AdminCreate, error) {
 
 	var total []string
@@ -401,7 +418,6 @@ func getAdminFromFile(db *mongo.Client, request string) ([]AdminCreate, error) {
 		names := strings.SplitAfterN(total[i+1], " ", 2)
 
 		elem := AdminCreate{
-
 			FirstName: strings.Trim(names[0], "\""),
 			LastName:  strings.Trim(names[1], "\""),
 			Matricula: strings.Trim(total[i], "\""),

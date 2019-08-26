@@ -8,13 +8,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateExams(db *mongo.Client, exams []ExamCreate, database_name, collection_name string) error {
+// CreateExams receive  a list of exams
+// Checks if that list is not null (can't insert null list)
+// Insert each exams individually in database
+// @param	db				pointer to database
+// @param	exams 		list of exams
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
+// TODO : Insert all exams at the same time (if possible)
+func CreateExams(db *mongo.Client, exams []ExamCreate, databaseName, collectionName string) error {
 
 	if len(exams) == 0 {
 		return nil
 	}
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, exam := range exams {
 		if _, err := collection.InsertOne(context.TODO(), exam); err != nil {
@@ -26,14 +35,65 @@ func CreateExams(db *mongo.Client, exams []ExamCreate, database_name, collection
 
 }
 
-func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, database_name, collection_name string) ([]Exam, error) {
+// GetExams return list of all exams from Database
+// Get all exams at the same time and store inside cursor
+// Decode each exam inside exam class and append into exams array
+// @param	db				pointer to database
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	[]Exam		list of all exams
+// @return 	error 			function error
+func GetExams(db *mongo.Client, databaseName, collectionName string) ([]Exam, error) {
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
 
-	// Here's an array in which you can store the decoded documents
 	exams := []Exam{}
 
-	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{},
+		nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(context.TODO()) {
+
+		var elem Exam
+
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		exams = append(exams, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	cursor.Close(context.TODO())
+
+	return exams, nil
+
+}
+
+// GetExamsClass return list of all exams from a current class
+// Get class id to filter in mongodb
+// @param	db				pointer to database
+// @param   classID			class ID
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	[]Exam			list of all exams that match with the given class id
+// @return 	error 			function error
+func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]Exam, error) {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	exams := []Exam{}
+
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{
@@ -46,19 +106,14 @@ func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, database_name, 
 		return nil, err
 	}
 
-	// Finding multiple documents returns a cursor
-	// Iterating through the cursor allows us to decode documents one at a time
 	for cursor.Next(context.TODO()) {
 
-		// create a value into which the single document can be decoded
 		var elem Exam
 
-		// Checks if decoding method didn't return any errors
 		if err := cursor.Decode(&elem); err != nil {
 			return nil, err
 		}
 
-		// Push school class inside student array
 		exams = append(exams, elem)
 	}
 
@@ -66,65 +121,26 @@ func GetExamsClass(db *mongo.Client, classID primitive.ObjectID, database_name, 
 		return nil, err
 	}
 
-	// Close the cursor once finished
 	cursor.Close(context.TODO())
 
 	return exams, nil
 
 }
 
-func GetExams(db *mongo.Client, database_name, collection_name string) ([]Exam, error) {
-
-	collection := db.Database(database_name).Collection(collection_name)
-
-	// Here's an array in which you can store the decoded documents
-	exams := []Exam{}
-
-	// Passing bson.D{{}} as the filter matches all documents in the collection
-	cursor, err := collection.Find(
-		context.TODO(),
-		bson.M{},
-		nil,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Finding multiple documents returns a cursor
-	// Iterating through the cursor allows us to decode documents one at a time
-	for cursor.Next(context.TODO()) {
-
-		// create a value into which the single document can be decoded
-		var elem Exam
-
-		// Checks if decoding method didn't return any errors
-		if err := cursor.Decode(&elem); err != nil {
-			return nil, err
-		}
-
-		// Push school class inside student array
-		exams = append(exams, elem)
-	}
-
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
-
-	// Close the cursor once finished
-	cursor.Close(context.TODO())
-
-	return exams, nil
-
-}
-
-func UpdateExams(db *mongo.Client, exams []Exam, database_name, collection_name string) error {
+// UpdateExams receive list of exams (updated)
+// Checks if exams old password matches with db to update that exams password or email
+// @param	db				pointer to database (updated)
+// @param	exams 			list of exams
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
+func UpdateExams(db *mongo.Client, exams []Exam, databaseName, collectionName string) error {
 
 	if len(exams) == 0 {
 		return nil
 	}
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, exam := range exams {
 
@@ -152,13 +168,22 @@ func UpdateExams(db *mongo.Client, exams []Exam, database_name, collection_name 
 
 }
 
-func DeleteExams(db *mongo.Client, exams []Exam, database_name, collection_name string) error {
+// DeleteExams recieve a list of exams (to be deleted)
+// Checks if that list is not null (can't delete null list)
+// Delete each exam individually
+// @param	db				pointer to database (to be deleted)
+// @param	exams	 		list of exams
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
+// TODO : Delete all exams at the same time (if possible)
+func DeleteExams(db *mongo.Client, exams []Exam, databaseName, collectionName string) error {
 
 	if len(exams) == 0 {
 		return nil
 	}
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, exam := range exams {
 		filter := bson.M{"_id": exam.ID}

@@ -1,5 +1,38 @@
-
 # Student
+
+## Create Students
+* HTTP Request : ```POST http://api.com/students```
+* Send student's data in the request body in the follow format 
+
+	``` 
+		[
+			{
+				"classid"   :	ObjectId,
+				"firstname" :	String,
+				"lastname"  :	String,
+				"matricula" :	String
+			},...
+		]
+	```
+* http StatusCreated (201) will be sent if the student has been created correctly
+
+## Create Students by CSV file
+* HTTP Request : ```PUT http://api.com/studentsFile```
+* Send data in the request body in the follow format
+
+	|    ANO/SEMESTE/TURMA   |             2019/2/A 
+	|------------------------|-------------------------------
+	|       160140000        | 	Thiago Veras Machado    
+	|       160140000        | 	Giovanni Guidini       
+	|       160140000        | 	Vitor Dullens     
+
+	``` 
+		{  
+			"file"	: file.csv,
+		},...
+	```
+
+* http StatusCreated (201) will be sent if the student has been created correctly
 
 ## Get all Students
 * HTTP Request : ```GET http://api.com/students```
@@ -25,7 +58,7 @@
 					"projects" :	[]float64,
 					"lists"    :	[]float64
 				}
-			}...
+			},...
 		]
     ```
 
@@ -61,35 +94,29 @@
 * HTTP Request : ```POST http://api.com/students```
 * Send student's data in the request body in the follow format 
 
-	``` 
-		[
+    ``` 
+        [
 			{
+				"_id"       :	ObjectId,
 				"classid"   :	ObjectId,
 				"firstname" :	String,
 				"lastname"  :	String,
 				"matricula" :	String,
+				"password"  :	String,
+				"handles"   :	{
+					"codeforces" :	String,
+					"uri" 	     :	String
+				},
+				"photourl"  :	String,
+				"email"     :	String,
+				"grades"    :	{
+					"exams"    :	[]float64,
+					"projects" :	[]float64,
+					"lists"    :	[]float64
+				}
 			},...
 		]
-	```
-* http StatusCreated (201) will be sent if the student has been created correctly
-
-## Create Students by CSV file
-* HTTP Request : ```PUT http://api.com/studentsFile```
-* Send data in the request body in the follow format
-
-	|    ANO/SEMESTE/TURMA   |             2019/2/A 
-	|------------------------|-------------------------------
-	|       160140000        | 	Thiago Veras Machado    
-	|       160140000        | 	Giovanni Guidini       
-	|       160140000        | 	Vitor Dullens     
-
-	``` 
-		{  
-			"file"	: file.csv,
-		},...
-	```
-
-* http StatusCreated (201) will be sent if the student has been updated correctly
+    ```
 
 ## Update Students
 * HTTP Request : ```PUT http://api.com/students```
@@ -106,7 +133,7 @@
 				"handles"   	: 	{
 						"codeforces" :	String,
 						"uri" 	     :	String
-				},
+				}
 			},...
 		]
 	```
