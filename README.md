@@ -139,6 +139,10 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 ```go get gopkg.in/mgo.v2/bson```
 
+- Codeforces
+
+```go get github.com/togatoga/goforces```
+
 ### Rodando testes
 
 - Vá no diretório de test em ```plataforma-apc\test```
