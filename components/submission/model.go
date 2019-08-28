@@ -1,8 +1,8 @@
 package submission
 
 import (
+	"github.com/VerasThiago/plataforma-apc/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/student"
 )
 
 // TODO : Check how submissions time are made in Pimenta Judge

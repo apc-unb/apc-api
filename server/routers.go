@@ -1,19 +1,19 @@
-package main
+package server
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/VerasThiago/plataforma-apc/components/admin"
+	"github.com/VerasThiago/plataforma-apc/components/exam"
+	"github.com/VerasThiago/plataforma-apc/components/news"
+	"github.com/VerasThiago/plataforma-apc/components/schoolClass"
+	"github.com/VerasThiago/plataforma-apc/components/student"
+	"github.com/VerasThiago/plataforma-apc/components/submission"
+	"github.com/VerasThiago/plataforma-apc/components/task"
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/admin"
-	"github.com/plataforma-apc/components/exam"
-	"github.com/plataforma-apc/components/news"
-	"github.com/plataforma-apc/components/schoolClass"
-	"github.com/plataforma-apc/components/student"
-	"github.com/plataforma-apc/components/submission"
-	"github.com/plataforma-apc/components/task"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////

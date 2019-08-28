@@ -3,9 +3,9 @@ package test
 import (
 	"testing"
 
-	"github.com/plataforma-apc/components/student"
-	"github.com/plataforma-apc/components/submission"
-	"github.com/plataforma-apc/components/task"
+	"github.com/VerasThiago/plataforma-apc/components/student"
+	"github.com/VerasThiago/plataforma-apc/components/submission"
+	"github.com/VerasThiago/plataforma-apc/components/task"
 )
 
 func TestTask(t *testing.T) {

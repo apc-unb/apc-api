@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/plataforma-apc/components/news"
+	"github.com/VerasThiago/plataforma-apc/components/news"
 )
 
 func TestNews(t *testing.T) {

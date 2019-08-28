@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/plataforma-apc/components/submission"
-	"github.com/plataforma-apc/components/task"
+	"github.com/VerasThiago/plataforma-apc/components/submission"
+	"github.com/VerasThiago/plataforma-apc/components/task"
 )
 
 func TestTaskDB(t *testing.T) {
