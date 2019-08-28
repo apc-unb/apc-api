@@ -1,8 +1,8 @@
 package admin
 
 import (
+	"github.com/VerasThiago/plataforma-apc/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/student"
 )
 
 // Admin contains all admin data

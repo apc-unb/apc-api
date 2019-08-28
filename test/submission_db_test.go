@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/plataforma-apc/components/student"
-	"github.com/plataforma-apc/components/submission"
+	"github.com/VerasThiago/plataforma-apc/components/student"
+	"github.com/VerasThiago/plataforma-apc/components/submission"
 )
 
 func TestSubmissionDB(t *testing.T) {

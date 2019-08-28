@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/plataforma-apc/components/schoolClass"
-	"github.com/plataforma-apc/components/student"
+	"github.com/VerasThiago/plataforma-apc/components/schoolClass"
+	"github.com/VerasThiago/plataforma-apc/components/student"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 )

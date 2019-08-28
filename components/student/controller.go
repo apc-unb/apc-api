@@ -44,6 +44,16 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 	return nil
 }
 
+// CreateStudentsFile recieve csv file of students
+// Call function that parse that file and return list o students
+// Checks if that list is not null (can't insert null list)
+// Insert each student individually in database
+// @param	db				pointer to database
+// @param	request 		byte array file
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	error 			function error
+// TODO : Insert all students at the same time (if possible)
 func CreateStudentsFile(db *mongo.Client, request string, databaseName, collectionName string) error {
 
 	var students []StudentCreate
@@ -125,9 +135,18 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	return students, nil
 }
 
-func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, database_name, collection_name string) ([]Student, error) {
+// GetStudents return list of all students from Database thata matchs with a certain class
+// Get all students at the same time and store inside cursor
+// Decode each student inside student class and append into students array
+// @param	db				pointer to database
+// @param   classID         ID of the current class
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	[]Student		list of all students
+// @return 	error 			function error
+func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]Student, error) {
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
 
 	// Here's an array in which you can store the decoded documents
 	students := []Student{}
@@ -329,6 +348,14 @@ func getCodeforcesAvatarURL(handle string, api *goforces.Client) string {
 	return userAvatarURL
 }
 
+// getClassID recieve class year, season and class name
+// Return current class id
+// @param	db				pointer to database (to be deleted)
+// @param	classData		year, season and class name
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	[]ObjectID		class id
+// @return 	error 			function error
 func getClassID(db *mongo.Client, classData []string, databaseName, collectionName string) (primitive.ObjectID, error) {
 
 	type teste struct {
@@ -368,6 +395,14 @@ func getClassID(db *mongo.Client, classData []string, databaseName, collectionNa
 	return classID.ID, nil
 }
 
+// generateRandomPassword return
+// Return current class id
+// @param	db				pointer to database (to be deleted)
+// @param	classData		year, season and class name
+// @param	databaseName	name of database
+// @param	collectionName	name of collection
+// @return 	[]ObjectID		class id
+// @return 	error 			function error
 func generateRandomPassword() string {
 
 	letters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

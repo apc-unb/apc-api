@@ -1,10 +1,10 @@
 package schoolClass
 
 import (
+	"github.com/VerasThiago/plataforma-apc/components/admin"
+	"github.com/VerasThiago/plataforma-apc/components/news"
+	"github.com/VerasThiago/plataforma-apc/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/plataforma-apc/components/admin"
-	"github.com/plataforma-apc/components/news"
-	"github.com/plataforma-apc/components/student"
 )
 
 type SchoolClass struct {
