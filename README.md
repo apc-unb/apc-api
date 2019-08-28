@@ -121,30 +121,6 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 ## Como instalar
 
-- Possuir GO Lang instalado na máquina
+- Possuir Docker instalado na máquina
 
-- Possuir MongoDB instalado na máquina
-
-### Instalando dependências do mongo
-
-- Gorilla
-
-```go get github.com/gorilla/mux```
-
-- MongoDB
-
-```go get go.mongodb.org/mongo-driver```
-
-- BSON
-
-```go get gopkg.in/mgo.v2/bson```
-
-- Codeforces
-
-```go get github.com/togatoga/goforces```
-
-### Rodando testes
-
-- Vá no diretório de test em ```plataforma-apc\test```
-
-- Digite o comando ```go test```
+``` docker-compose up ```
