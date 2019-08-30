@@ -3,10 +3,12 @@ package student
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
 
+	"github.com/VerasThiago/plataforma-apc/components/utils"
 	"github.com/togatoga/goforces"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -28,6 +30,8 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 
 	var studentsReturn []StudentLogin
 	var singlestudent StudentLogin
+	var pwd string
+	var err error
 
 	if len(students) == 0 {
 		return nil, nil
@@ -37,14 +41,20 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 
 	for _, student := range students {
 
-		student.Password = generateRandomPassword()
+		pwd = generateRandomPassword()
 
-		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
+		if student.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
+			return nil, err
+		}
+
+		fmt.Println("Senha gerada = ", pwd, " hash = ", student.Password)
+
+		if _, err = collection.InsertOne(context.TODO(), student); err != nil {
 			return nil, err
 		}
 
 		singlestudent.Matricula = student.Matricula
-		singlestudent.Password = student.Password
+		singlestudent.Password = pwd
 
 		studentsReturn = append(studentsReturn, singlestudent)
 
@@ -63,28 +73,44 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Insert all students at the same time (if possible)
-func CreateStudentsFile(db *mongo.Client, request string, databaseName, collectionName string) error {
+func CreateStudentsFile(db *mongo.Client, request string, databaseName, collectionName string) ([]StudentLogin, error) {
 
+	var studentsReturn []StudentLogin
+	var singlestudent StudentLogin
 	var students []StudentCreate
+	var pwd string
 	var err error
 
 	if students, err = getStudentsFromFile(db, request); err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(students) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, student := range students {
-		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
-			return err
+
+		pwd = generateRandomPassword()
+
+		if student.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
+			return nil, err
 		}
+
+		if _, err = collection.InsertOne(context.TODO(), student); err != nil {
+			return nil, err
+		}
+
+		singlestudent.Matricula = student.Matricula
+		singlestudent.Password = pwd
+
+		studentsReturn = append(studentsReturn, singlestudent)
+
 	}
 
-	return nil
+	return studentsReturn, nil
 }
 
 // GetStudents return list of all students from Database
@@ -211,6 +237,12 @@ func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, databaseName
 // TODO : Update all students at the same time (if possible)
 func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdate, databaseName, collectionName string) error {
 
+	var err error
+
+	if student.Password, err = utils.HashAndSalt([]byte(student.Password)); err != nil {
+		return err
+	}
+
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	currentStudent := Student{}
@@ -247,6 +279,9 @@ func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdat
 	}
 
 	if student.NewPassword != "" {
+		if student.NewPassword, err = utils.HashAndSalt([]byte(student.NewPassword)); err != nil {
+			return err
+		}
 		update["password"] = student.NewPassword
 	}
 
@@ -315,13 +350,27 @@ func DeleteStudents(db *mongo.Client, students []Student, databaseName, collecti
 // @return 	error 			function error
 func AuthStudent(db *mongo.Client, student StudentLogin, databaseName, collectionName string) (StudentInfo, error) {
 
+	var err error
+
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	findStudent := StudentInfo{}
+	studentData := StudentLogin{}
 
 	filter := bson.D{
 		{"matricula", student.Matricula},
-		{"password", student.Password},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne(),
+	).Decode(&studentData); err != nil {
+		return findStudent, err
+	}
+
+	if err = utils.ComparePasswords(studentData.Password, student.Password); err != nil {
+		return findStudent, errors.New("mongo: no documents in result")
 	}
 
 	projection := bson.D{
