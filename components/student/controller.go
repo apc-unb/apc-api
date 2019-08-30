@@ -24,10 +24,13 @@ import (
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Insert all students at the same time (if possible)
-func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCreate, databaseName, collectionName string) error {
+func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCreate, databaseName, collectionName string) ([]StudentLogin, error) {
+
+	var studentsReturn []StudentLogin
+	var singlestudent StudentLogin
 
 	if len(students) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	collection := db.Database(databaseName).Collection(collectionName)
@@ -37,11 +40,17 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 		student.Password = generateRandomPassword()
 
 		if _, err := collection.InsertOne(context.TODO(), student); err != nil {
-			return err
+			return nil, err
 		}
+
+		singlestudent.Matricula = student.Matricula
+		singlestudent.Password = student.Password
+
+		studentsReturn = append(studentsReturn, singlestudent)
+
 	}
 
-	return nil
+	return studentsReturn, nil
 }
 
 // CreateStudentsFile recieve csv file of students
@@ -135,7 +144,7 @@ func GetStudents(db *mongo.Client, databaseName, collectionName string) ([]Stude
 	return students, nil
 }
 
-// GetStudents return list of all students from Database thata matchs with a certain class
+// GetStudentsClass return list of all students from Database thata matchs with a certain class
 // Get all students at the same time and store inside cursor
 // Decode each student inside student class and append into students array
 // @param	db				pointer to database

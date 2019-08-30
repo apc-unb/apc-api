@@ -28,6 +28,7 @@ type SchoolClassCreate struct {
 
 type StudentPage struct {
 	UserExist bool                `json:"userexist"`
+	Result    string              `json:"result"`
 	Student   student.StudentInfo `json:"student"`
 	Class     SchoolClass         `json:"class"`
 	News      []news.News         `json:"news"`
