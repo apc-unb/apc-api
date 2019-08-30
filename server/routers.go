@@ -43,6 +43,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.StudentPage{
 				UserExist: false,
+				Result:    "Invalid Login or Password",
 			}
 			respondWithJSON(w, http.StatusOK, ret)
 		} else {
@@ -52,17 +53,34 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if class, err = schoolClass.GetClass(a.DB, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		if err.Error() == "mongo: no documents in result" {
+			ret := schoolClass.StudentPage{
+				UserExist: false,
+				Result:    "Invalid student class",
+			}
+			respondWithJSON(w, http.StatusOK, ret)
+		} else {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
 	if newsArray, err = news.GetNewsClass(a.DB, singleStudent.ClassID, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		if err.Error() == "mongo: no documents in result" {
+			ret := schoolClass.StudentPage{
+				UserExist: false,
+				Result:    "Invalid student news",
+			}
+			respondWithJSON(w, http.StatusOK, ret)
+		} else {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
 	ret := schoolClass.StudentPage{
 		UserExist: true,
+		Result:    "success",
 		Student:   singleStudent,
 		Class:     class,
 		News:      newsArray,
@@ -76,6 +94,8 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 	enableCORS(&w)
 
 	var students []student.StudentCreate
+	var studentsLits []student.StudentLogin
+	var err error
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -86,12 +106,17 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := student.CreateStudents(a.DB, a.API, students, "apc_database", "student"); err != nil {
+	if studentsLits, err = student.CreateStudents(a.DB, a.API, students, "apc_database", "student"); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	jsonReturn := student.StudentCreatePage{
+		Result:   "success",
+		Students: studentsLits,
+	}
+
+	respondWithJSON(w, http.StatusCreated, jsonReturn)
 }
 
 func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {

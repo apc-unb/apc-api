@@ -65,3 +65,8 @@ type StudentHandles struct {
 	Codeforces string `json:"codeforces"`
 	Uri        string `json:"uri"`
 }
+
+type StudentCreatePage struct {
+	Result   string         `json:"result"`
+	Students []StudentLogin `json:"students"`
+}
