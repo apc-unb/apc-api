@@ -12,6 +12,7 @@ import (
 	"github.com/VerasThiago/plataforma-apc/components/student"
 	"github.com/VerasThiago/plataforma-apc/components/submission"
 	"github.com/VerasThiago/plataforma-apc/components/task"
+	"github.com/VerasThiago/plataforma-apc/components/utils"
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
@@ -22,7 +23,7 @@ import (
 
 func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
@@ -33,7 +34,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	if err = decoder.Decode(&studentLogin); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
@@ -45,9 +46,9 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 				UserExist: false,
 				Result:    "Invalid Login or Password",
 			}
-			respondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
-			respondWithError(w, http.StatusInternalServerError, err.Error())
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
@@ -58,9 +59,9 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 				UserExist: false,
 				Result:    "Invalid student class",
 			}
-			respondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
-			respondWithError(w, http.StatusInternalServerError, err.Error())
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
@@ -71,9 +72,9 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 				UserExist: false,
 				Result:    "Invalid student news",
 			}
-			respondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
-			respondWithError(w, http.StatusInternalServerError, err.Error())
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
@@ -86,12 +87,12 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		News:      newsArray,
 	}
 
-	respondWithJSON(w, http.StatusOK, ret)
+	utils.RespondWithJSON(w, http.StatusOK, ret)
 }
 
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var students []student.StudentCreate
 	var studentsLits []student.StudentLogin
@@ -100,14 +101,14 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&students); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if studentsLits, err = student.CreateStudents(a.DB, a.API, students, "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -116,111 +117,119 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 		Students: studentsLits,
 	}
 
-	respondWithJSON(w, http.StatusCreated, jsonReturn)
+	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
 }
 
 func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	var studentsLits []student.StudentLogin
+	var err error
+
+	utils.EnableCORS(&w)
 
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
 
-	if err := student.CreateStudentsFile(a.DB, string(request), "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+	if studentsLits, err = student.CreateStudentsFile(a.DB, string(request), "apc_database", "student"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	jsonReturn := student.StudentCreatePage{
+		Result:   "success",
+		Students: studentsLits,
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
 
 }
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, students)
+	utils.RespondWithJSON(w, http.StatusOK, students)
 }
 
 func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
 	classID, err := primitive.ObjectIDFromHex(vars["classid"])
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Class ID")
 		return
 	}
 
 	students, err := student.GetStudentsClass(a.DB, classID, "apc_database", "student")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, students)
+	utils.RespondWithJSON(w, http.StatusOK, students)
 
 }
 
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var studentUpdate student.StudentUpdate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&studentUpdate); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := student.UpdateStudents(a.DB, a.API, studentUpdate, "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	if studentUpdate.Email != "" {
-		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success", "email": studentUpdate.Email})
+		utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success", "email": studentUpdate.Email})
 	} else {
-		respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+		utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 	}
 }
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var students []student.Student
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&students); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := student.DeleteStudents(a.DB, students, "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -229,85 +238,85 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var classes []schoolClass.SchoolClassCreate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&classes); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := schoolClass.CreateClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	classes, err := schoolClass.GetClasses(a.DB, "apc_database", "schoolClass")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, classes)
+	utils.RespondWithJSON(w, http.StatusOK, classes)
 
 }
 
 func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&classes); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := schoolClass.UpdateClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&classes); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := schoolClass.DeleteClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
 }
 
@@ -317,84 +326,84 @@ func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var submissions []submission.SubmissionCreate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&submissions); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := submission.CreateSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	submissions, err := submission.GetSubmissions(a.DB, "apc_database", "submission")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, submissions)
+	utils.RespondWithJSON(w, http.StatusOK, submissions)
 }
 
 func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var submissions []submission.Submission
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&submissions); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := submission.UpdateSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var submissions []submission.Submission
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&submissions); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := submission.DeleteSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -403,109 +412,109 @@ func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var tasks []task.TaskCreate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&tasks); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := task.CreateTasks(a.DB, tasks, "apc_database", "task"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	tasks, err := task.GetTasks(a.DB, "apc_database", "task")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, tasks)
+	utils.RespondWithJSON(w, http.StatusOK, tasks)
 }
 
 func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
 	examID, err := primitive.ObjectIDFromHex(vars["examid"])
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Exam ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Exam ID")
 		return
 	}
 
 	tasks, err := task.GetTasksClass(a.DB, examID, "apc_database", "task")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, tasks)
+	utils.RespondWithJSON(w, http.StatusOK, tasks)
 
 }
 
 func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var tasks []task.Task
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&tasks); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := task.UpdateTasks(a.DB, tasks, "apc_database", "task"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
 }
 
 func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var tasks []task.Task
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&tasks); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := task.DeleteTasks(a.DB, tasks, "apc_database", "task"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
 }
 
@@ -515,104 +524,104 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var exams []exam.ExamCreate
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&exams); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := exam.CreateExams(a.DB, exams, "apc_database", "exam"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
 	classID, err := primitive.ObjectIDFromHex(vars["classid"])
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Class ID")
 		return
 	}
 
 	exams, err := exam.GetExamsClass(a.DB, classID, "apc_database", "exam")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, exams)
+	utils.RespondWithJSON(w, http.StatusOK, exams)
 
 }
 
 func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	exams, err := exam.GetExams(a.DB, "apc_database", "exam")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, exams)
+	utils.RespondWithJSON(w, http.StatusOK, exams)
 }
 
 func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&exams); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := exam.UpdateExams(a.DB, exams, "apc_database", "exam"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&exams); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := exam.DeleteExams(a.DB, exams, "apc_database", "exam"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -621,109 +630,109 @@ func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var newsArray []news.NewsCreate
 
 	body, _ := ioutil.ReadAll(r.Body)
 
 	if err := json.Unmarshal(body, &newsArray); err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := news.CreateNews(a.DB, newsArray, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
 }
 
 func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	news, err := news.GetNews(a.DB, "apc_database", "news")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, news)
+	utils.RespondWithJSON(w, http.StatusOK, news)
 }
 
 func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
 	classID, err := primitive.ObjectIDFromHex(vars["classid"])
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Class ID")
 		return
 	}
 
 	newsArray, err := news.GetNewsClass(a.DB, classID, "apc_database", "news")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, newsArray)
+	utils.RespondWithJSON(w, http.StatusOK, newsArray)
 
 }
 
 func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var newsArray []news.News
 
 	body, _ := ioutil.ReadAll(r.Body)
 
 	if err := json.Unmarshal(body, &newsArray); err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := news.UpdateNews(a.DB, newsArray, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var newsArray []news.News
 
 	body, _ := ioutil.ReadAll(r.Body)
 
 	if err := json.Unmarshal(body, &newsArray); err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := news.DeleteNews(a.DB, newsArray, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -732,7 +741,7 @@ func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var adminLogin admin.AdminLogin
 	var singleAdmin admin.AdminInfo
@@ -743,7 +752,7 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	if err = decoder.Decode(&adminLogin); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
@@ -754,20 +763,20 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 			ret := schoolClass.AdminPage{
 				UserExist: false,
 			}
-			respondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
-			respondWithError(w, http.StatusInternalServerError, err.Error())
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
 
 	if class, err = schoolClass.GetClass(a.DB, singleAdmin.ClassID, "apc_database", "schoolClass"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	if newsArray, err = news.GetNewsClass(a.DB, singleAdmin.ClassID, "apc_database", "news"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -778,105 +787,110 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 		News:      newsArray,
 	}
 
-	respondWithJSON(w, http.StatusOK, ret)
+	utils.RespondWithJSON(w, http.StatusOK, ret)
 }
 
 func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var admins []admin.AdminCreate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&admins); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := admin.CreateAdmin(a.DB, a.API, admins, "apc_database", "admin"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
 
 	if err := admin.CreateAdminFile(a.DB, string(request), "apc_database", "admin"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
 }
 
 func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	admins, err := admin.GetAdmins(a.DB, "apc_database", "admin")
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusOK, admins)
+	utils.RespondWithJSON(w, http.StatusOK, admins)
 }
 
 func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var adminUpdate admin.AdminUpdate
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&adminUpdate); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := admin.UpdateAdmins(a.DB, a.API, adminUpdate, "apc_database", "admin"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
 func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
-	enableCORS(&w)
+	utils.EnableCORS(&w)
 
 	var adminUpdateStudent admin.AdminUpdateStudent
 
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&adminUpdateStudent); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
 	if err := admin.UpdateAdminStudent(a.DB, a.API, adminUpdateStudent, "apc_database", "student"); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 
+}
+
+func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
+	utils.EnableCORS(&w)
+	utils.RespondWithJSON(w, http.StatusOK, nil)
 }
