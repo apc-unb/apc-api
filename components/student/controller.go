@@ -3,7 +3,6 @@ package student
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -46,8 +45,6 @@ func CreateStudents(db *mongo.Client, api *goforces.Client, students []StudentCr
 		if student.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
 			return nil, err
 		}
-
-		fmt.Println("Senha gerada = ", pwd, " hash = ", student.Password)
 
 		if _, err = collection.InsertOne(context.TODO(), student); err != nil {
 			return nil, err
@@ -238,18 +235,25 @@ func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, databaseName
 func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdate, databaseName, collectionName string) error {
 
 	var err error
+	collection := db.Database(databaseName).Collection(collectionName)
+	studentData := StudentLogin{}
+	currentStudent := Student{}
+	update := bson.M{}
 
-	if student.Password, err = utils.HashAndSalt([]byte(student.Password)); err != nil {
+	filter := bson.M{
+		"_id": student.ID,
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne(),
+	).Decode(&studentData); err != nil {
 		return err
 	}
 
-	collection := db.Database(databaseName).Collection(collectionName)
-
-	currentStudent := Student{}
-
-	filter := bson.M{
-		"_id":      student.ID,
-		"password": student.Password,
+	if err = utils.ComparePasswords(studentData.Password, student.Password); err != nil {
+		return errors.New("mongo: no documents in result")
 	}
 
 	projection := bson.M{
@@ -262,17 +266,8 @@ func UpdateStudents(db *mongo.Client, api *goforces.Client, student StudentUpdat
 		filter,
 		options.FindOne().SetProjection(projection),
 	).Decode(&currentStudent); err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			return errors.New("Invalid password")
-		}
 		return err
 	}
-
-	filter = bson.M{
-		"_id": student.ID,
-	}
-
-	update := bson.M{}
 
 	if student.Email != "" {
 		update["email"] = student.Email
