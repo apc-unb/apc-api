@@ -49,6 +49,7 @@ func (a *App) Initialize(host, port, codeforcesKey, codeforcesSecret string) {
 
 	a.Router = mux.NewRouter()
 	a.Router.Use(middleware.GetPrometheusMiddleware())
+	a.Router.Use(middleware.GetCorsMiddleware())
 
 	a.initializeRoutes()
 }

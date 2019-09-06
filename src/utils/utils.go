@@ -19,12 +19,6 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-func EnableCORS(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
-}
-
 func HashAndSalt(pwd []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
