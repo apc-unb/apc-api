@@ -23,8 +23,6 @@ import (
 
 func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
 	var class schoolClass.SchoolClass
@@ -92,8 +90,6 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var students []student.StudentCreate
 	var studentsLits []student.StudentLogin
 	var err error
@@ -125,8 +121,6 @@ func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 	var studentsLits []student.StudentLogin
 	var err error
 
-	utils.EnableCORS(&w)
-
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
@@ -147,8 +141,6 @@ func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	students, err := student.GetStudents(a.DB, "apc_database", "student")
 
 	if err != nil {
@@ -159,8 +151,6 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
@@ -183,8 +173,6 @@ func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var studentUpdate student.StudentUpdate
 
@@ -211,8 +199,6 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var students []student.Student
 
 	decoder := json.NewDecoder(r.Body)
@@ -238,8 +224,6 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var classes []schoolClass.SchoolClassCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -261,8 +245,6 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	classes, err := schoolClass.GetClasses(a.DB, "apc_database", "schoolClass")
 
 	if err != nil {
@@ -274,8 +256,6 @@ func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
@@ -297,8 +277,6 @@ func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var classes []schoolClass.SchoolClass
 
@@ -326,8 +304,6 @@ func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var submissions []submission.SubmissionCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -349,8 +325,6 @@ func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	submissions, err := submission.GetSubmissions(a.DB, "apc_database", "submission")
 
 	if err != nil {
@@ -361,8 +335,6 @@ func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var submissions []submission.Submission
 
@@ -384,8 +356,6 @@ func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var submissions []submission.Submission
 
@@ -412,8 +382,6 @@ func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var tasks []task.TaskCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -435,8 +403,6 @@ func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	tasks, err := task.GetTasks(a.DB, "apc_database", "task")
 
 	if err != nil {
@@ -447,8 +413,6 @@ func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
@@ -472,8 +436,6 @@ func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var tasks []task.Task
 
 	decoder := json.NewDecoder(r.Body)
@@ -495,8 +457,6 @@ func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var tasks []task.Task
 
@@ -524,8 +484,6 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var exams []exam.ExamCreate
 	decoder := json.NewDecoder(r.Body)
 
@@ -545,8 +503,6 @@ func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
@@ -569,7 +525,6 @@ func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
 
 	exams, err := exam.GetExams(a.DB, "apc_database", "exam")
 
@@ -581,8 +536,6 @@ func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
@@ -603,8 +556,6 @@ func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
@@ -630,8 +581,6 @@ func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var newsArray []news.NewsCreate
 
 	body, _ := ioutil.ReadAll(r.Body)
@@ -654,8 +603,6 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	news, err := news.GetNews(a.DB, "apc_database", "news")
 
 	if err != nil {
@@ -666,8 +613,6 @@ func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	vars := mux.Vars(r)
 
@@ -691,8 +636,6 @@ func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var newsArray []news.News
 
 	body, _ := ioutil.ReadAll(r.Body)
@@ -713,8 +656,6 @@ func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var newsArray []news.News
 
@@ -740,8 +681,6 @@ func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var adminLogin admin.AdminLogin
 	var singleAdmin admin.AdminInfo
@@ -792,8 +731,6 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var admins []admin.AdminCreate
 
 	decoder := json.NewDecoder(r.Body)
@@ -815,8 +752,6 @@ func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
@@ -832,8 +767,6 @@ func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	admins, err := admin.GetAdmins(a.DB, "apc_database", "admin")
 
 	if err != nil {
@@ -844,8 +777,6 @@ func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
-
-	utils.EnableCORS(&w)
 
 	var adminUpdate admin.AdminUpdate
 
@@ -868,8 +799,6 @@ func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
-	utils.EnableCORS(&w)
-
 	var adminUpdateStudent admin.AdminUpdateStudent
 
 	decoder := json.NewDecoder(r.Body)
@@ -891,6 +820,5 @@ func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
 	utils.RespondWithJSON(w, http.StatusOK, nil)
 }
