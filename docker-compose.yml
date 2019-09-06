@@ -1,8 +1,8 @@
 version: '3.3'
 services:
-  api:
-    container_name: api
-    build: .
+  rest_api:
+    container_name: rest_api
+    build: src/
     ports:
       - 8080:8080
     depends_on:
@@ -12,5 +12,22 @@ services:
     container_name: 'mongo'
     ports:
       - '27017:27017'
+  prometheus:
+    container_name: prometheus
+    image: prometheus_apc
+    build: prometheus/
+    ports:
+      - 9090:9090
+  grafana:
+    container_name: grafana
+    image: grafana_apc
+    build: grafana/
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-veras}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-123}
+    depends_on:
+      - prometheus
 
 
