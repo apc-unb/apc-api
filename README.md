@@ -88,29 +88,53 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 > Fim do primeiro semestre
 
-### Semana 1~2 (19 agosto ~ 2 setembro)
+### Semana 1 (19 agosto ~ 26 agosto)
 
 - Revisão do conteúdo / Questões (Pedido anteriormente)
+- Refatoração da API
 
- ### Semana 3~4 (2 ~ 16 setembro)
+### Semana 2 (26 agosto ~ 2 setembro)
+
+- Implementação servidor de autenticação
+- Finalização CRUD alunos e monitores
+
+### Semana 3~5 (2 ~ 23 setembro)
+
+- Implementação envio de provas, trabalhos e exercícios extras (Exercícios de arquivos)
+- Deploy aplicação para acompanhamento 
+
+### Semana 6 (23 setembro ~ 30 setembro)
+
+- Semana Universitária
+
+### Semana 7~8 (30 setembro ~ 7 outubro)
+
+- Integração das aulas práticas
+
+### Semana 8 (7 outubro ~ 14 outubro)
 
 - Analise e estruturação dos dados da turma
 
-### Semana 5 (16 ~ 23 setembro)
+### Semana 9~11 (14 outubro ~ 4 novembro)
 
 - Implementação das analises dos dados e do dashboard
 
- ### Semana 6~7 (23 setembro ~ 7 outubro)
+### Semana 12 (4 novembro ~ 11 novembro)
 
 - Analise da estrutura do relatório automático
 
-### Semana 8~9 (7 ~ 21 outubro)
+### Semana 13~15 (11 novembro ~ 2 dezembro)
 
 - Implementando geração de relatório automático
 
+### Semana 16 (2 dezembro ~ 9 dezembro)
+
+- Análise da segurança
+- Estudo sobre deploy oficial da aplicação
+
+
 > Versão 100% funcional
 
-.
 
 .
 
