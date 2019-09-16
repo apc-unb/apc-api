@@ -2,7 +2,7 @@ version: '3.3'
 services:
   rest_api:
     container_name: rest_api
-    build: src/
+    build: api/
     ports:
       - 8080:8080
     depends_on:
@@ -25,7 +25,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-veras}
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-apc}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-123}
     depends_on:
       - prometheus
