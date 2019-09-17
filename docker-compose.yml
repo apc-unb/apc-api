@@ -1,23 +1,54 @@
 version: '3.3'
+
+networks: 
+  nginx-net:
+  internal-net:
+
 services:
   rest_api:
     container_name: rest_api
-    build: api/
+    build: rest_api/
     ports:
       - 8080:8080
     depends_on:
       - mongo
+    networks: 
+      - internal-net
+      - nginx-net
+
   mongo:
-    image: 'mongo:latest'
-    container_name: 'mongo'
+    image: aashreys/mongo-auth:latest
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=root
+      - MONGODB_ADMIN_PASS=secret
     ports:
-      - '27017:27017'
+      - "27017:27017"
+    networks:
+      - internal-net
+  
+  mongo_exporter:
+    image: eses/mongodb_exporter
+    ports:
+      - '9216:9216'
+    command:
+      - '--mongodb.uri=mongodb://root:secret@mongo:27017'
+    depends_on:
+      - mongo
+      - prometheus
+    networks: 
+      - internal-net
+
   prometheus:
     container_name: prometheus
     image: prometheus_apc
     build: prometheus/
     ports:
       - 9090:9090
+    networks: 
+      - internal-net
+      - nginx-net
+
   grafana:
     container_name: grafana
     image: grafana_apc
@@ -29,5 +60,21 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-123}
     depends_on:
       - prometheus
+    networks: 
+      - internal-net
+      - nginx-net  
+
+  nginx:
+    build: nginx/
+    ports:
+      - 80:80
+    environment:
+      - HOST=localhost
+    networks:
+      - nginx-net
+    depends_on:
+      - rest_api
+      - prometheus
+      - grafana
 
 
