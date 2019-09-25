@@ -5,67 +5,58 @@ networks:
   internal-net:
 
 services:
-  rest_api:
-    container_name: rest_api
-    build: rest_api/
+  apc-api:
+    build: .
     ports:
       - 8080:8080
     depends_on:
-      - mongo
+      - apc-mongo
     networks: 
       - internal-net
       - nginx-net
 
-  mongo:
-    image: aashreys/mongo-auth:latest
-    environment:
-      - AUTH=yes
-      - MONGODB_ADMIN_USER=root
-      - MONGODB_ADMIN_PASS=secret
+  apc-mongo:
+    image: mongo
     ports:
       - "27017:27017"
     networks:
       - internal-net
   
-  mongo_exporter:
-    image: eses/mongodb_exporter
-    ports:
-      - '9216:9216'
-    command:
-      - '--mongodb.uri=mongodb://root:secret@mongo:27017'
-    depends_on:
-      - mongo
-      - prometheus
-    networks: 
-      - internal-net
+  # mongo_exporter:
+  #   image: eses/mongodb_exporter
+  #   ports:
+  #     - '9216:9216'
+  #   command:
+  #     - '--mongodb.uri=mongodb://root:secret@mongo:27017'
+  #   depends_on:
+  #     - apc-mongo
+  #     - apc-prometheus
+  #   networks: 
+  #     - internal-net
 
-  prometheus:
-    container_name: prometheus
-    image: prometheus_apc
-    build: prometheus/
+  apc-prometheus:
+    image : verasthiago/apc-prometheus
     ports:
       - 9090:9090
     networks: 
       - internal-net
       - nginx-net
 
-  grafana:
-    container_name: grafana
-    image: grafana_apc
-    build: grafana/
+  apc-grafana:
+    image : verasthiago/apc-grafana
     ports:
       - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-apc}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-123}
     depends_on:
-      - prometheus
+      - apc-prometheus
     networks: 
       - internal-net
       - nginx-net  
 
-  nginx:
-    build: nginx/
+  apc-nginx:
+    image : verasthiago/apc-nginx
     ports:
       - 80:80
     environment:
@@ -73,8 +64,8 @@ services:
     networks:
       - nginx-net
     depends_on:
-      - rest_api
-      - prometheus
-      - grafana
+      - apc-api
+      - apc-prometheus
+      - apc-grafana
 
 
