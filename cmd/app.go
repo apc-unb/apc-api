@@ -1,10 +1,21 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/VerasThiago/api/components/exam"
+	"github.com/VerasThiago/api/components/news"
+	"github.com/VerasThiago/api/components/student"
+	"github.com/VerasThiago/api/components/task"
+	"github.com/VerasThiago/api/utils"
+
+	"github.com/VerasThiago/api/components/schoolClass"
+
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/togatoga/goforces"
@@ -52,6 +63,86 @@ func (a *App) Initialize(host, port, codeforcesKey, codeforcesSecret string) {
 	a.Router.Use(middleware.GetCorsMiddleware())
 
 	a.initializeRoutes()
+	a.insertData()
+}
+
+func (a *App) insertData() {
+
+	var err error
+	var classID primitive.ObjectID
+	var examID primitive.ObjectID
+
+	classDAO := schoolClass.SchoolClassCreate{
+		ProfessorFirstName: "Carla",
+		ProfessorLastName:  "Castanho",
+		ClassName:          "2019",
+		Address:            "PJC 144",
+		Year:               2019,
+		Season:             2,
+	}
+
+	classID = a.insert("schoolClass", classDAO)
+
+	studentDAO := student.StudentCreate{
+		ClassID:   classID,
+		FirstName: "Aluno",
+		LastName:  "De Apc",
+		Matricula: "123",
+		Handles: student.StudentHandles{
+			Codeforces: "Veras",
+		},
+		Email: "aluno@unb.com.br",
+	}
+
+	if studentDAO.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	a.insert("student", studentDAO)
+
+	examDAO := exam.ExamCreate{
+		ClassID: classID,
+		Title:   "Prova 1 APC",
+	}
+
+	examID = a.insert("exam", examDAO)
+
+	newsDAO := news.NewsCreate{
+		ClassID:     classID,
+		Title:       "Aula cancelada",
+		Description: "Devido ao alinhamento da lua, hoje nao teremos aula",
+		Tags:        []string{"Horóscopo", "É verdade esse bilhete"},
+	}
+
+	a.insert("news", newsDAO)
+
+	taskDAO := task.TaskCreate{
+		ExamID:    examID,
+		Statement: "Some duas letras",
+		Score:     7.5,
+		Tags:      []string{"FFT", "Dinamic Programming", "Bitmask"},
+	}
+
+	a.insert("task", taskDAO)
+
+}
+
+func (a *App) insert(collectionName string, data interface{}) primitive.ObjectID {
+
+	var err error
+	var dataID primitive.ObjectID
+	var mongoReturn *mongo.InsertOneResult
+
+	collection := a.DB.Database("apc_database").Collection(collectionName)
+
+	if mongoReturn, err = collection.InsertOne(context.TODO(), data); err != nil {
+		panic(err)
+	} else {
+		dataID = mongoReturn.InsertedID.(primitive.ObjectID)
+	}
+
+	return dataID
+
 }
 
 // initializeRoutes create all server routes
