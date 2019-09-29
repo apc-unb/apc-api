@@ -6,23 +6,24 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/VerasThiago/api/components/exam"
-	"github.com/VerasThiago/api/components/news"
-	"github.com/VerasThiago/api/components/student"
-	"github.com/VerasThiago/api/components/task"
-	"github.com/VerasThiago/api/utils"
+	"github.com/VerasThiago/apc-api/components/exam"
+	"github.com/VerasThiago/apc-api/components/news"
+	"github.com/VerasThiago/apc-api/components/student"
+	"github.com/VerasThiago/apc-api/components/task"
+	"github.com/VerasThiago/apc-api/utils"
 
-	"github.com/VerasThiago/api/components/schoolClass"
+	"github.com/VerasThiago/apc-api/components/schoolClass"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/togatoga/goforces"
 
-	"github.com/VerasThiago/api/config"
-	"github.com/VerasThiago/api/middleware"
-	"github.com/VerasThiago/api/prometheus"
+	"github.com/VerasThiago/apc-api/config"
+	"github.com/VerasThiago/apc-api/middleware"
+	"github.com/VerasThiago/apc-api/prometheus"
 
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -71,6 +72,9 @@ func (a *App) insertData() {
 	var err error
 	var classID primitive.ObjectID
 	var examID primitive.ObjectID
+	var studentID primitive.ObjectID
+	var projectType1ID primitive.ObjectID
+	var projectType2ID primitive.ObjectID
 
 	classDAO := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Carla",
@@ -98,7 +102,47 @@ func (a *App) insertData() {
 		panic(err)
 	}
 
-	a.insert("student", studentDAO)
+	studentID = a.insert("student", studentDAO)
+
+	projectTypeDAO1 := student.ProjectType{
+		Name:     "Trabalho 1",
+		Order:    1,
+		DeadLine: time.Now().Add(time.Minute * 30),
+		Score:    10.0,
+	}
+
+	projectType1ID = a.insert("projectType", projectTypeDAO1)
+
+	projectTypeDAO2 := student.ProjectType{
+		Name:     "Trabalho 2",
+		Order:    2,
+		DeadLine: time.Now().Add(time.Minute * 60),
+		Score:    4.0,
+	}
+
+	projectType2ID = a.insert("projectType", projectTypeDAO2)
+
+	studentProject1 := student.StudentProject{
+		StudentID:     studentID,
+		ProjectTypeID: projectType1ID,
+		SendTime:      time.Now(),
+		FileName:      "Veras hehe",
+		Status:        "Pending",
+		Score:         0.0,
+	}
+
+	a.insert("projects", studentProject1)
+
+	studentProject2 := student.StudentProject{
+		StudentID:     studentID,
+		ProjectTypeID: projectType2ID,
+		SendTime:      time.Now(),
+		FileName:      "Veras2 hehe",
+		Status:        "Pending",
+		Score:         0.0,
+	}
+
+	a.insert("projects", studentProject2)
 
 	examDAO := exam.ExamCreate{
 		ClassID: classID,
@@ -201,6 +245,9 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/news", a.updateNews).Methods("PUT")
 	a.Router.HandleFunc("/news", a.deleteNews).Methods("DELETE")
 
+	a.Router.HandleFunc("/projects/send", a.createProject).Methods("POST")
+	a.Router.HandleFunc("/projects/{studentid}", a.getProjectStudent).Methods("GET")
+
 	a.Router.Handle("/metrics", promhttp.Handler())
 
 }
@@ -216,8 +263,8 @@ func Start() {
 
 	a := App{}
 	//mongoHost := os.Getenv("CONN")
-	mongoHost := "apc-mongo"
-	//mongoHost := "localhost"
+	//mongoHost := "apc-mongo"
+	mongoHost := "localhost"
 	a.Initialize(mongoHost, "27017", "f3d968eea83ad8d5f21cad0365edcc200439c6f0", "b30c206b689d5ba004534c6780aa7be8e234a7f3")
 
 	defer a.DB.Disconnect(nil)

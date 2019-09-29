@@ -5,11 +5,11 @@ import (
 	"log"
 	"testing"
 
-	"github.com/VerasThiago/api/components/exam"
-	"github.com/VerasThiago/api/components/schoolClass"
-	"github.com/VerasThiago/api/components/student"
-	"github.com/VerasThiago/api/components/submission"
-	"github.com/VerasThiago/api/components/task"
+	"github.com/VerasThiago/apc-api/components/exam"
+	"github.com/VerasThiago/apc-api/components/schoolClass"
+	"github.com/VerasThiago/apc-api/components/student"
+	"github.com/VerasThiago/apc-api/components/submission"
+	"github.com/VerasThiago/apc-api/components/task"
 )
 
 func TestContestDB(t *testing.T) {

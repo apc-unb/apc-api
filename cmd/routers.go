@@ -5,14 +5,14 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/VerasThiago/api/components/admin"
-	"github.com/VerasThiago/api/components/exam"
-	"github.com/VerasThiago/api/components/news"
-	"github.com/VerasThiago/api/components/schoolClass"
-	"github.com/VerasThiago/api/components/student"
-	"github.com/VerasThiago/api/components/submission"
-	"github.com/VerasThiago/api/components/task"
-	"github.com/VerasThiago/api/utils"
+	"github.com/VerasThiago/apc-api/components/admin"
+	"github.com/VerasThiago/apc-api/components/exam"
+	"github.com/VerasThiago/apc-api/components/news"
+	"github.com/VerasThiago/apc-api/components/schoolClass"
+	"github.com/VerasThiago/apc-api/components/student"
+	"github.com/VerasThiago/apc-api/components/submission"
+	"github.com/VerasThiago/apc-api/components/task"
+	"github.com/VerasThiago/apc-api/utils"
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
@@ -821,4 +821,33 @@ func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, nil)
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// 								        PROJECTS		 				            		 //
+///////////////////////////////////////////////////////////////////////////////////////////
+
+func (a *App) getProjectStudent(w http.ResponseWriter, r *http.Request) {
+
+	var studentProjects []student.StudentProject
+	var err error
+	vars := mux.Vars(r)
+	studentID, err := primitive.ObjectIDFromHex(vars["studentid"])
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Student ID")
+		return
+	}
+
+	if studentProjects, err = student.GetProjects(a.DB, studentID, "apc_database", "projects"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, studentProjects)
+
+}
+
+func (a *App) createProject(w http.ResponseWriter, r *http.Request) {
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "Not Implemented"})
 }

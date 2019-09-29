@@ -3,7 +3,7 @@ package prometheus
 import (
 	"time"
 
-	"github.com/VerasThiago/api/metrics"
+	"github.com/VerasThiago/apc-api/metrics"
 )
 
 func RecordUpTime() {
