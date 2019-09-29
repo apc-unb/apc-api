@@ -1,9 +1,9 @@
 package schoolClass
 
 import (
-	"github.com/VerasThiago/api/components/admin"
-	"github.com/VerasThiago/api/components/news"
-	"github.com/VerasThiago/api/components/student"
+	"github.com/VerasThiago/apc-api/components/admin"
+	"github.com/VerasThiago/apc-api/components/news"
+	"github.com/VerasThiago/apc-api/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 

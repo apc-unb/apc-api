@@ -4,7 +4,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/VerasThiago/api/components/student"
+	"github.com/VerasThiago/apc-api/components/student"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"

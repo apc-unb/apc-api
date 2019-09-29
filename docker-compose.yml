@@ -68,4 +68,9 @@ services:
       - apc-prometheus
       - apc-grafana
 
+  local:
+    image: busybox
+    depends_on:
+      - apc-mongo
+
 

@@ -1961,10 +1961,10 @@ func Test301Redirect(t *testing.T) {
 	func2 := func(w http.ResponseWriter, r *http.Request) {}
 
 	r := NewRouter()
-	r.HandleFunc("/api/", func2).Name("func2")
+	r.HandleFunc("/apc-api/", func2).Name("func2")
 	r.HandleFunc("/", func1).Name("func1")
 
-	req, _ := http.NewRequest("GET", "http://localhost//api/?abc=def", nil)
+	req, _ := http.NewRequest("GET", "http://localhost//apc-api/?abc=def", nil)
 
 	res := TestA301ResponseWriter{
 		hh:     m,
@@ -1972,7 +1972,7 @@ func Test301Redirect(t *testing.T) {
 	}
 	r.ServeHTTP(&res, req)
 
-	if "http://localhost/api/?abc=def" != res.hh["Location"][0] {
+	if "http://localhost/apc-api/?abc=def" != res.hh["Location"][0] {
 		t.Errorf("Should have complete URL with query string")
 	}
 }
@@ -1983,10 +1983,10 @@ func TestSkipClean(t *testing.T) {
 
 	r := NewRouter()
 	r.SkipClean(true)
-	r.HandleFunc("/api/", func2).Name("func2")
+	r.HandleFunc("/apc-api/", func2).Name("func2")
 	r.HandleFunc("/", func1).Name("func1")
 
-	req, _ := http.NewRequest("GET", "http://localhost//api/?abc=def", nil)
+	req, _ := http.NewRequest("GET", "http://localhost//apc-api/?abc=def", nil)
 	res := NewRecorder()
 	r.ServeHTTP(res, req)
 

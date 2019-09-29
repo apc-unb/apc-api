@@ -5,7 +5,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/VerasThiago/api/components/news"
+	"github.com/VerasThiago/apc-api/components/news"
 )
 
 func TestNewsDB(t *testing.T) {
