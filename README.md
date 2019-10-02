@@ -1,10 +1,10 @@
-# &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DraGon T Pratform
+![](https://i.imgur.com/LN5iFfC.jpg)
 
   
 
 # Visão Geral
 
-Nosso objetivo é desenvolver uma plataforma que centraliza o acesso à materiais do curso - e forneça relatórios automáticos do progresso de cada aluno individual (tipo a2oj) e da turma como um todo.
+DragonT é uma plataforma que centraliza o acesso à materiais do curso - e forneça relatórios automáticos do progresso de cada aluno individual (tipo a2oj) e da turma como um todo.
 
   
 
