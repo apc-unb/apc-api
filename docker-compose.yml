@@ -13,6 +13,13 @@ services:
       - 8080:8080
     depends_on:
       - apc-mongo
+    environment:
+      - DRAGONT_MONGO_HOST=apc-mongo
+      - DRAGONT_MONGO_PORT=27017
+      - DRAGONT_JWT_KEY=SUPER_SECRET
+      - DRAGONT_CODEFORCES_KEY=f3d968eea83ad8d5f21cad0365edcc200439c6f0
+      - DRAGONT_CODEFORCES_SECRET=b30c206b689d5ba004534c6780aa7be8e234a7f3
+      - DRAGONT_LOG_LEVEL=debug
     networks: 
       - internal-net
       - nginx-net
@@ -27,15 +34,15 @@ services:
       - internal-net
       - nginx-net
 
-  # apc-alunos:
-  #   image : apcunb/apc-alunos
-  #   ports:
-  #     - 4000:4000
-  #   depends_on:
-  #     - apc-api
-  #   networks:
-  #     - internal-net
-  #     - nginx-net       
+  apc-alunos:
+    image : apcunb/apc-alunos
+    ports:
+      - 4000:4000
+    depends_on:
+      - apc-api
+    networks:
+      - internal-net
+      - nginx-net       
 
   apc-mongo:
     image: mongo
@@ -82,7 +89,7 @@ services:
     image: busybox
     depends_on:
       - apc-mongo
-      #- apc-admin
+      - apc-admin
       # - apc-alunos
 
 
