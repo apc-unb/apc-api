@@ -1,6 +1,6 @@
 package main
 
-import "github.com/VerasThiago/apc-api/cmd"
+import "github.com/apc-unb/apc-api/cmd"
 
 func main() {
 	cmd.Start()

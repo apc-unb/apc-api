@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/VerasThiago/components/student"
+	"github.com/components/student"
 )
 
 func TestStudent(t *testing.T) {

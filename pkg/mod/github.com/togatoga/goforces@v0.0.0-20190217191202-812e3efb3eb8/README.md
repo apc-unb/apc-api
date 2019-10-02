@@ -45,7 +45,7 @@ func main() {
 }
 ```
 
-The official codeforces api documentation is [here](http://codeforces.com/apc-api/help)
+The official codeforces api documentation is [here](http://codeforces.com/apc-unb/apc-api/help)
 
 ## Documention
 

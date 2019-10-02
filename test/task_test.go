@@ -3,9 +3,9 @@ package test
 import (
 	"testing"
 
-	"github.com/VerasThiago/components/student"
-	"github.com/VerasThiago/components/submission"
-	"github.com/VerasThiago/components/task"
+	"github.com/components/student"
+	"github.com/components/submission"
+	"github.com/components/task"
 )
 
 func TestTask(t *testing.T) {

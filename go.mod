@@ -1,4 +1,4 @@
-module github.com/VerasThiago/api
+module github.com/apc-unb/apc-api
 
 go 1.12
 
