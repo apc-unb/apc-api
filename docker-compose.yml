@@ -5,7 +5,9 @@ networks:
   internal-net:
 
 services:
+
   apc-api:
+    image : apcunb/apc-api
     build: .
     ports:
       - 8080:8080
@@ -14,6 +16,26 @@ services:
     networks: 
       - internal-net
       - nginx-net
+  
+  apc-admin:
+    image : apcunb/apc-admin
+    ports:
+      - 5000:5000
+    depends_on:
+      - apc-api
+    networks:
+      - internal-net
+      - nginx-net
+
+  # apc-alunos:
+  #   image : apcunb/apc-alunos
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - apc-api
+  #   networks:
+  #     - internal-net
+  #     - nginx-net       
 
   apc-mongo:
     image: mongo
@@ -21,21 +43,9 @@ services:
       - "27017:27017"
     networks:
       - internal-net
-  
-  # mongo_exporter:
-  #   image: eses/mongodb_exporter
-  #   ports:
-  #     - '9216:9216'
-  #   command:
-  #     - '--mongodb.uri=mongodb://root:secret@mongo:27017'
-  #   depends_on:
-  #     - apc-mongo
-  #     - apc-prometheus
-  #   networks: 
-  #     - internal-net
 
   apc-prometheus:
-    image : verasthiago/apc-prometheus
+    image : apcunb/apc-prometheus
     ports:
       - 9090:9090
     networks: 
@@ -43,7 +53,7 @@ services:
       - nginx-net
 
   apc-grafana:
-    image : verasthiago/apc-grafana
+    image : apcunb/apc-grafana
     ports:
       - 3000:3000
     environment:
@@ -53,10 +63,10 @@ services:
       - apc-prometheus
     networks: 
       - internal-net
-      - nginx-net  
+      - nginx-net
 
   apc-nginx:
-    image : verasthiago/apc-nginx
+    image : apcunb/apc-nginx
     ports:
       - 80:80
     environment:
@@ -68,9 +78,11 @@ services:
       - apc-prometheus
       - apc-grafana
 
-  local:
-    image: busybox
-    depends_on:
-      - apc-mongo
+  # local:
+  #   image: busybox
+  #   depends_on:
+  #     - apc-mongo
+  #     - apc-admin
+  #     # - apc-alunos
 
 

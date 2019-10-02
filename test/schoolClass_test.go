@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	"github.com/VerasThiago/components/schoolClass"
-	"github.com/VerasThiago/components/student"
+	"github.com/components/schoolClass"
+	"github.com/components/student"
 )
 
 func TestSchoolClass(t *testing.T) {

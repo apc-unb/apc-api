@@ -8,22 +8,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/VerasThiago/apc-api/components/exam"
-	"github.com/VerasThiago/apc-api/components/news"
-	"github.com/VerasThiago/apc-api/components/student"
-	"github.com/VerasThiago/apc-api/components/task"
-	"github.com/VerasThiago/apc-api/utils"
+	"github.com/apc-unb/apc-api/components/exam"
+	"github.com/apc-unb/apc-api/components/news"
+	"github.com/apc-unb/apc-api/components/student"
+	"github.com/apc-unb/apc-api/components/task"
+	"github.com/apc-unb/apc-api/utils"
 
-	"github.com/VerasThiago/apc-api/components/schoolClass"
+	"github.com/apc-unb/apc-api/components/schoolClass"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/togatoga/goforces"
 
-	"github.com/VerasThiago/apc-api/config"
-	"github.com/VerasThiago/apc-api/middleware"
-	"github.com/VerasThiago/apc-api/prometheus"
+	"github.com/apc-unb/apc-api/config"
+	"github.com/apc-unb/apc-api/middleware"
+	"github.com/apc-unb/apc-api/prometheus"
 
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -263,8 +263,8 @@ func Start() {
 
 	a := App{}
 	//mongoHost := os.Getenv("CONN")
-	//mongoHost := "apc-mongo"
-	mongoHost := "localhost"
+	mongoHost := "apc-mongo"
+	//mongoHost := "localhost"
 	a.Initialize(mongoHost, "27017", "f3d968eea83ad8d5f21cad0365edcc200439c6f0", "b30c206b689d5ba004534c6780aa7be8e234a7f3")
 
 	defer a.DB.Disconnect(nil)

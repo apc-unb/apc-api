@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/VerasThiago/components/student"
-	"github.com/VerasThiago/components/submission"
+	"github.com/components/student"
+	"github.com/components/submission"
 )
 
 func TestSubmissionDB(t *testing.T) {

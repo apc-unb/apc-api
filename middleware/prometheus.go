@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/VerasThiago/apc-api/metrics"
+	"github.com/apc-unb/apc-api/metrics"
 	"github.com/gorilla/mux"
 )
 

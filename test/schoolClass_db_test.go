@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/VerasThiago/components/schoolClass"
-	"github.com/VerasThiago/components/student"
+	"github.com/components/schoolClass"
+	"github.com/components/student"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
 )

@@ -17,7 +17,7 @@
 //
 //Endpoints
 //
-//Goforces implements almost all of the endpoints defined in the Codeforces API(http://codeforces.com/apc-api/help)
+//Goforces implements almost all of the endpoints defined in the Codeforces API(http://codeforces.com/apc-unb/apc-api/help)
 //More detailed information about the behavior of endpoint and the parameters can be found at the official Codeforces API documentation.
 package goforces
 
