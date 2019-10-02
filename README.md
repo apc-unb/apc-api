@@ -1,5 +1,4 @@
-
-# DraGon T Pratform
+# &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DraGon T Pratform
 
   
 
@@ -38,8 +37,70 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
   
 
 - Possível fórum de discussão alunos - monitores para cada assunto da matéria (talvez)
+ 
+
+# Tente você mesmo
+
+## Deploy Mode
+
+Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo de produção
+
+```bash
+
+docker-compose up --build
+
+```
+
+## Developer Mode
+
+Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo desenvolvedor
+  
+1. Subir as aplicações que o DraGonT precisa
 
   
+
+```bash
+
+docker-compose up -d local
+
+```
+
+  
+
+2. Compile a versão local
+
+  
+
+```bash
+
+go build
+
+```
+
+  
+
+3. Servindo o DraGonT localmente
+
+  
+
+```
+
+./apc-api serve --port 8080 \
+
+--mongo-host localhost \
+
+--mongo-port 27017 \
+
+--jwt-key SUPER_SECRET \
+
+--codeforces-key f3d968eea83ad8d5f21cad0365edcc200439c6f0 \
+
+--codeforces-secret b30c206b689d5ba004534c6780aa7be8e234a7f3 \
+
+--log-level debug
+
+```
+
 
 # Product backlog
 
@@ -283,68 +344,4 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 > possível dilatação do tempo de projeto + novas ideias
 
-  
-  
-
-# Tente você mesmo
-
-## Deploy Mode
-
-Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo de produção
-
-```bash
-
-docker-compose up --build
-
-```
-
-## Developer Mode
-
-Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo desenvolvedor
-  
-1. Subir as aplicações que o DraGonT precisa
-
-  
-
-```bash
-
-docker-compose up -d local
-
-```
-
-  
-
-2. Compile a versão local
-
-  
-
-```bash
-
-go build
-
-```
-
-  
-
-3. Servindo o DraGonT localmente
-
-  
-
-```
-
-./apc-api serve --port 8080 \
-
---mongo-host localhost \
-
---mongo-port 27017 \
-
---jwt-key SUPER_SECRET \
-
---codeforces-key f3d968eea83ad8d5f21cad0365edcc200439c6f0 \
-
---codeforces-secret b30c206b689d5ba004534c6780aa7be8e234a7f3 \
-
---log-level debug
-
-```
 
