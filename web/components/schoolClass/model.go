@@ -1,9 +1,9 @@
 package schoolClass
 
 import (
-	"github.com/apc-unb/apc-api/components/admin"
-	"github.com/apc-unb/apc-api/components/news"
-	"github.com/apc-unb/apc-api/components/student"
+	"github.com/apc-unb/apc-api/web/components/admin"
+	"github.com/apc-unb/apc-api/web/components/news"
+	"github.com/apc-unb/apc-api/web/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 

@@ -1,9 +1,6 @@
 # Start from the latest golang base image
 FROM golang:latest
 
-# Mongo connection ip of ibm cluster
-ENV CONN "172.21.55.122"
-
 # Set the Current Working Directory inside the container
 WORKDIR /app
 

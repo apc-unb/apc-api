@@ -1,18 +1,18 @@
-package cmd
+package web
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 
-	"github.com/apc-unb/apc-api/components/admin"
-	"github.com/apc-unb/apc-api/components/exam"
-	"github.com/apc-unb/apc-api/components/news"
-	"github.com/apc-unb/apc-api/components/schoolClass"
-	"github.com/apc-unb/apc-api/components/student"
-	"github.com/apc-unb/apc-api/components/submission"
-	"github.com/apc-unb/apc-api/components/task"
-	"github.com/apc-unb/apc-api/utils"
+	"github.com/apc-unb/apc-api/web/components/admin"
+	"github.com/apc-unb/apc-api/web/components/exam"
+	"github.com/apc-unb/apc-api/web/components/news"
+	"github.com/apc-unb/apc-api/web/components/schoolClass"
+	"github.com/apc-unb/apc-api/web/components/student"
+	"github.com/apc-unb/apc-api/web/components/submission"
+	"github.com/apc-unb/apc-api/web/components/task"
+	"github.com/apc-unb/apc-api/web/utils"
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
@@ -21,7 +21,7 @@ import (
 // 									 STUDENTS			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	var studentLogin student.StudentLogin
 	var singleStudent student.StudentInfo
@@ -38,7 +38,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if singleStudent, err = student.AuthStudent(a.DB, studentLogin, "apc_database", "student"); err != nil {
+	if singleStudent, err = student.AuthStudent(s.DataBase, studentLogin, "apc_database", "student"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.StudentPage{
 				UserExist: false,
@@ -51,7 +51,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if class, err = schoolClass.GetClass(a.DB, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
+	if class, err = schoolClass.GetClass(s.DataBase, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.StudentPage{
 				UserExist: false,
@@ -64,7 +64,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if newsArray, err = news.GetNewsClass(a.DB, singleStudent.ClassID, "apc_database", "news"); err != nil {
+	if newsArray, err = news.GetNewsClass(s.DataBase, singleStudent.ClassID, "apc_database", "news"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.StudentPage{
 				UserExist: false,
@@ -88,7 +88,7 @@ func (a *App) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, ret)
 }
 
-func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	var students []student.StudentCreate
 	var studentsLits []student.StudentLogin
@@ -103,7 +103,7 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if studentsLits, err = student.CreateStudents(a.DB, a.API, students, "apc_database", "student"); err != nil {
+	if studentsLits, err = student.CreateStudents(s.DataBase, s.GoForces, students, "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -116,7 +116,7 @@ func (a *App) createStudents(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
 }
 
-func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
 	var studentsLits []student.StudentLogin
 	var err error
@@ -125,7 +125,7 @@ func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if studentsLits, err = student.CreateStudentsFile(a.DB, string(request), "apc_database", "student"); err != nil {
+	if studentsLits, err = student.CreateStudentsFile(s.DataBase, string(request), "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -139,9 +139,9 @@ func (a *App) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getStudents(w http.ResponseWriter, r *http.Request) {
 
-	students, err := student.GetStudents(a.DB, "apc_database", "student")
+	students, err := student.GetStudents(s.DataBase, "apc_database", "student")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -150,7 +150,7 @@ func (a *App) getStudents(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, students)
 }
 
-func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -161,7 +161,7 @@ func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	students, err := student.GetStudentsClass(a.DB, classID, "apc_database", "student")
+	students, err := student.GetStudentsClass(s.DataBase, classID, "apc_database", "student")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -172,7 +172,7 @@ func (a *App) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	var studentUpdate student.StudentUpdate
 
@@ -185,7 +185,7 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := student.UpdateStudents(a.DB, a.API, studentUpdate, "apc_database", "student"); err != nil {
+	if err := student.UpdateStudents(s.DataBase, s.GoForces, studentUpdate, "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -197,7 +197,7 @@ func (a *App) updateStudents(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
 	var students []student.Student
 
@@ -210,7 +210,7 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := student.DeleteStudents(a.DB, students, "apc_database", "student"); err != nil {
+	if err := student.DeleteStudents(s.DataBase, students, "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -222,7 +222,7 @@ func (a *App) deleteStudents(w http.ResponseWriter, r *http.Request) {
 // 								   CLASS OF STUDENTS         							 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createClasses(w http.ResponseWriter, r *http.Request) {
 
 	var classes []schoolClass.SchoolClassCreate
 
@@ -235,7 +235,7 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := schoolClass.CreateClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.CreateClasses(s.DataBase, classes, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -243,9 +243,9 @@ func (a *App) createClasses(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getClasses(w http.ResponseWriter, r *http.Request) {
 
-	classes, err := schoolClass.GetClasses(a.DB, "apc_database", "schoolClass")
+	classes, err := schoolClass.GetClasses(s.DataBase, "apc_database", "schoolClass")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -255,7 +255,7 @@ func (a *App) getClasses(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateClasses(w http.ResponseWriter, r *http.Request) {
 
 	var classes []schoolClass.SchoolClass
 
@@ -268,7 +268,7 @@ func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := schoolClass.UpdateClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.UpdateClasses(s.DataBase, classes, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -276,7 +276,7 @@ func (a *App) updateClasses(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
 	var classes []schoolClass.SchoolClass
 
@@ -289,7 +289,7 @@ func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := schoolClass.DeleteClasses(a.DB, classes, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.DeleteClasses(s.DataBase, classes, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -302,7 +302,7 @@ func (a *App) deleteClasses(w http.ResponseWriter, r *http.Request) {
 // 								      SUBMISSION		 					     		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	var submissions []submission.SubmissionCreate
 
@@ -315,7 +315,7 @@ func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := submission.CreateSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
+	if err := submission.CreateSubmissions(s.DataBase, submissions, "apc_database", "submission"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -323,9 +323,9 @@ func (a *App) createSubmissions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	submissions, err := submission.GetSubmissions(a.DB, "apc_database", "submission")
+	submissions, err := submission.GetSubmissions(s.DataBase, "apc_database", "submission")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -334,7 +334,7 @@ func (a *App) getSubmissions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, submissions)
 }
 
-func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	var submissions []submission.Submission
 
@@ -347,7 +347,7 @@ func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := submission.UpdateSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
+	if err := submission.UpdateSubmissions(s.DataBase, submissions, "apc_database", "submission"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -355,7 +355,7 @@ func (a *App) updateSubmissions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	var submissions []submission.Submission
 
@@ -368,7 +368,7 @@ func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := submission.DeleteSubmissions(a.DB, submissions, "apc_database", "submission"); err != nil {
+	if err := submission.DeleteSubmissions(s.DataBase, submissions, "apc_database", "submission"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -380,7 +380,7 @@ func (a *App) deleteSubmissions(w http.ResponseWriter, r *http.Request) {
 // 								        TASK		 				            		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createTasks(w http.ResponseWriter, r *http.Request) {
 
 	var tasks []task.TaskCreate
 
@@ -393,7 +393,7 @@ func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := task.CreateTasks(a.DB, tasks, "apc_database", "task"); err != nil {
+	if err := task.CreateTasks(s.DataBase, tasks, "apc_database", "task"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -401,9 +401,9 @@ func (a *App) createTasks(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getTasks(w http.ResponseWriter, r *http.Request) {
 
-	tasks, err := task.GetTasks(a.DB, "apc_database", "task")
+	tasks, err := task.GetTasks(s.DataBase, "apc_database", "task")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -412,7 +412,7 @@ func (a *App) getTasks(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, tasks)
 }
 
-func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getTasksExam(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -423,7 +423,7 @@ func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tasks, err := task.GetTasksClass(a.DB, examID, "apc_database", "task")
+	tasks, err := task.GetTasksClass(s.DataBase, examID, "apc_database", "task")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -434,7 +434,7 @@ func (a *App) getTasksExam(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateTasks(w http.ResponseWriter, r *http.Request) {
 
 	var tasks []task.Task
 
@@ -447,7 +447,7 @@ func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := task.UpdateTasks(a.DB, tasks, "apc_database", "task"); err != nil {
+	if err := task.UpdateTasks(s.DataBase, tasks, "apc_database", "task"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -456,7 +456,7 @@ func (a *App) updateTasks(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
 	var tasks []task.Task
 
@@ -469,7 +469,7 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := task.DeleteTasks(a.DB, tasks, "apc_database", "task"); err != nil {
+	if err := task.DeleteTasks(s.DataBase, tasks, "apc_database", "task"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -482,7 +482,7 @@ func (a *App) deleteTasks(w http.ResponseWriter, r *http.Request) {
 // 								        EXAM		 				            		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createExams(w http.ResponseWriter, r *http.Request) {
 
 	var exams []exam.ExamCreate
 	decoder := json.NewDecoder(r.Body)
@@ -494,7 +494,7 @@ func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := exam.CreateExams(a.DB, exams, "apc_database", "exam"); err != nil {
+	if err := exam.CreateExams(s.DataBase, exams, "apc_database", "exam"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -502,7 +502,7 @@ func (a *App) createExams(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getExamsClass(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -513,7 +513,7 @@ func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exams, err := exam.GetExamsClass(a.DB, classID, "apc_database", "exam")
+	exams, err := exam.GetExamsClass(s.DataBase, classID, "apc_database", "exam")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -524,9 +524,9 @@ func (a *App) getExamsClass(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getExams(w http.ResponseWriter, r *http.Request) {
 
-	exams, err := exam.GetExams(a.DB, "apc_database", "exam")
+	exams, err := exam.GetExams(s.DataBase, "apc_database", "exam")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -535,7 +535,7 @@ func (a *App) getExams(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, exams)
 }
 
-func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateExams(w http.ResponseWriter, r *http.Request) {
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
@@ -547,7 +547,7 @@ func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := exam.UpdateExams(a.DB, exams, "apc_database", "exam"); err != nil {
+	if err := exam.UpdateExams(s.DataBase, exams, "apc_database", "exam"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -555,7 +555,7 @@ func (a *App) updateExams(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 	var exams []exam.Exam
 	decoder := json.NewDecoder(r.Body)
@@ -567,7 +567,7 @@ func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := exam.DeleteExams(a.DB, exams, "apc_database", "exam"); err != nil {
+	if err := exam.DeleteExams(s.DataBase, exams, "apc_database", "exam"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -579,7 +579,7 @@ func (a *App) deleteExams(w http.ResponseWriter, r *http.Request) {
 // 								        NEWS		 				            		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createNews(w http.ResponseWriter, r *http.Request) {
 
 	var newsArray []news.NewsCreate
 
@@ -592,7 +592,7 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := news.CreateNews(a.DB, newsArray, "apc_database", "news"); err != nil {
+	if err := news.CreateNews(s.DataBase, newsArray, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -601,9 +601,9 @@ func (a *App) createNews(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getNews(w http.ResponseWriter, r *http.Request) {
 
-	news, err := news.GetNews(a.DB, "apc_database", "news")
+	news, err := news.GetNews(s.DataBase, "apc_database", "news")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -612,7 +612,7 @@ func (a *App) getNews(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, news)
 }
 
-func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getNewsClass(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -623,7 +623,7 @@ func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newsArray, err := news.GetNewsClass(a.DB, classID, "apc_database", "news")
+	newsArray, err := news.GetNewsClass(s.DataBase, classID, "apc_database", "news")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -634,7 +634,7 @@ func (a *App) getNewsClass(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateNews(w http.ResponseWriter, r *http.Request) {
 
 	var newsArray []news.News
 
@@ -647,7 +647,7 @@ func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := news.UpdateNews(a.DB, newsArray, "apc_database", "news"); err != nil {
+	if err := news.UpdateNews(s.DataBase, newsArray, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -655,7 +655,7 @@ func (a *App) updateNews(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteNews(w http.ResponseWriter, r *http.Request) {
 
 	var newsArray []news.News
 
@@ -668,7 +668,7 @@ func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := news.DeleteNews(a.DB, newsArray, "apc_database", "news"); err != nil {
+	if err := news.DeleteNews(s.DataBase, newsArray, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -680,7 +680,7 @@ func (a *App) deleteNews(w http.ResponseWriter, r *http.Request) {
 // 									 ADMINS  			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 
 	var adminLogin admin.AdminLogin
 	var singleAdmin admin.AdminInfo
@@ -697,7 +697,7 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if singleAdmin, err = admin.AuthAdmin(a.DB, adminLogin, "apc_database", "admin"); err != nil {
+	if singleAdmin, err = admin.AuthAdmin(s.DataBase, adminLogin, "apc_database", "admin"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.AdminPage{
 				UserExist: false,
@@ -709,12 +709,12 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if class, err = schoolClass.GetClass(a.DB, singleAdmin.ClassID, "apc_database", "schoolClass"); err != nil {
+	if class, err = schoolClass.GetClass(s.DataBase, singleAdmin.ClassID, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if newsArray, err = news.GetNewsClass(a.DB, singleAdmin.ClassID, "apc_database", "news"); err != nil {
+	if newsArray, err = news.GetNewsClass(s.DataBase, singleAdmin.ClassID, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -729,7 +729,7 @@ func (a *App) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, ret)
 }
 
-func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 	var admins []admin.AdminCreate
 
@@ -742,7 +742,7 @@ func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.CreateAdmin(a.DB, a.API, admins, "apc_database", "admin"); err != nil {
+	if err := admin.CreateAdmin(s.DataBase, s.GoForces, admins, "apc_database", "admin"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -750,13 +750,13 @@ func (a *App) createAdmins(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
 
-	if err := admin.CreateAdminFile(a.DB, string(request), "apc_database", "admin"); err != nil {
+	if err := admin.CreateAdminFile(s.DataBase, string(request), "apc_database", "admin"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -765,9 +765,9 @@ func (a *App) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getAdmins(w http.ResponseWriter, r *http.Request) {
 
-	admins, err := admin.GetAdmins(a.DB, "apc_database", "admin")
+	admins, err := admin.GetAdmins(s.DataBase, "apc_database", "admin")
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -776,7 +776,7 @@ func (a *App) getAdmins(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, admins)
 }
 
-func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
 	var adminUpdate admin.AdminUpdate
 
@@ -789,7 +789,7 @@ func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.UpdateAdmins(a.DB, a.API, adminUpdate, "apc_database", "admin"); err != nil {
+	if err := admin.UpdateAdmins(s.DataBase, s.GoForces, adminUpdate, "apc_database", "admin"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -797,7 +797,7 @@ func (a *App) updateAdmins(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 	var adminUpdateStudent admin.AdminUpdateStudent
 
@@ -810,7 +810,7 @@ func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.UpdateAdminStudent(a.DB, a.API, adminUpdateStudent, "apc_database", "student"); err != nil {
+	if err := admin.UpdateAdminStudent(s.DataBase, s.GoForces, adminUpdateStudent, "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -819,7 +819,7 @@ func (a *App) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getOptions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, nil)
 }
 
@@ -827,7 +827,7 @@ func (a *App) getOptions(w http.ResponseWriter, r *http.Request) {
 // 								        PROJECTS		 				            		 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (a *App) getProjectStudent(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 
 	var studentProjects []student.StudentProject
 	var err error
@@ -839,7 +839,7 @@ func (a *App) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if studentProjects, err = student.GetProjects(a.DB, studentID, "apc_database", "projects"); err != nil {
+	if studentProjects, err = student.GetProjects(s.DataBase, studentID, "apc_database", "projects"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -848,6 +848,6 @@ func (a *App) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) createProject(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "Not Implemented"})
 }

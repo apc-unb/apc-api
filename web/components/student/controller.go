@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apc-unb/apc-api/utils"
+	"github.com/apc-unb/apc-api/web/utils"
 	"github.com/togatoga/goforces"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"

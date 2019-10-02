@@ -3,11 +3,11 @@ package test
 import (
 	"testing"
 
-	"github.com/apc-unb/apc-api/components/contest"
-	"github.com/apc-unb/apc-api/components/schoolClass"
-	"github.com/apc-unb/apc-api/components/student"
-	"github.com/apc-unb/apc-api/components/submission"
-	"github.com/apc-unb/apc-api/components/task"
+	"github.com/apc-unb/apc-api/web/components/contest"
+	"github.com/apc-unb/apc-api/web/components/schoolClass"
+	"github.com/apc-unb/apc-api/web/components/student"
+	"github.com/apc-unb/apc-api/web/components/submission"
+	"github.com/apc-unb/apc-api/web/components/task"
 )
 
 func TestContest(t *testing.T) {
