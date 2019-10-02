@@ -1,5 +1,5 @@
 
-# DraGon T
+# DraGon T Pratform
 
   
 
@@ -288,7 +288,17 @@ O objetivo desse software será para facilitar o seu acompanhamento de cada alun
 
 # Tente você mesmo
 
-  
+## Deploy Mode
+
+Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo de produção
+
+```bash
+
+docker-compose up --build
+
+```
+
+## Developer Mode
 
 Na raiz do projeto, execute os seguintes comandos para executar o projeto no modo desenvolvedor
   
@@ -337,3 +347,4 @@ go build
 --log-level debug
 
 ```
+
