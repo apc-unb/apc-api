@@ -246,10 +246,6 @@ func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdat
 		update["grades.lists"] = admin.Grades.Lists
 	}
 
-	if len(admin.Grades.Projects) > 0 {
-		update["grades.projects"] = admin.Grades.Projects
-	}
-
 	updateSet := bson.M{"$set": update}
 
 	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {

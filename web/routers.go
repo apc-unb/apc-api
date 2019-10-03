@@ -8,6 +8,7 @@ import (
 	"github.com/apc-unb/apc-api/web/components/admin"
 	"github.com/apc-unb/apc-api/web/components/exam"
 	"github.com/apc-unb/apc-api/web/components/news"
+	"github.com/apc-unb/apc-api/web/components/project"
 	"github.com/apc-unb/apc-api/web/components/schoolClass"
 	"github.com/apc-unb/apc-api/web/components/student"
 	"github.com/apc-unb/apc-api/web/components/submission"
@@ -829,7 +830,7 @@ func (s *Server) getOptions(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 
-	var studentProjects []student.StudentProject
+	var studentProjects []project.Project
 	var err error
 	vars := mux.Vars(r)
 	studentID, err := primitive.ObjectIDFromHex(vars["studentid"])
@@ -839,7 +840,7 @@ func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if studentProjects, err = student.GetProjects(s.DataBase, studentID, "apc_database", "projects"); err != nil {
+	if studentProjects, err = project.GetProjects(s.DataBase, studentID, "apc_database", "projects"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
