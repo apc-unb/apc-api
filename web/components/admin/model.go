@@ -15,6 +15,7 @@ type Admin struct {
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
+	Projects  int32              `json:"projects"`
 }
 
 // AdminCreate contais all admin data except from ID
@@ -26,6 +27,7 @@ type AdminCreate struct {
 	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
+	Projects  int32              `json:"projects"`
 }
 
 // AdminInfo contais all admin data except from Password
@@ -37,6 +39,7 @@ type AdminInfo struct {
 	Matricula string             `json:"matricula"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
+	Projects  int32              `json:"projects"`
 }
 
 // AdminUpdate contais all data that admin can update
@@ -47,6 +50,7 @@ type AdminUpdate struct {
 	Password    string             `json:"password"`
 	NewPassword string             `json:"newpassword"`
 	PhotoURL    string             `json:"photourl"`
+	Projects    int32              `json:"projects"`
 }
 
 // AdminUpdateStudent all data of a student to be updated

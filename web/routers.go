@@ -850,5 +850,25 @@ func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
-	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "Not Implemented"})
+
+	var projectInfo project.Project
+	var monitorInfo admin.Admin
+	var err error
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err = decoder.Decode(&projectInfo); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if monitorInfo, err = project.CreateProject(s.DataBase, projectInfo, "apc_database"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, monitorInfo)
+
 }
