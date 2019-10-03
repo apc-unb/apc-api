@@ -51,6 +51,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	var classID primitive.ObjectID
+	var classID2 primitive.ObjectID
 	var examID primitive.ObjectID
 	var studentID primitive.ObjectID
 	var monitorID1 primitive.ObjectID
@@ -67,6 +68,17 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	classID = s.insert("schoolClass", classDAO)
+
+	classDAO2 := schoolClass.SchoolClassCreate{
+		ProfessorFirstName: "Caetano",
+		ProfessorLastName:  "Veloso",
+		ClassName:          "2019",
+		Address:            "PJC 101",
+		Year:               2019,
+		Season:             2,
+	}
+
+	classID2 = s.insert("schoolClass", classDAO2)
 
 	studentDAO := student.StudentCreate{
 		ClassID:   classID,
@@ -91,7 +103,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		LastName:  "Leite",
 		Matricula: "1612346666",
 		Email:     "email.do.jose@gmail.com",
-		Projects:  2,
+		Projects:  6,
 	}
 
 	if monitorDAO1.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
@@ -106,7 +118,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		LastName:  "Gebrim",
 		Matricula: "160146666",
 		Email:     "email.do.luis@gmail.com",
-		Projects:  0,
+		Projects:  4,
 	}
 
 	if monitorDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
@@ -114,6 +126,21 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.insert("admin", monitorDAO2)
+
+	monitorDAO3 := admin.AdminCreate{
+		ClassID:   classID2,
+		FirstName: "Vitor",
+		LastName:  "Dullens",
+		Matricula: "1612346666",
+		Email:     "email.do.dullens@gmail.com",
+		Projects:  2,
+	}
+
+	if monitorDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	monitorID1 = s.insert("admin", monitorDAO3)
 
 	projectTypeDAO1 := project.ProjectType{
 		Name:     "Trabalho 1",
@@ -137,6 +164,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		StudentID:     studentID,
 		ProjectTypeID: projectType1ID,
 		MonitorID:     monitorID1,
+		ClassID:       classID,
 		SendTime:      time.Now(),
 		FileName:      "Veras hehe",
 		Status:        "Pending",
@@ -149,6 +177,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		StudentID:     studentID,
 		ProjectTypeID: projectType2ID,
 		MonitorID:     monitorID1,
+		ClassID:       classID,
 		SendTime:      time.Now(),
 		FileName:      "Veras2 hehe",
 		Status:        "Pending",
