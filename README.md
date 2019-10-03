@@ -86,17 +86,11 @@ go build
 ```
 
 ./apc-api serve --port 8080 \
-
 --mongo-host localhost \
-
 --mongo-port 27017 \
-
 --jwt-key SUPER_SECRET \
-
 --codeforces-key f3d968eea83ad8d5f21cad0365edcc200439c6f0 \
-
 --codeforces-secret b30c206b689d5ba004534c6780aa7be8e234a7f3 \
-
 --log-level debug
 
 ```
