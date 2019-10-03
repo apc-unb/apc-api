@@ -28,21 +28,19 @@ services:
     image : apcunb/apc-admin
     ports:
       - 5000:5000
-    depends_on:
-      - apc-api
     networks:
       - internal-net
       - nginx-net
 
-  apc-alunos:
-    image : apcunb/apc-alunos
-    ports:
-      - 4000:4000
-    depends_on:
-      - apc-api
-    networks:
-      - internal-net
-      - nginx-net       
+  # apc-alunos:
+  #   image : apcunb/apc-alunos
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - apc-api
+  #   networks:
+  #     - internal-net
+  #     - nginx-net       
 
   apc-mongo:
     image: mongo
