@@ -7,6 +7,7 @@ import (
 
 	"github.com/apc-unb/apc-api/web/components/exam"
 	"github.com/apc-unb/apc-api/web/components/news"
+	"github.com/apc-unb/apc-api/web/components/project"
 	"github.com/apc-unb/apc-api/web/components/student"
 	"github.com/apc-unb/apc-api/web/components/task"
 	"github.com/apc-unb/apc-api/web/utils"
@@ -81,7 +82,7 @@ func (s *Server) insertData() {
 
 	studentID = s.insert("student", studentDAO)
 
-	projectTypeDAO1 := student.ProjectType{
+	projectTypeDAO1 := project.ProjectType{
 		Name:     "Trabalho 1",
 		Order:    1,
 		DeadLine: time.Now().Add(time.Minute * 30),
@@ -90,7 +91,7 @@ func (s *Server) insertData() {
 
 	projectType1ID = s.insert("projectType", projectTypeDAO1)
 
-	projectTypeDAO2 := student.ProjectType{
+	projectTypeDAO2 := project.ProjectType{
 		Name:     "Trabalho 2",
 		Order:    2,
 		DeadLine: time.Now().Add(time.Minute * 60),
@@ -99,7 +100,7 @@ func (s *Server) insertData() {
 
 	projectType2ID = s.insert("projectType", projectTypeDAO2)
 
-	studentProject1 := student.StudentProject{
+	studentProject1 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType1ID,
 		SendTime:      time.Now(),
@@ -110,7 +111,7 @@ func (s *Server) insertData() {
 
 	s.insert("projects", studentProject1)
 
-	studentProject2 := student.StudentProject{
+	studentProject2 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType2ID,
 		SendTime:      time.Now(),
