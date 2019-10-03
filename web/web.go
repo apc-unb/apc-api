@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/apc-unb/apc-api/web/components/admin"
+
 	"github.com/apc-unb/apc-api/web/components/exam"
 	"github.com/apc-unb/apc-api/web/components/news"
 	"github.com/apc-unb/apc-api/web/components/project"
@@ -45,12 +47,13 @@ func (s *Server) InitFromWebBuilder(webBuilder *config.WebBuilder) *Server {
 	return s
 }
 
-func (s *Server) insertData() {
+func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	var classID primitive.ObjectID
 	var examID primitive.ObjectID
 	var studentID primitive.ObjectID
+	var monitorID1 primitive.ObjectID
 	var projectType1ID primitive.ObjectID
 	var projectType2ID primitive.ObjectID
 
@@ -82,6 +85,36 @@ func (s *Server) insertData() {
 
 	studentID = s.insert("student", studentDAO)
 
+	monitorDAO1 := admin.AdminCreate{
+		ClassID:   classID,
+		FirstName: "Jose",
+		LastName:  "Leite",
+		Matricula: "1612346666",
+		Email:     "email.do.jose@gmail.com",
+		Projects:  2,
+	}
+
+	if monitorDAO1.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	monitorID1 = s.insert("admin", monitorDAO1)
+
+	monitorDAO2 := admin.AdminCreate{
+		ClassID:   classID,
+		FirstName: "Luis",
+		LastName:  "Gebrim",
+		Matricula: "160146666",
+		Email:     "email.do.luis@gmail.com",
+		Projects:  0,
+	}
+
+	if monitorDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	s.insert("admin", monitorDAO2)
+
 	projectTypeDAO1 := project.ProjectType{
 		Name:     "Trabalho 1",
 		Order:    1,
@@ -103,6 +136,7 @@ func (s *Server) insertData() {
 	studentProject1 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType1ID,
+		MonitorID:     monitorID1,
 		SendTime:      time.Now(),
 		FileName:      "Veras hehe",
 		Status:        "Pending",
@@ -114,6 +148,7 @@ func (s *Server) insertData() {
 	studentProject2 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType2ID,
+		MonitorID:     monitorID1,
 		SendTime:      time.Now(),
 		FileName:      "Veras2 hehe",
 		Status:        "Pending",
@@ -147,6 +182,8 @@ func (s *Server) insertData() {
 
 	s.insert("task", taskDAO)
 
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "Data created!"})
+
 }
 
 func (s *Server) insert(collectionName string, data interface{}) primitive.ObjectID {
@@ -170,7 +207,6 @@ func (s *Server) insert(collectionName string, data interface{}) primitive.Objec
 // Creates and run the server
 func (s *Server) Run() error {
 
-	s.insertData()
 	prometheus.RecordUpTime()
 
 	router := mux.NewRouter()
@@ -232,6 +268,8 @@ func (s *Server) Run() error {
 
 	router.HandleFunc("/projects/send", s.createProject).Methods("POST")
 	router.HandleFunc("/projects/{studentid}", s.getProjectStudent).Methods("GET")
+
+	router.HandleFunc("/data", s.insertData).Methods("GET")
 
 	router.Handle("/metrics", promhttp.Handler())
 
