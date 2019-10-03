@@ -80,7 +80,9 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
-		bson.D{{}},
+		bson.M{
+			"classid": projectInfo.ClassID,
+		},
 		options.Find().SetProjection(projection).SetSort(sortMethod).SetLimit(1),
 	)
 

@@ -19,6 +19,7 @@ type Project struct {
 	StudentID     primitive.ObjectID  `bson:"studentID,omitempty"`
 	ProjectTypeID primitive.ObjectID  `bson:"projectypeID,omitempty"`
 	MonitorID     primitive.ObjectID  `bson:"monitorID,omitempty"`
+	ClassID       primitive.ObjectID  `bson:"classID,omitempty"`
 	SendTime      time.Time           `json:"time,omitempty"`
 	FileName      string              `json:"filename,omitempty"`
 	Status        string              `json:"status,omitempty"`
