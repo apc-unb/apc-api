@@ -295,7 +295,8 @@ func (s *Server) Run() error {
 	router.HandleFunc("/news", s.updateNews).Methods("PUT")
 	router.HandleFunc("/news", s.deleteNews).Methods("DELETE")
 
-	router.HandleFunc("/projects/send", s.createProject).Methods("POST")
+	router.HandleFunc("/projects", s.createProject).Methods("POST")
+	router.HandleFunc("/projects/status", s.updateStatusProject).Methods("PUT")
 	router.HandleFunc("/projects/{studentid}", s.getProjectStudent).Methods("GET")
 
 	router.HandleFunc("/data", s.insertData).Methods("GET")

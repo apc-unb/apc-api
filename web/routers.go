@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -871,4 +872,27 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 
 	utils.RespondWithJSON(w, http.StatusOK, monitorInfo)
 
+}
+
+func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Recebi um request no update")
+
+	var projectInfo project.Project
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&projectInfo); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.UpdateStatusProject(s.DataBase, projectInfo, "apc_database", "projects"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
