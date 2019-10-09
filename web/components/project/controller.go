@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 
 	"github.com/apc-unb/apc-api/web/components/admin"
 
@@ -138,5 +139,31 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	}
 
 	return monitorInfo, nil
+
+}
+
+func UpdateStatusProject(db *mongo.Client, projectStatus Project, database_name, collection_name string) error {
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	filter := bson.M{
+		"_id": projectStatus.ID,
+	}
+
+	update := bson.M{}
+
+	if projectStatus.Status == "" {
+		return errors.New("Empty Status")
+	}
+
+	update["status"] = projectStatus.Status
+
+	updateSet := bson.M{"$set": update}
+
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
+	}
+
+	return nil
 
 }
