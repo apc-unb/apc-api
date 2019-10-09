@@ -11,6 +11,10 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/mongodb/mongo-go-driver v0.3.0
 	github.com/prometheus/client_golang v1.1.0
+	github.com/sirupsen/logrus v1.2.0
+	github.com/spf13/cobra v0.0.5
+	github.com/spf13/pflag v1.0.5
+	github.com/spf13/viper v1.4.0
 	github.com/togatoga/goforces v0.0.0-20190217191202-812e3efb3eb8
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
 	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc
