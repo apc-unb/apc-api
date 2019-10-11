@@ -4,13 +4,13 @@
 
 # Visão Geral
 
-DragonT é uma plataforma que centraliza o acesso à materiais do curso - e forneça relatórios automáticos do progresso de cada aluno individual (tipo a2oj) e da turma como um todo.
+DragonT é uma plataforma que centraliza o acesso à materiais do curso. Fornece relatórios automáticos do progresso de cada aluno individualmente e da turma como um todo.
 
   
 
 # Objetivo
 
-O objetivo desse software será para facilitar o seu acompanhamento de cada aluno, tendo relatório automático do progresso da turma, e também permitindo que você tenha uma noção do desenvolvimento da turma, pra ver se o aluno merece aquele 0,1 no final do ano e etc. Ele também irá servir o conteúdo teórico que atualmente está no GitHub.
+O objetivo desse software será para facilitar o trabalho do professor no acompanhamento de cada aluno, tendo relatório automático do progresso da turma, e também permitindo que você tenha uma noção do desenvolvimento da turma, pra ver se aquele aluno merece o famoso 0,1 no final do semestre. Também irá servir o conteúdo teórico que atualmente está neste [link](https://carlacastanho.github.io/Material-de-APC/).
 
   
 
