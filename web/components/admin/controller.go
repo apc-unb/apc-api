@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apc-unb/apc-api/web/utils"
 	"github.com/togatoga/goforces"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -24,24 +25,39 @@ import (
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Insert all students at the same time (if possible)
-func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, databaseName, collectionName string) error {
+func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, databaseName, collectionName string) ([]AdminLogin, error) {
+
+	var studentsReturn []AdminLogin
+	var singleAdmin AdminLogin
+	var pwd string
+	var err error
 
 	if len(admins) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	for _, admin := range admins {
 
-		admin.Password = generateRandomPassword()
+		pwd = generateRandomPassword()
 
-		if _, err := collection.InsertOne(context.TODO(), admin); err != nil {
-			return err
+		if admin.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
+			return nil, err
 		}
+
+		if _, err = collection.InsertOne(context.TODO(), admin); err != nil {
+			return nil, err
+		}
+
+		singleAdmin.Matricula = admin.Matricula
+		singleAdmin.Password = pwd
+
+		studentsReturn = append(studentsReturn, singleAdmin)
+
 	}
 
-	return nil
+	return studentsReturn, nil
 }
 
 // CreateAdminFile receive a csv file in that current format : https://github.com/apc-unb/tree/master/components/student
@@ -292,13 +308,27 @@ func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collect
 // @return 	error 			function error
 func AuthAdmin(db *mongo.Client, admin AdminLogin, databaseName, collectionName string) (AdminInfo, error) {
 
+	var err error
+
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	findAdmin := AdminInfo{}
+	adminData := AdminLogin{}
 
 	filter := bson.D{
 		{"matricula", admin.Matricula},
-		{"password", admin.Password},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne(),
+	).Decode(&adminData); err != nil {
+		return findAdmin, err
+	}
+
+	if err = utils.ComparePasswords(adminData.Password, admin.Password); err != nil {
+		return findAdmin, errors.New("mongo: no documents in result")
 	}
 
 	projection := bson.D{
