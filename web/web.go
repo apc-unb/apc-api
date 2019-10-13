@@ -254,6 +254,9 @@ func (s *Server) Run() error {
 	router.HandleFunc("/studentsFile", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/studentsFile", s.createStudentsFile).Methods("POST")
 
+	router.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/admin", s.getAdminLogin).Methods("POST")
+
 	router.HandleFunc("/admins", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/admins", s.getAdmins).Methods("GET")
 	router.HandleFunc("/admins", s.createAdmins).Methods("POST")
