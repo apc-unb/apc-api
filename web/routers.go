@@ -93,7 +93,7 @@ func (s *Server) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	var students []student.StudentCreate
-	var studentsLits []student.StudentLogin
+	var studentsList []student.StudentLogin
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -105,14 +105,14 @@ func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if studentsLits, err = student.CreateStudents(s.DataBase, s.GoForces, students, "apc_database", "student"); err != nil {
+	if studentsList, err = student.CreateStudents(s.DataBase, s.GoForces, students, "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	jsonReturn := student.StudentCreatePage{
 		Result:   "success",
-		Students: studentsLits,
+		Students: studentsList,
 	}
 
 	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
@@ -120,21 +120,21 @@ func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
-	var studentsLits []student.StudentLogin
+	var studentsList []student.StudentLogin
 	var err error
 
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
 
-	if studentsLits, err = student.CreateStudentsFile(s.DataBase, string(request), "apc_database", "student"); err != nil {
+	if studentsList, err = student.CreateStudentsFile(s.DataBase, string(request), "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	jsonReturn := student.StudentCreatePage{
 		Result:   "success",
-		Students: studentsLits,
+		Students: studentsList,
 	}
 
 	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
@@ -734,6 +734,8 @@ func (s *Server) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 	var admins []admin.AdminCreate
+	var adminsList []admin.AdminLogin
+	var err error
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -744,12 +746,17 @@ func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.CreateAdmin(s.DataBase, s.GoForces, admins, "apc_database", "admin"); err != nil {
+	if adminsList, err = admin.CreateAdmin(s.DataBase, s.GoForces, admins, "apc_database", "admin"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	jsonReturn := admin.AdminCreatePage{
+		Result: "success",
+		Admins: adminsList,
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
 }
 
 func (s *Server) createAdminsFile(w http.ResponseWriter, r *http.Request) {

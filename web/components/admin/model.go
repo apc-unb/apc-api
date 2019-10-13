@@ -71,3 +71,8 @@ type AdminLogin struct {
 	Matricula string `json:"matricula"`
 	Password  string `json:"password"`
 }
+
+type AdminCreatePage struct {
+	Result string       `json:"result"`
+	Admins []AdminLogin `json:"admins"`
+}
