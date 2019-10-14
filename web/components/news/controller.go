@@ -5,6 +5,7 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -15,11 +16,15 @@ func GetNews(db *mongo.Client, databaseName, collectionName string) ([]News, err
 	// Here's an array in which you can store the decoded documents
 	news := []News{}
 
+	var options options.FindOptions
+
+	options.SetSort(bson.D{{"updatedat", -1}})
+
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{},
-		nil,
+		&options,
 	)
 
 	if err != nil {
@@ -59,13 +64,17 @@ func GetNewsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, co
 	// Here's an array in which you can store the decoded documents
 	news := []News{}
 
+	var options options.FindOptions
+
+	options.SetSort(bson.D{{"updatedat", -1}})
+
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{
 			"classid": classID,
 		},
-		nil,
+		&options,
 	)
 
 	if err != nil {
