@@ -1,19 +1,7 @@
-{
-        "ID": "5d386a91ae48f2dab9d14e81",
-        "professorfirstname": "Carla",
-        "professorlastname": "Denise Castanho",
-        "classname": "A",
-        "address": "PAT 101",
-        "year": 2019,
-        "season": 2
-    },
-
-
-
 # APC Class
 
 ## Get all Classes
-* HTTP Request : ```GET http://api.com/classes```
+* HTTP Request : ```GET http://api.com/class```
 * Return a list of object in json format as follow
 
     ``` 
@@ -31,7 +19,7 @@
     ```
 
 ## Create Classes
-* HTTP Request : ```POST http://api.com/classes```
+* HTTP Request : ```POST http://api.com/class```
 * Send Classes's data in the request body in the follow format 
 
 	``` 
@@ -46,11 +34,11 @@
 			}...
 		]
 
-* http StatusCreated (201) will be sent if the student has been created correctly
+* http StatusCreated (201) will be sent if the class has been created correctly
 
 
 ## Update Classes
-* HTTP Request : ```PUT http://api.com/classes```
+* HTTP Request : ```PUT http://api.com/class```
 * Send data in the request body in the follow format
 
    ``` 
@@ -71,7 +59,7 @@
 
 
 ## Delete Classes
-* HTTP Request : ```DELETE http://api.com/classes```
+* HTTP Request : ```DELETE http://api.com/class```
 * Send data in the request body in the follow format
 
 	``` 
