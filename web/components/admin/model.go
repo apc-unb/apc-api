@@ -2,6 +2,7 @@ package admin
 
 import (
 	"github.com/apc-unb/apc-api/web/components/student"
+	"github.com/apc-unb/apc-api/web/components/user"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
@@ -12,7 +13,6 @@ type Admin struct {
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
-	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
 	Projects  int32              `json:"projects"`
@@ -24,7 +24,6 @@ type AdminCreate struct {
 	FirstName string             `json:"firstname"`
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
-	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
 	Projects  int32              `json:"projects"`
@@ -66,13 +65,7 @@ type AdminUpdateStudent struct {
 	Grades    student.StudentGrades  `json:"grades"`
 }
 
-// AdminLogin login data
-type AdminLogin struct {
-	Matricula string `json:"matricula"`
-	Password  string `json:"password"`
-}
-
 type AdminCreatePage struct {
-	Result string       `json:"result"`
-	Admins []AdminLogin `json:"admins"`
+	Result string                 `json:"result"`
+	Admins []user.UserCredentials `json:"admins"`
 }

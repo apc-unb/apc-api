@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apc-unb/apc-api/web/components/user"
 	"github.com/apc-unb/apc-api/web/utils"
 	"github.com/togatoga/goforces"
 
@@ -25,11 +26,11 @@ import (
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Insert all students at the same time (if possible)
-func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, databaseName, collectionName string) ([]AdminLogin, error) {
+func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, databaseName, collectionName string) ([]user.UserCredentials, error) {
 
-	var studentsReturn []AdminLogin
-	var singleAdmin AdminLogin
-	var pwd string
+	var studentsReturn []user.UserCredentials
+	var singleAdmin user.UserCredentials
+	var mongoReturn *mongo.InsertOneResult
 	var err error
 
 	if len(admins) == 0 {
@@ -37,21 +38,27 @@ func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, d
 	}
 
 	collection := db.Database(databaseName).Collection(collectionName)
+	collectionLogin := db.Database(databaseName).Collection(collectionName + "_login")
 
 	for _, admin := range admins {
 
-		pwd = generateRandomPassword()
+		pwd := generateRandomPassword()
 
-		if admin.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
+		if singleAdmin.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
 			return nil, err
 		}
 
-		if _, err = collection.InsertOne(context.TODO(), admin); err != nil {
-			return nil, err
+		if mongoReturn, err = collection.InsertOne(context.TODO(), admin); err != nil {
+			return studentsReturn, err
+		} else {
+			singleAdmin.ID = mongoReturn.InsertedID.(primitive.ObjectID)
 		}
 
 		singleAdmin.Matricula = admin.Matricula
-		singleAdmin.Password = pwd
+
+		if _, err = collectionLogin.InsertOne(context.TODO(), singleAdmin); err != nil {
+			return nil, err
+		}
 
 		studentsReturn = append(studentsReturn, singleAdmin)
 
@@ -67,28 +74,50 @@ func CreateAdmin(db *mongo.Client, api *goforces.Client, admins []AdminCreate, d
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
 // @return 	error 			function error
-func CreateAdminFile(db *mongo.Client, request, databaseName, collectionName string) error {
+func CreateAdminFile(db *mongo.Client, request, databaseName, collectionName string) ([]user.UserCredentials, error) {
 
 	var admins []AdminCreate
+	var studentsReturn []user.UserCredentials
+	var singleAdmin user.UserCredentials
+	var mongoReturn *mongo.InsertOneResult
 	var err error
 
 	if admins, err = getAdminFromFile(db, request); err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(admins) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	collection := db.Database(databaseName).Collection(collectionName)
+	collectionLogin := db.Database(databaseName).Collection(collectionName + "_login")
 
 	for _, admin := range admins {
-		if _, err := collection.InsertOne(context.TODO(), admin); err != nil {
-			return err
+
+		pwd := generateRandomPassword()
+
+		if singleAdmin.Password, err = utils.HashAndSalt([]byte(pwd)); err != nil {
+			return nil, err
 		}
+
+		if mongoReturn, err = collection.InsertOne(context.TODO(), admin); err != nil {
+			return studentsReturn, err
+		} else {
+			singleAdmin.ID = mongoReturn.InsertedID.(primitive.ObjectID)
+		}
+
+		singleAdmin.Matricula = admin.Matricula
+
+		if _, err = collectionLogin.InsertOne(context.TODO(), singleAdmin); err != nil {
+			return nil, err
+		}
+
+		studentsReturn = append(studentsReturn, singleAdmin)
+
 	}
 
-	return nil
+	return studentsReturn, nil
 }
 
 // GetAdmins return list of all students from Database
@@ -105,14 +134,10 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 
 	admins := []AdminInfo{}
 
-	projection := bson.D{
-		{"password", 0},
-	}
-
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.D{{}},
-		options.Find().SetProjection(projection),
+		options.Find(),
 	)
 
 	if err != nil {
@@ -151,27 +176,39 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
+	collectionLogin := db.Database(databaseName).Collection(collectionName + "_login")
 
-	currentAdmin := AdminUpdate{}
+	var err error
+	adminData := user.UserCredentials{}
 
 	filter := bson.M{
-		"_id":      admin.ID,
-		"password": admin.Password,
+		"_id": admin.ID,
 	}
 
-	projection := bson.M{
-		"_id": 1,
-	}
-
-	if err := collection.FindOne(
+	if err := collectionLogin.FindOne(
 		context.TODO(),
 		filter,
-		options.FindOne().SetProjection(projection),
-	).Decode(&currentAdmin); err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			return errors.New("Invalid password")
-		}
+		options.FindOne(),
+	).Decode(&adminData); err != nil {
 		return err
+	}
+
+	if err = utils.ComparePasswords(adminData.Password, admin.Password); err != nil {
+		return errors.New("mongo: no documents in result")
+	}
+
+	if admin.NewPassword != "" {
+		if admin.NewPassword, err = utils.HashAndSalt([]byte(admin.NewPassword)); err != nil {
+			return err
+		}
+
+		updateSet := bson.M{"$set": bson.M{"password": admin.NewPassword}}
+
+		if _, err := collectionLogin.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	filter = bson.M{
@@ -182,10 +219,6 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 
 	if admin.Email != "" {
 		update["email"] = admin.Email
-	}
-
-	if admin.NewPassword != "" {
-		update["password"] = admin.NewPassword
 	}
 
 	if admin.PhotoURL != "" {
@@ -306,20 +339,21 @@ func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collect
 // @param	collectionName	name of collection
 // @return 	AdminInfo		json if exist plus all admin data
 // @return 	error 			function error
-func AuthAdmin(db *mongo.Client, admin AdminLogin, databaseName, collectionName string) (AdminInfo, error) {
+func AuthAdmin(db *mongo.Client, admin user.UserCredentials, databaseName, collectionName string) (AdminInfo, error) {
 
 	var err error
 
 	collection := db.Database(databaseName).Collection(collectionName)
+	collectionLogin := db.Database(databaseName).Collection(collectionName + "_login")
 
 	findAdmin := AdminInfo{}
-	adminData := AdminLogin{}
+	adminData := user.UserCredentials{}
 
 	filter := bson.D{
 		{"matricula", admin.Matricula},
 	}
 
-	if err := collection.FindOne(
+	if err := collectionLogin.FindOne(
 		context.TODO(),
 		filter,
 		options.FindOne(),
@@ -331,14 +365,10 @@ func AuthAdmin(db *mongo.Client, admin AdminLogin, databaseName, collectionName 
 		return findAdmin, errors.New("mongo: no documents in result")
 	}
 
-	projection := bson.D{
-		{"password", 0},
-	}
-
 	if err := collection.FindOne(
 		context.TODO(),
 		filter,
-		options.FindOne().SetProjection(projection),
+		options.FindOne(),
 	).Decode(&findAdmin); err != nil {
 		return findAdmin, err
 	}
@@ -448,7 +478,7 @@ func getAdminFromFile(db *mongo.Client, request string) ([]AdminCreate, error) {
 			LastName:  strings.Trim(names[1], "\""),
 			Matricula: strings.Trim(total[i], "\""),
 			ClassID:   classID,
-			Password:  generateRandomPassword(),
+			//Password:  generateRandomPassword(),
 		}
 
 		students = append(students, elem)
