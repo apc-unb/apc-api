@@ -1,6 +1,7 @@
 package student
 
 import (
+	"github.com/apc-unb/apc-api/web/components/user"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
@@ -11,7 +12,6 @@ type Student struct {
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
 	Handles   StudentHandles     `json:"handles"`
-	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
 	Grades    StudentGrades      `json:"grades"`
@@ -23,7 +23,6 @@ type StudentCreate struct {
 	LastName  string             `json:"lastname"`
 	Matricula string             `json:"matricula"`
 	Handles   StudentHandles     `json:"handles"`
-	Password  string             `json:"password"`
 	PhotoURL  string             `json:"photourl"`
 	Email     string             `json:"email"`
 	Grades    StudentGrades      `json:"grades"`
@@ -50,11 +49,6 @@ type StudentUpdate struct {
 	PhotoURL    string             `json:"photourl"`
 }
 
-type StudentLogin struct {
-	Matricula string `json:"matricula"`
-	Password  string `json:"password"`
-}
-
 type StudentGrades struct {
 	Exams []float64 `json:"exams"`
 	Lists []float64 `json:"lists"`
@@ -66,6 +60,6 @@ type StudentHandles struct {
 }
 
 type StudentCreatePage struct {
-	Result   string         `json:"result"`
-	Students []StudentLogin `json:"students"`
+	Result   string                 `json:"result"`
+	Students []user.UserCredentials `json:"students"`
 }
