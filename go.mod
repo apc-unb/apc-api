@@ -15,6 +15,7 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.4.0
+	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/togatoga/goforces v0.0.0-20190217191202-812e3efb3eb8
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
 	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc

@@ -183,13 +183,17 @@ func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, databaseName
 	// Here's an array in which you can store the decoded documents
 	students := []Student{}
 
+	var options options.FindOptions
+
+	options.SetSort(bson.D{{"firstname", 1}, {"lastname", 1}})
+
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{
 			"classid": classID,
 		},
-		nil,
+		&options,
 	)
 
 	if err != nil {

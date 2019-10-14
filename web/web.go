@@ -61,7 +61,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	classDAO := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
-		ClassName:          "2019",
+		ClassName:          "H",
 		Address:            "PJC 144",
 		Year:               2019,
 		Season:             2,
@@ -72,7 +72,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	classDAO2 := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Caetano",
 		ProfessorLastName:  "Veloso",
-		ClassName:          "2019",
+		ClassName:          "A",
 		Address:            "PJC 101",
 		Year:               2019,
 		Season:             2,
@@ -80,11 +80,22 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	classID2 = s.insert("schoolClass", classDAO2)
 
+	classDAO3 := schoolClass.SchoolClassCreate{
+		ProfessorFirstName: "Caetano",
+		ProfessorLastName:  "Veloso",
+		ClassName:          "A",
+		Address:            "PJC 101",
+		Year:               2020,
+		Season:             1,
+	}
+
+	s.insert("schoolClass", classDAO3)
+
 	studentDAO := student.StudentCreate{
 		ClassID:   classID,
-		FirstName: "Aluno",
+		FirstName: "Student",
 		LastName:  "De Apc",
-		Matricula: "123",
+		Matricula: "321",
 		Handles: student.StudentHandles{
 			Codeforces: "Veras",
 		},
@@ -96,6 +107,40 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	studentID = s.insert("student", studentDAO)
+
+	studentDAO2 := student.StudentCreate{
+		ClassID:   classID,
+		FirstName: "Aluno",
+		LastName:  "De Apc",
+		Matricula: "123",
+		Handles: student.StudentHandles{
+			Codeforces: "Veras",
+		},
+		Email: "aluno@unb.com.br",
+	}
+
+	if studentDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	s.insert("student", studentDAO2)
+
+	studentDAO3 := student.StudentCreate{
+		ClassID:   classID,
+		FirstName: "Aluno",
+		LastName:  "Altamente preparado de Apc",
+		Matricula: "1234",
+		Handles: student.StudentHandles{
+			Codeforces: "Veras",
+		},
+		Email: "aluno@unb.com.br",
+	}
+
+	if studentDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+		panic(err)
+	}
+
+	s.insert("student", studentDAO3)
 
 	monitorDAO1 := admin.AdminCreate{
 		ClassID:   classID,
@@ -198,9 +243,33 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Title:       "Aula cancelada",
 		Description: "Devido ao alinhamento da lua, hoje nao teremos aula",
 		Tags:        []string{"Horóscopo", "É verdade esse bilhete"},
+		CreatedAT:   time.Now(),
+		UpdatedAT:   time.Now(),
 	}
 
 	s.insert("news", newsDAO)
+
+	newsDAO2 := news.NewsCreate{
+		ClassID:     classID,
+		Title:       "Cancelamento do cancelamento da aula",
+		Description: "A lua voltou ao seu local normal, teremos aula",
+		Tags:        []string{"Horóscopo", "É verdade esse bilhete"},
+		CreatedAT:   time.Now(),
+		UpdatedAT:   time.Now().Add(10 * time.Minute),
+	}
+
+	s.insert("news", newsDAO2)
+
+	newsDAO3 := news.NewsCreate{
+		ClassID:     classID,
+		Title:       "Prova 1",
+		Description: "Se ligue na prova 1 galera",
+		Tags:        []string{"Prova 1", "Rumo ao MM"},
+		CreatedAT:   time.Now(),
+		UpdatedAT:   time.Now().Add(5 * time.Minute),
+	}
+
+	s.insert("news", newsDAO3)
 
 	taskDAO := task.TaskCreate{
 		ExamID:    examID,
@@ -242,54 +311,54 @@ func (s *Server) Run() error {
 	router.Use(middleware.GetPrometheusMiddleware())
 	router.Use(middleware.GetCorsMiddleware())
 
-	router.HandleFunc("/student", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/student", s.getStudentLogin).Methods("POST")
+	router.HandleFunc("/student/login", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/student/login", s.getStudentLogin).Methods("POST")
 
-	router.HandleFunc("/students", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/students", s.getStudents).Methods("GET")
-	router.HandleFunc("/students/{classid}", s.getStudentsClass).Methods("GET")
-	router.HandleFunc("/students", s.createStudents).Methods("POST")
-	router.HandleFunc("/students", s.updateStudents).Methods("PUT")
-	router.HandleFunc("/students", s.deleteStudents).Methods("DELETE")
-	router.HandleFunc("/studentsFile", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/studentsFile", s.createStudentsFile).Methods("POST")
+	router.HandleFunc("/student", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/student", s.getStudents).Methods("GET")
+	router.HandleFunc("/student/{classid}", s.getStudentsClass).Methods("GET")
+	router.HandleFunc("/student", s.createStudents).Methods("POST")
+	router.HandleFunc("/student", s.updateStudents).Methods("PUT")
+	router.HandleFunc("/student", s.deleteStudents).Methods("DELETE")
+	router.HandleFunc("/student/file", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/student/file", s.createStudentsFile).Methods("POST")
+
+	router.HandleFunc("/admin/login", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/admin/login", s.getAdminLogin).Methods("POST")
 
 	router.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/admin", s.getAdminLogin).Methods("POST")
-
-	router.HandleFunc("/admins", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/admins", s.getAdmins).Methods("GET")
-	router.HandleFunc("/admins", s.createAdmins).Methods("POST")
-	router.HandleFunc("/admins", s.updateAdmins).Methods("PUT")
-	router.HandleFunc("/adminsFile", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/adminsFile", s.createAdminsFile).Methods("POST")
+	router.HandleFunc("/admin", s.getAdmins).Methods("GET")
+	router.HandleFunc("/admin", s.createAdmins).Methods("POST")
+	router.HandleFunc("/admin", s.updateAdmins).Methods("PUT")
+	router.HandleFunc("/admin/file", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/admin/file", s.createAdminsFile).Methods("POST")
 	router.HandleFunc("/admin/student", s.updateAdminStudent).Methods("PUT")
 
-	router.HandleFunc("/classes", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/classes", s.getClasses).Methods("GET")
-	router.HandleFunc("/classes", s.createClasses).Methods("POST")
-	router.HandleFunc("/classes", s.updateClasses).Methods("PUT")
-	router.HandleFunc("/classes", s.deleteClasses).Methods("DELETE")
+	router.HandleFunc("/class", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/class", s.getClasses).Methods("GET")
+	router.HandleFunc("/class", s.createClasses).Methods("POST")
+	router.HandleFunc("/class", s.updateClasses).Methods("PUT")
+	router.HandleFunc("/class", s.deleteClasses).Methods("DELETE")
 
-	router.HandleFunc("/submissions", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/submissions", s.getSubmissions).Methods("GET")
-	router.HandleFunc("/submissions", s.createSubmissions).Methods("POST")
-	router.HandleFunc("/submissions", s.updateSubmissions).Methods("PUT")
-	router.HandleFunc("/submissions", s.deleteSubmissions).Methods("DELETE")
+	router.HandleFunc("/submission", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/submission", s.getSubmissions).Methods("GET")
+	router.HandleFunc("/submission", s.createSubmissions).Methods("POST")
+	router.HandleFunc("/submission", s.updateSubmissions).Methods("PUT")
+	router.HandleFunc("/submission", s.deleteSubmissions).Methods("DELETE")
 
-	router.HandleFunc("/tasks", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/tasks", s.getTasks).Methods("GET")
-	router.HandleFunc("/tasks/{examid}", s.getTasksExam).Methods("GET")
-	router.HandleFunc("/tasks", s.createTasks).Methods("POST")
-	router.HandleFunc("/tasks", s.updateTasks).Methods("PUT")
-	router.HandleFunc("/tasks", s.deleteTasks).Methods("DELETE")
+	router.HandleFunc("/task", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/task", s.getTasks).Methods("GET")
+	router.HandleFunc("/task/{examid}", s.getTasksExam).Methods("GET")
+	router.HandleFunc("/task", s.createTasks).Methods("POST")
+	router.HandleFunc("/task", s.updateTasks).Methods("PUT")
+	router.HandleFunc("/task", s.deleteTasks).Methods("DELETE")
 
-	router.HandleFunc("/exams", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/exams", s.getExams).Methods("GET")
-	router.HandleFunc("/exams/{classid}", s.getExamsClass).Methods("GET")
-	router.HandleFunc("/exams", s.createExams).Methods("POST")
-	router.HandleFunc("/exams", s.updateExams).Methods("PUT")
-	router.HandleFunc("/exams", s.deleteExams).Methods("DELETE")
+	router.HandleFunc("/exam", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/exam", s.getExams).Methods("GET")
+	router.HandleFunc("/exam/{classid}", s.getExamsClass).Methods("GET")
+	router.HandleFunc("/exam", s.createExams).Methods("POST")
+	router.HandleFunc("/exam", s.updateExams).Methods("PUT")
+	router.HandleFunc("/exam", s.deleteExams).Methods("DELETE")
 
 	router.HandleFunc("/news", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/news", s.getNews).Methods("GET")
@@ -298,9 +367,9 @@ func (s *Server) Run() error {
 	router.HandleFunc("/news", s.updateNews).Methods("PUT")
 	router.HandleFunc("/news", s.deleteNews).Methods("DELETE")
 
-	router.HandleFunc("/projects", s.createProject).Methods("POST")
-	router.HandleFunc("/projects/status", s.updateStatusProject).Methods("PUT")
-	router.HandleFunc("/projects/{studentid}", s.getProjectStudent).Methods("GET")
+	router.HandleFunc("/project", s.createProject).Methods("POST")
+	router.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
+	router.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")
 
 	router.HandleFunc("/data", s.insertData).Methods("GET")
 
