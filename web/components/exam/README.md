@@ -2,7 +2,7 @@
 # Exam
 
 ## Get all Exams
-* HTTP Request : ```GET http://api.com/exams```
+* HTTP Request : ```GET http://api.com/exam```
 * Return a list of object in json format as follow
 
     ``` 
@@ -17,7 +17,7 @@
 
 
 ## Get all Exams from a class
-* HTTP Request : ```GET http://api.com/exams/{classID}```
+* HTTP Request : ```GET http://api.com/exam/{classid}```
 * Return a list of object in json format as follow
 
     ``` 
@@ -32,7 +32,7 @@
 
 
 ## Create Exams
-* HTTP Request : ```POST http://api.com/exams```
+* HTTP Request : ```POST http://api.com/exam```
 * Send exams's data in the request body in the follow format 
 
 	``` 
@@ -48,7 +48,7 @@
 
 
 ## Update Exams
-* HTTP Request : ```PUT http://api.com/exams```
+* HTTP Request : ```PUT http://api.com/exam```
 * Send data in the request body in the follow format
 
     ``` 
@@ -65,7 +65,7 @@
 
 
 ## Delete Exams
-* HTTP Request : ```DELETE http://api.com/exams```
+* HTTP Request : ```DELETE http://api.com/exam```
 * Send data in the request body in the follow format
 
 	``` 
