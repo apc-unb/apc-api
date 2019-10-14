@@ -1,7 +1,7 @@
 # Admin
 
 ## Create Admins
-* HTTP Request : ```POST http://api.com/admins```
+* HTTP Request : ```POST http://api.com/admin```
 * Send admins's data in the request body in the follow format 
 
 	``` 
@@ -17,7 +17,7 @@
 * http StatusCreated (201) will be sent if the admin has been created correctly
 
 ## Create Admins by CSV file
-* HTTP Request : ```PUT http://api.com/adminsFile```
+* HTTP Request : ```POST http://api.com/admin/file```
 * Send data in the request body in the follow format
 
 	|    ANO/SEMESTE/TURMA   |             2019/2/A 
@@ -35,7 +35,7 @@
 * http StatusCreated (201) will be sent if the admin has been created correctly
 
 ## Get all Admins
-* HTTP Request : ```GET http://api.com/admins```
+* HTTP Request : ```GET http://api.com/admin```
 * Return a list of object in json format as follow
 
     ``` 
@@ -53,7 +53,7 @@
     ```
 
 ## Update Admins
-* HTTP Request : ```PUT http://api.com/admins```
+* HTTP Request : ```PUT http://api.com/admin```
 * Send data in the request body in the follow format
 
 	``` 
@@ -125,4 +125,22 @@
 * http StatusOK (200) will be sent if the Admins have been deleted correctly
 
 
+## Log in Admin
+* HTTP Request : ```POST http://api.com/admin/login```
 
+    ``` 
+		{
+			"matricula" :	String,
+			"password"  :	String,
+		}
+    ```
+* Return a json format as follow
+
+	```
+	{
+	    "userexist"	:	Boolean,
+	    "admin"	:	AdminInfo,
+	    "class"	:	SchoolClass,
+	    "news"	:	[]News 
+	}
+	```

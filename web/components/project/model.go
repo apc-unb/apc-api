@@ -20,7 +20,7 @@ type Project struct {
 	ProjectTypeID primitive.ObjectID  `bson:"projectypeID,omitempty"`
 	MonitorID     primitive.ObjectID  `bson:"monitorID,omitempty"`
 	ClassID       primitive.ObjectID  `bson:"classID,omitempty"`
-	SendTime      time.Time           `json:"time,omitempty"`
+	CreatedAT     time.Time           `json:"createdat,omitempty"`
 	FileName      string              `json:"filename,omitempty"`
 	Status        string              `json:"status,omitempty"`
 	Score         float64             `json:"score,omitempty"`
