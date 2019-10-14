@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/apc-unb/apc-api/web/components/admin"
+	"github.com/apc-unb/apc-api/web/components/user"
 
 	"github.com/apc-unb/apc-api/web/components/exam"
 	"github.com/apc-unb/apc-api/web/components/news"
@@ -50,13 +51,6 @@ func (s *Server) InitFromWebBuilder(webBuilder *config.WebBuilder) *Server {
 func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	var err error
-	var classID primitive.ObjectID
-	var classID2 primitive.ObjectID
-	var examID primitive.ObjectID
-	var studentID primitive.ObjectID
-	var monitorID1 primitive.ObjectID
-	var projectType1ID primitive.ObjectID
-	var projectType2ID primitive.ObjectID
 
 	classDAO := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Carla",
@@ -67,7 +61,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Season:             2,
 	}
 
-	classID = s.insert("schoolClass", classDAO)
+	classID := s.insert("schoolClass", classDAO)
 
 	classDAO2 := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Caetano",
@@ -78,7 +72,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Season:             2,
 	}
 
-	classID2 = s.insert("schoolClass", classDAO2)
+	classID2 := s.insert("schoolClass", classDAO2)
 
 	classDAO3 := schoolClass.SchoolClassCreate{
 		ProfessorFirstName: "Caetano",
@@ -102,11 +96,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Email: "aluno@unb.com.br",
 	}
 
-	if studentDAO.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	studentID := s.insert("student", studentDAO)
+
+	studentCredentialsDAO := user.UserCredentials{
+		ID:        studentID,
+		Matricula: studentDAO.Matricula,
+	}
+
+	if studentCredentialsDAO.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	studentID = s.insert("student", studentDAO)
+	s.insert("student_login", studentCredentialsDAO)
 
 	studentDAO2 := student.StudentCreate{
 		ClassID:   classID,
@@ -119,11 +120,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Email: "aluno@unb.com.br",
 	}
 
-	if studentDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	studentID2 := s.insert("student", studentDAO2)
+
+	studentCredentialsDAO2 := user.UserCredentials{
+		ID:        studentID2,
+		Matricula: studentDAO2.Matricula,
+	}
+
+	if studentCredentialsDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	s.insert("student", studentDAO2)
+	s.insert("student_login", studentCredentialsDAO2)
 
 	studentDAO3 := student.StudentCreate{
 		ClassID:   classID,
@@ -136,11 +144,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Email: "aluno@unb.com.br",
 	}
 
-	if studentDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	studentID3 := s.insert("student", studentDAO3)
+
+	studentCredentialsDAO3 := user.UserCredentials{
+		ID:        studentID3,
+		Matricula: studentDAO3.Matricula,
+	}
+
+	if studentCredentialsDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	s.insert("student", studentDAO3)
+	s.insert("student_login", studentCredentialsDAO3)
 
 	monitorDAO1 := admin.AdminCreate{
 		ClassID:   classID,
@@ -151,11 +166,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Projects:  6,
 	}
 
-	if monitorDAO1.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	monitorID1 := s.insert("admin", monitorDAO1)
+
+	adminCredentialsDAO1 := user.UserCredentials{
+		ID:        monitorID1,
+		Matricula: monitorDAO1.Matricula,
+	}
+
+	if adminCredentialsDAO1.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	monitorID1 = s.insert("admin", monitorDAO1)
+	s.insert("admin_login", adminCredentialsDAO1)
 
 	monitorDAO2 := admin.AdminCreate{
 		ClassID:   classID,
@@ -166,11 +188,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Projects:  4,
 	}
 
-	if monitorDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	monitorID2 := s.insert("admin", monitorDAO2)
+
+	adminCredentialsDAO2 := user.UserCredentials{
+		ID:        monitorID2,
+		Matricula: monitorDAO2.Matricula,
+	}
+
+	if adminCredentialsDAO2.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	s.insert("admin", monitorDAO2)
+	s.insert("admin_login", adminCredentialsDAO2)
 
 	monitorDAO3 := admin.AdminCreate{
 		ClassID:   classID2,
@@ -181,11 +210,18 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Projects:  2,
 	}
 
-	if monitorDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
+	monitorID3 := s.insert("admin", monitorDAO3)
+
+	adminCredentialsDAO3 := user.UserCredentials{
+		ID:        monitorID3,
+		Matricula: monitorDAO3.Matricula,
+	}
+
+	if adminCredentialsDAO3.Password, err = utils.HashAndSalt([]byte("123")); err != nil {
 		panic(err)
 	}
 
-	monitorID1 = s.insert("admin", monitorDAO3)
+	s.insert("admin_login", adminCredentialsDAO3)
 
 	projectTypeDAO1 := project.ProjectType{
 		Name:     "Trabalho 1",
@@ -194,7 +230,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Score:    10.0,
 	}
 
-	projectType1ID = s.insert("projectType", projectTypeDAO1)
+	projectType1ID := s.insert("projectType", projectTypeDAO1)
 
 	projectTypeDAO2 := project.ProjectType{
 		Name:     "Trabalho 2",
@@ -203,7 +239,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Score:    4.0,
 	}
 
-	projectType2ID = s.insert("projectType", projectTypeDAO2)
+	projectType2ID := s.insert("projectType", projectTypeDAO2)
 
 	studentProject1 := project.Project{
 		StudentID:     studentID,
@@ -236,7 +272,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Title:   "Prova 1 APC",
 	}
 
-	examID = s.insert("exam", examDAO)
+	examID := s.insert("exam", examDAO)
 
 	newsDAO := news.NewsCreate{
 		ClassID:     classID,
@@ -312,7 +348,7 @@ func (s *Server) Run() error {
 	router.Use(middleware.GetCorsMiddleware())
 
 	router.HandleFunc("/student/login", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/student/login", s.getStudentLogin).Methods("POST")
+	router.HandleFunc("/student/login", s.studentLogin).Methods("POST")
 
 	router.HandleFunc("/student", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/student", s.getStudents).Methods("GET")
@@ -324,7 +360,7 @@ func (s *Server) Run() error {
 	router.HandleFunc("/student/file", s.createStudentsFile).Methods("POST")
 
 	router.HandleFunc("/admin/login", s.getOptions).Methods("OPTIONS")
-	router.HandleFunc("/admin/login", s.getAdminLogin).Methods("POST")
+	router.HandleFunc("/admin/login", s.adminLogin).Methods("POST")
 
 	router.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/admin", s.getAdmins).Methods("GET")

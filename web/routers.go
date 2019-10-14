@@ -14,6 +14,7 @@ import (
 	"github.com/apc-unb/apc-api/web/components/student"
 	"github.com/apc-unb/apc-api/web/components/submission"
 	"github.com/apc-unb/apc-api/web/components/task"
+	"github.com/apc-unb/apc-api/web/components/user"
 	"github.com/apc-unb/apc-api/web/utils"
 	"github.com/gorilla/mux"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -23,9 +24,9 @@ import (
 // 									 STUDENTS			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (s *Server) getStudentLogin(w http.ResponseWriter, r *http.Request) {
+func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
-	var studentLogin student.StudentLogin
+	var UserCredentials user.UserCredentials
 	var singleStudent student.StudentInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
@@ -33,14 +34,14 @@ func (s *Server) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err = decoder.Decode(&studentLogin); err != nil {
+	if err = decoder.Decode(&UserCredentials); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if singleStudent, err = student.AuthStudent(s.DataBase, studentLogin, "apc_database", "student"); err != nil {
+	if singleStudent, err = student.AuthStudent(s.DataBase, UserCredentials, "apc_database", "student"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.StudentPage{
 				UserExist: false,
@@ -93,7 +94,7 @@ func (s *Server) getStudentLogin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 	var students []student.StudentCreate
-	var studentsList []student.StudentLogin
+	var studentsList []user.UserCredentials
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -120,7 +121,7 @@ func (s *Server) createStudents(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) createStudentsFile(w http.ResponseWriter, r *http.Request) {
 
-	var studentsList []student.StudentLogin
+	var studentsList []user.UserCredentials
 	var err error
 
 	request, _ := ioutil.ReadAll(r.Body)
@@ -682,9 +683,9 @@ func (s *Server) deleteNews(w http.ResponseWriter, r *http.Request) {
 // 									 ADMINS  			 								 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-func (s *Server) getAdminLogin(w http.ResponseWriter, r *http.Request) {
+func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 
-	var adminLogin admin.AdminLogin
+	var UserCredentials user.UserCredentials
 	var singleAdmin admin.AdminInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
@@ -692,14 +693,14 @@ func (s *Server) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err = decoder.Decode(&adminLogin); err != nil {
+	if err = decoder.Decode(&UserCredentials); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if singleAdmin, err = admin.AuthAdmin(s.DataBase, adminLogin, "apc_database", "admin"); err != nil {
+	if singleAdmin, err = admin.AuthAdmin(s.DataBase, UserCredentials, "apc_database", "admin"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ret := schoolClass.AdminPage{
 				UserExist: false,
@@ -734,7 +735,7 @@ func (s *Server) getAdminLogin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 	var admins []admin.AdminCreate
-	var adminsList []admin.AdminLogin
+	var adminsList []user.UserCredentials
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -761,16 +762,24 @@ func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 
+	var adminList []user.UserCredentials
+	var err error
+
 	request, _ := ioutil.ReadAll(r.Body)
 
 	defer r.Body.Close()
 
-	if err := admin.CreateAdminFile(s.DataBase, string(request), "apc_database", "admin"); err != nil {
+	if adminList, err = admin.CreateAdminFile(s.DataBase, string(request), "apc_database", "student"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+	jsonReturn := student.StudentCreatePage{
+		Result:   "success",
+		Students: adminList,
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
 
 }
 
