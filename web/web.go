@@ -225,8 +225,10 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	projectTypeDAO1 := project.ProjectType{
 		Name:     "Trabalho 1",
-		Order:    1,
-		DeadLine: time.Now().Add(time.Minute * 30),
+		Description:    "Codar em C, somar 2 numeros",
+		ClassID: classID,
+		Start: time.Now(),
+		End: time.Now().Add(time.Minute * 30),
 		Score:    10.0,
 	}
 
@@ -234,9 +236,11 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	projectTypeDAO2 := project.ProjectType{
 		Name:     "Trabalho 2",
-		Order:    2,
-		DeadLine: time.Now().Add(time.Minute * 60),
-		Score:    4.0,
+		Description:    "Codar em C, somar 3 numeros",
+		ClassID: classID,
+		Start: time.Now().Add(time.Minute * 30),
+		End: time.Now().Add(time.Minute * 90),
+		Score:    10.0,
 	}
 
 	projectType2ID := s.insert("projectType", projectTypeDAO2)
@@ -403,6 +407,8 @@ func (s *Server) Run() error {
 	router.HandleFunc("/news", s.updateNews).Methods("PUT")
 	router.HandleFunc("/news", s.deleteNews).Methods("DELETE")
 
+
+	router.HandleFunc("/project/type", s.getProjectType).Methods("GET")
 	router.HandleFunc("/project", s.createProject).Methods("POST")
 	router.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
 	router.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")

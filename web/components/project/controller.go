@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/apc-unb/apc-api/web/components/admin"
 
@@ -113,7 +114,7 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	// Assign current project to the monitor
 	projectInfo.MonitorID = monitorInfo.ID
 
-	// Updating amountto projects
+	// Updating amount of projects
 	update := bson.D{
 		{"$inc", bson.D{
 			{"projects", 1},
@@ -133,6 +134,8 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	//
 
 	collection = db.Database(databaseName).Collection("projects")
+
+	projectInfo.CreatedAT = time.Now()
 
 	if _, err := collection.InsertOne(context.TODO(), projectInfo); err != nil {
 		return monitorInfo, err
@@ -166,4 +169,49 @@ func UpdateStatusProject(db *mongo.Client, projectStatus Project, database_name,
 
 	return nil
 
+}
+
+func GetProjectsType (db *mongo.Client, databaseName, collectionName string) ([]ProjectType, error) {
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	// Here's an array in which you can store the decoded documents
+	types := []ProjectType{}
+
+	var options options.FindOptions
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{},
+		&options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem ProjectType
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push student inside student array
+		types = append(types, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return types, nil
 }

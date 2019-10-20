@@ -37,7 +37,7 @@
 
 ## Create News
 * HTTP Request : ```POST http://api.com/news```
-* Send News's data in the request body in the follow format 
+* Send News's data in the request body in the following format 
 
 	``` 
         [
@@ -55,7 +55,7 @@
 
 ## Update News
 * HTTP Request : ```PUT http://api.com/news```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
     ``` 
         [
@@ -74,7 +74,7 @@
 
 ## Delete News
 * HTTP Request : ```DELETE http://api.com/news```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[

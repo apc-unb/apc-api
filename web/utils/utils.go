@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,7 +13,13 @@ func RespondWithError(w http.ResponseWriter, code int, message string) {
 }
 
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
+	response, err := json.Marshal(payload)
+
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err.Error(),
+		}).Error("Error parsing interface to write on http response")
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)

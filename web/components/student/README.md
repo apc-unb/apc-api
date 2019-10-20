@@ -2,7 +2,7 @@
 
 ## Create Students
 * HTTP Request : ```POST http://api.com/student```
-* Send student's data in the request body in the follow format 
+* Send student's data in the request body in the following format 
 
 	``` 
 		[
@@ -18,7 +18,7 @@
 
 ## Create Students by CSV file
 * HTTP Request : ```POST http://api.com/student/file```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	|    ANO/SEMESTE/TURMA   |             2019/2/A 
 	|------------------------|-------------------------------
@@ -92,7 +92,7 @@
 
 ## Update Students
 * HTTP Request : ```PUT http://api.com/student```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 * PS : Student can only uptade empty handles
 
 	``` 
@@ -114,7 +114,7 @@
 
 ## Delete Students
 * HTTP Request : ```DELETE http://api.com/student```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[
