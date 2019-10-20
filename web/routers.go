@@ -886,7 +886,16 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, monitorInfo)
+	monitorReturn := map[string]interface{}{
+		"status":       "success",
+		"content" : map[string]interface{}{
+			"monitorName":  monitorInfo.FirstName + " " + monitorInfo.LastName,
+			"monitorEmail": monitorInfo.Email,
+		},
+	}
+
+
+	utils.RespondWithJSON(w, http.StatusCreated, monitorReturn)
 
 }
 
@@ -911,4 +920,19 @@ func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+
+func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var types []project.ProjectType
+	var err error
+
+	if types, err = project.GetProjectsType(s.DataBase, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, types)
+
 }

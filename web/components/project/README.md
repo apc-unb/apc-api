@@ -34,13 +34,12 @@
 
 ## Create Project
 * HTTP Request : ```POST http://api.com/project```
-* Send News's data in the request body in the follow format 
+* Send News's data in the request body in the following format 
 
 	``` 
         {
             "studentid"     :   ObjectID,
             "projecttypeid" :   ObjectID,
-            "monitorid"     :	ObjectId,
             "classid"       :	ObjectId,
             "createdat"     :	time.Time,
             "filename"      :	String,
@@ -48,4 +47,14 @@
         }
     ```
 
-* http StatusCreated (201) will be sent if the project has been created correctly
+* http StatusCreated (201) will be sent if the project has been created correctly and will return a JSON in the following format
+
+    ```
+       {
+           "status": "success",
+           "content": {
+               "monitorEmail": "email.do.luis@gmail.com",
+               "monitorName": "Luis Gebrim"
+           }
+       } 
+    ```

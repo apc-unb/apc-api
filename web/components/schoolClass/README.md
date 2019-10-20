@@ -20,7 +20,7 @@
 
 ## Create Classes
 * HTTP Request : ```POST http://api.com/class```
-* Send Classes's data in the request body in the follow format 
+* Send Classes's data in the request body in the following format 
 
 	``` 
         [
@@ -39,7 +39,7 @@
 
 ## Update Classes
 * HTTP Request : ```PUT http://api.com/class```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
    ``` 
         [
@@ -60,7 +60,7 @@
 
 ## Delete Classes
 * HTTP Request : ```DELETE http://api.com/class```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[

@@ -33,7 +33,7 @@
 
 ## Create Exams
 * HTTP Request : ```POST http://api.com/exam```
-* Send exams's data in the request body in the follow format 
+* Send exams's data in the request body in the following format 
 
 	``` 
         [
@@ -49,7 +49,7 @@
 
 ## Update Exams
 * HTTP Request : ```PUT http://api.com/exam```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
     ``` 
         [
@@ -66,7 +66,7 @@
 
 ## Delete Exams
 * HTTP Request : ```DELETE http://api.com/exam```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[

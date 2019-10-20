@@ -7,19 +7,21 @@ import (
 )
 
 type ProjectType struct {
-	ID       *primitive.ObjectID `bson:"_id,omitempty"`
-	Name     string              `json:"name"`
-	Order    int                 `json:"order"`
-	DeadLine time.Time           `json:"deadline"`
-	Score    float64             `json:"score"`
+	ID       	*primitive.ObjectID `bson:"_id,omitempty"`
+	Name     	string              `json:"name"`
+	Description string              `json:"descripton"`
+	ClassID  	primitive.ObjectID  `bson:"classID,omitempty"`
+	Start 		time.Time           `json:"start"`
+	End 		time.Time           `json:"end"`
+	Score    	float64             `json:"score"`
 }
 
 type Project struct {
 	ID            *primitive.ObjectID `bson:"_id,omitempty"`
 	StudentID     primitive.ObjectID  `bson:"studentID,omitempty"`
 	ProjectTypeID primitive.ObjectID  `bson:"projectypeID,omitempty"`
+	ClassID  	primitive.ObjectID  `bson:"classID,omitempty"`
 	MonitorID     primitive.ObjectID  `bson:"monitorID,omitempty"`
-	ClassID       primitive.ObjectID  `bson:"classID,omitempty"`
 	CreatedAT     time.Time           `json:"createdat,omitempty"`
 	FileName      string              `json:"filename,omitempty"`
 	Status        string              `json:"status,omitempty"`
