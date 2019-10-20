@@ -2,7 +2,7 @@
 
 ## Create Admins
 * HTTP Request : ```POST http://api.com/admin```
-* Send admins's data in the request body in the follow format 
+* Send admins's data in the request body in the following format 
 
 	``` 
 		[
@@ -18,7 +18,7 @@
 
 ## Create Admins by CSV file
 * HTTP Request : ```POST http://api.com/admin/file```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	|    ANO/SEMESTE/TURMA   |             2019/2/A 
 	|------------------------|-------------------------------
@@ -54,7 +54,7 @@
 
 ## Update Admins
 * HTTP Request : ```PUT http://api.com/admin```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[
@@ -72,7 +72,7 @@
 
 ## Update Students from Admin request
 * HTTP Request : ```PUT http://api.com/admin/student```
-* Send data in the request body in the follow format (id is required)
+* Send data in the request body in the following format (id is required)
 
 	``` 
 		[
@@ -100,7 +100,7 @@
 
 ## Delete Students from Admin request
 * HTTP Request : ```DELETE http://api.com/admin/student```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[
@@ -113,7 +113,7 @@
 
 ## Delete Admins
 * HTTP Request : ```DELETE http://api.com/admins```
-* Send data in the request body in the follow format
+* Send data in the request body in the following format
 
 	``` 
 		[
