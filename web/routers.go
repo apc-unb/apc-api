@@ -30,6 +30,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 	var singleStudent student.StudentInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
+	var userProgress interface{}
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -43,9 +44,9 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleStudent, err = student.AuthStudent(s.DataBase, UserCredentials, "apc_database", "student"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := schoolClass.StudentPage{
-				UserExist: false,
-				Result:    "Invalid Login or Password",
+			ret := map[string]interface{}{
+				"UserExist": false,
+				"Result":    "Invalid Login or Password",
 			}
 			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
@@ -56,9 +57,9 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if class, err = schoolClass.GetClass(s.DataBase, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := schoolClass.StudentPage{
-				UserExist: false,
-				Result:    "Invalid student class",
+			ret := map[string]interface{}{
+				"UserExist": false,
+				"Result":    "Invalid student class",
 			}
 			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
@@ -69,9 +70,9 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if newsArray, err = news.GetNewsClass(s.DataBase, singleStudent.ClassID, "apc_database", "news"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := schoolClass.StudentPage{
-				UserExist: false,
-				Result:    "Invalid student news",
+			ret := map[string]interface{}{
+				"UserExist": false,
+				"Result":    "Invalid student news",
 			}
 			utils.RespondWithJSON(w, http.StatusOK, ret)
 		} else {
@@ -80,12 +81,18 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ret := schoolClass.StudentPage{
-		UserExist: true,
-		Result:    "success",
-		Student:   singleStudent,
-		Class:     class,
-		News:      newsArray,
+	if userProgress, err = student.GetUserProgress(class.ContestsIDs, singleStudent.Handles.Codeforces, s.GoForces); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ret := map[string]interface{}{
+		"UserExist" : "true",
+		"Result":    "success",
+		"Student":   singleStudent,
+		"Class":     class,
+		"News":      newsArray,
+		"Progress": userProgress,
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, ret)

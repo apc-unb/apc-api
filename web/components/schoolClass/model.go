@@ -3,7 +3,6 @@ package schoolClass
 import (
 	"github.com/apc-unb/apc-api/web/components/admin"
 	"github.com/apc-unb/apc-api/web/components/news"
-	"github.com/apc-unb/apc-api/web/components/student"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
@@ -15,6 +14,7 @@ type SchoolClass struct {
 	Address            string             `json:"address"`
 	Year               int                `json:"year"`
 	Season             int                `json:"season"`
+	ContestsIDs        []int 			  `json:"contestsids"`
 }
 
 type SchoolClassCreate struct {
@@ -24,14 +24,7 @@ type SchoolClassCreate struct {
 	Address            string `json:"address"`
 	Year               int    `json:"year"`
 	Season             int    `json:"season"`
-}
-
-type StudentPage struct {
-	UserExist bool                `json:"userexist"`
-	Result    string              `json:"result"`
-	Student   student.StudentInfo `json:"student"`
-	Class     SchoolClass         `json:"class"`
-	News      []news.News         `json:"news"`
+	ContestsIDs        []int  `json:"contestsids"`
 }
 
 type AdminPage struct {
