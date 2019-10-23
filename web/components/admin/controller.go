@@ -245,11 +245,32 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 // @param	databaseName	name of database
 // @param	collectionName	name of collection
 // @return 	error 			function error
-func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdateStudent, databaseName, collectionName string) error {
+func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdateStudent, databaseName, studentCollectionName, adminLoginCollectionName string) error {
 
-	collection := db.Database(databaseName).Collection(collectionName)
+	collection := db.Database(databaseName).Collection(adminLoginCollectionName)
+
+	var err error
+	adminData := user.UserCredentials{}
 
 	filter := bson.M{
+		"_id": admin.AdminID,
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+		options.FindOne(),
+	).Decode(&adminData); err != nil {
+		return err
+	}
+
+	if err = utils.ComparePasswords(adminData.Password, admin.AdminPassword); err != nil {
+		return errors.New("invalid password")
+	}
+
+	collection = db.Database(databaseName).Collection(studentCollectionName)
+
+	filter = bson.M{
 		"_id": admin.StudentID,
 	}
 

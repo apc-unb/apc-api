@@ -54,15 +54,17 @@ type AdminUpdate struct {
 
 // AdminUpdateStudent all data of a student to be updated
 type AdminUpdateStudent struct {
-	StudentID primitive.ObjectID     `bson:"_id,omitempty"`
-	ClassID   primitive.ObjectID     `bson:"classid,omitempty"`
-	FirstName string                 `json:"firstname"`
-	LastName  string                 `json:"lastname"`
-	Matricula string                 `json:"matricula"`
-	Handles   student.StudentHandles `json:"handles"`
-	PhotoURL  string                 `json:"photourl"`
-	Email     string                 `json:"email"`
-	Grades    student.StudentGrades  `json:"grades"`
+	AdminID 			primitive.ObjectID 	   `bson:"adminid,omitempty"`
+	AdminPassword    	string             	   `json:"adminpassword"`
+	StudentID			primitive.ObjectID     `bson:"studentid,omitempty"`
+	ClassID   			primitive.ObjectID     `bson:"classid,omitempty"`
+	FirstName 			string                 `json:"firstname"`
+	LastName  			string                 `json:"lastname"`
+	Matricula 			string                 `json:"matricula"`
+	Handles   			student.StudentHandles `json:"handles"`
+	PhotoURL  			string                 `json:"photourl"`
+	Email     			string                 `json:"email"`
+	Grades    			student.StudentGrades  `json:"grades"`
 }
 
 type AdminCreatePage struct {
