@@ -59,6 +59,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Address:            "PJC 144",
 		Year:               2019,
 		Season:             2,
+		ContestsIDs: []int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
 	}
 
 	classID := s.insert("schoolClass", classDAO)
@@ -70,6 +71,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Address:            "PJC 101",
 		Year:               2019,
 		Season:             2,
+		ContestsIDs:[]int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
 	}
 
 	classID2 := s.insert("schoolClass", classDAO2)
@@ -81,6 +83,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Address:            "PJC 101",
 		Year:               2020,
 		Season:             1,
+		ContestsIDs:[]int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
 	}
 
 	s.insert("schoolClass", classDAO3)
@@ -91,7 +94,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		LastName:  "De Apc",
 		Matricula: "321",
 		Handles: student.StudentHandles{
-			Codeforces: "Veras",
+			Codeforces: "FeMaiaF",
 		},
 		Email: "aluno@unb.com.br",
 	}
@@ -115,7 +118,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		LastName:  "De Apc",
 		Matricula: "123",
 		Handles: student.StudentHandles{
-			Codeforces: "Veras",
+			Codeforces: "bnlz",
 		},
 		Email: "aluno@unb.com.br",
 	}
@@ -139,7 +142,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		LastName:  "Altamente preparado de Apc",
 		Matricula: "1234",
 		Handles: student.StudentHandles{
-			Codeforces: "Veras",
+			Codeforces: "kyara",
 		},
 		Email: "aluno@unb.com.br",
 	}
