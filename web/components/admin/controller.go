@@ -225,7 +225,7 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 		update["photourl"] = admin.PhotoURL
 	}
 
-	if admin.ClassID.String() != "" {
+	if !admin.ClassID.IsZero() {
 		update["classid"] = admin.ClassID
 	}
 
