@@ -889,6 +889,7 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 	monitorReturn := map[string]interface{}{
 		"status":       "success",
 		"content" : map[string]interface{}{
+			"monitorID":monitorInfo.ID,
 			"monitorName":  monitorInfo.FirstName + " " + monitorInfo.LastName,
 			"monitorEmail": monitorInfo.Email,
 		},
