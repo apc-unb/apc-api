@@ -530,3 +530,46 @@ func getStudentsFromFile(db *mongo.Client, request string) ([]StudentCreate, err
 
 	return students, nil
 }
+
+func GetUserProgress (contestsIds []int, handle string, api *goforces.Client) (interface{}, error){
+
+	ctx := context.Background()
+	done := 0
+	total := 0
+	opt := goforces.ContestStatndingsOptions{
+		Handles:        []string{handle},
+		ShowUnofficial: true,
+	}
+
+	for i := 0; i < len(contestsIds); i++ {
+
+		standings, err := api.GetContestStandings(ctx, contestsIds[i], &opt)
+
+		if err != nil {
+			return nil, err
+		}
+
+		totalProblems := len(standings.Problems)
+		total += totalProblems
+		tasks := make([]int, totalProblems)
+
+		for j := 0; j < len(standings.Rows); j++ {
+			for k := 0; k < totalProblems; k++ {
+				score := int(standings.Rows[j].ProblemResults[k].Points)
+				if tasks[k] == 0 && score == 1{
+					done++
+				}
+				tasks[k] |= score
+			}
+		}
+
+	}
+
+	userProgress := map[string]interface{}{
+		"done": strconv.Itoa(done),
+		"total": strconv.Itoa(total),
+	}
+
+	return userProgress, nil
+
+}
