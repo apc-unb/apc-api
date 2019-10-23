@@ -2,6 +2,7 @@ package news
 
 import (
 	"context"
+	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -107,62 +108,54 @@ func GetNewsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, co
 	return news, nil
 }
 
-func CreateNews(db *mongo.Client, news []NewsCreate, databaseName, collectionName string) error {
-
-	if len(news) == 0 {
-		return nil
-	}
+func CreateNews(db *mongo.Client, singleNews NewsCreate, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	for _, singleNews := range news {
-		if _, err := collection.InsertOne(context.TODO(), singleNews); err != nil {
-			return err
-		}
+	singleNews.CreatedAT = time.Now()
+	singleNews.UpdatedAT = time.Now()
+
+	if _, err := collection.InsertOne(context.TODO(), singleNews); err != nil {
+		return err
 	}
 
 	return nil
 
 }
 
-func UpdateNews(db *mongo.Client, news []News, databaseName, collectionName string) error {
-
-	if len(news) == 0 {
-		return nil
-	}
+func UpdateNews(db *mongo.Client, singleNews News, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	for _, singleNews := range news {
 
-		filter := bson.M{
-			"_id": singleNews.ID,
-		}
+	filter := bson.M{
+		"_id": singleNews.ID,
+	}
 
-		update := bson.M{}
+	update := bson.M{}
 
-		if !singleNews.ClassID.IsZero() {
-			update["classid"] = singleNews.ClassID
-		}
+	if !singleNews.ClassID.IsZero() {
+		update["classid"] = singleNews.ClassID
+	}
 
-		if singleNews.Title != "" {
-			update["title"] = singleNews.Title
-		}
+	if singleNews.Title != "" {
+		update["title"] = singleNews.Title
+	}
 
-		if singleNews.Description != "" {
-			update["description"] = singleNews.Description
-		}
+	if singleNews.Description != "" {
+		update["description"] = singleNews.Description
+	}
 
-		if len(singleNews.Tags) > 0 {
-			update["tags"] = singleNews.Tags
-		}
+	if len(singleNews.Tags) > 0 {
+		update["tags"] = singleNews.Tags
+	}
 
-		updateSet := bson.M{"$set": update}
+	update["updatedat"] = time.Now()
 
-		if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
-			return err
-		}
+	updateSet := bson.M{"$set": update}
 
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
 	}
 
 	return nil
