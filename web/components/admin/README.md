@@ -60,11 +60,11 @@
 		[
 			{  
 				"_id"      	:   ObjectId,
-				"classid"   	: 	ObjectId,
+				"classid"   	:   ObjectId,
 				"email" 	:   String,
 				"password"	:   String,
 				"newpassword"	:   String,
-				"photourl"  	: 	String
+				"photourl"  	:   String
 			},...
 		]
 	```
@@ -72,29 +72,29 @@
 
 ## Update Students from Admin request
 * HTTP Request : ```PUT http://api.com/admin/student```
-* Send data in the request body in the following format (id is required)
+* Send data in the request body in the following format (```stundentid```, ```adminid``` and ```adminpassword``` is required)
 
 	``` 
-		[
-			{  
-				"_id"      	:   	ObjectId,
-				"classid"   	:	ObjectId,
-				"firstname" 	:   	String,
-				"lastname" 	:   	String,
-				"matricula" 	:   	String,
-				"handles"   	:	{
-					"codeforces"	:	String,
-					"uri"		:	String
-				},
-				"photourl"  	: 	String,
-				"email"  	: 	String,
-				"grades"    	:	{
-					"exams"		:	[]float64,
-					"projects" 	:	[]float64,
-					"lists"    	:	[]float64
-				}
-			},...
-		]
+        {  
+            "adminid"      	:   ObjectId,                
+            "studentid"          :   ObjectId,
+            "classid"   	        :   ObjectId,
+            "adminpassword"      :   String,
+            "firstname" 	        :   String,
+            "lastname"           :   String,
+            "matricula" 	        :   String,
+            "handles"   	        :	{
+                "codeforces"	    :	String,
+                "uri"		    :	String
+            },
+            "photourl"  	        :   String,
+            "email"  	        :   String,
+            "grades"    	        :	{
+                "exams"		    :	[]float64,
+                "projects" 	    :	[]float64,
+                "lists"    	    :	[]float64
+            }
+        }
 	```
 * http StatusCreated (201) will be sent if the student has been updated correctly by an admin
 

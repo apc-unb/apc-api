@@ -828,7 +828,7 @@ func (s *Server) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.UpdateAdminStudent(s.DataBase, s.GoForces, adminUpdateStudent, "apc_database", "student"); err != nil {
+	if err := admin.UpdateAdminStudent(s.DataBase, s.GoForces, adminUpdateStudent, "apc_database", "student", "admin_login"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
