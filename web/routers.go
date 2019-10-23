@@ -591,18 +591,18 @@ func (s *Server) deleteExams(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) createNews(w http.ResponseWriter, r *http.Request) {
 
-	var newsArray []news.NewsCreate
+	var singleNews news.NewsCreate
 
 	body, _ := ioutil.ReadAll(r.Body)
 
-	if err := json.Unmarshal(body, &newsArray); err != nil {
+	if err := json.Unmarshal(body, &singleNews); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := news.CreateNews(s.DataBase, newsArray, "apc_database", "news"); err != nil {
+	if err := news.CreateNews(s.DataBase, singleNews, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -646,18 +646,18 @@ func (s *Server) getNewsClass(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) updateNews(w http.ResponseWriter, r *http.Request) {
 
-	var newsArray []news.News
+	var singleNews news.News
 
 	body, _ := ioutil.ReadAll(r.Body)
 
-	if err := json.Unmarshal(body, &newsArray); err != nil {
+	if err := json.Unmarshal(body, &singleNews); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := news.UpdateNews(s.DataBase, newsArray, "apc_database", "news"); err != nil {
+	if err := news.UpdateNews(s.DataBase, singleNews, "apc_database", "news"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
