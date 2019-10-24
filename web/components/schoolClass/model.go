@@ -15,16 +15,18 @@ type SchoolClass struct {
 	Year               int                `json:"year"`
 	Season             int                `json:"season"`
 	ContestsIDs        []int 			  `json:"contestsids"`
+	GroupID 		  		string   	   `json:"groupid"`
 }
 
 type SchoolClassCreate struct {
-	ProfessorFirstName string `json:"professorfirstname"`
-	ProfessorLastName  string `json:"professorlastname"`
-	ClassName          string `json:"classname"`
-	Address            string `json:"address"`
-	Year               int    `json:"year"`
-	Season             int    `json:"season"`
-	ContestsIDs        []int  `json:"contestsids"`
+	ProfessorFirstName 		string		   `json:"professorfirstname"`
+	ProfessorLastName  		string		   `json:"professorlastname"`
+	ClassName          		string		   `json:"classname"`
+	Address            		string		   `json:"address"`
+	Year             		int			   `json:"year"`
+	Season           		int 		   `json:"season"`
+	ContestsIDs        		[]int		   `json:"contestsids"`
+	GroupID 		  		string   	   `json:"groupid"`
 }
 
 type AdminPage struct {

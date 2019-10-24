@@ -182,6 +182,47 @@ func (s *Server) getStudentsClass(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (s *Server) getStudentIndividualProgress(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	var studentDAO student.Student
+	var classDAO schoolClass.SchoolClass
+	var studentProgress interface{}
+
+	vars := mux.Vars(r)
+
+	studentID, err := primitive.ObjectIDFromHex(vars["studentid"])
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Student ID")
+		return
+	}
+
+	studentDAO, err = student.GetStudent(s.DataBase, studentID, "apc_database", "student")
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	classDAO, err = schoolClass.GetClass(s.DataBase, studentDAO.ClassID, "apc_database", "schoolClass")
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	studentProgress, err = student.GetIndividualUserProgress(classDAO.ContestsIDs, studentDAO.Handles.Codeforces, classDAO.GroupID ,  s.GoForces)
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, studentProgress)
+
+}
+
 func (s *Server) updateStudents(w http.ResponseWriter, r *http.Request) {
 
 	var studentUpdate student.StudentUpdate
