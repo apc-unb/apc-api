@@ -54,7 +54,9 @@
 
 ## Update Admins
 * HTTP Request : ```PUT http://api.com/admin```
-* Send data in the request body in the following format
+* Send data in the request body in the following format.
+
+**PS:** (`id` and `password` required)
 
 	``` 
 		[
