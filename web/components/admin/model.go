@@ -43,13 +43,16 @@ type AdminInfo struct {
 
 // AdminUpdate contais all data that admin can update
 type AdminUpdate struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	ClassID     primitive.ObjectID `bson:"classid,omitempty"`
-	Email       string             `json:"email"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	ClassID   primitive.ObjectID `bson:"classid,omitempty"`
+	FirstName string             `json:"firstname"`
+	LastName  string             `json:"lastname"`
+	Matricula string             `json:"matricula"`
+	PhotoURL  string             `json:"photourl"`
+	Email     string             `json:"email"`
+	Projects  int32              `json:"projects"`
 	Password    string             `json:"password"`
 	NewPassword string             `json:"newpassword"`
-	PhotoURL    string             `json:"photourl"`
-	Projects    int32              `json:"projects"`
 }
 
 // AdminUpdateStudent all data of a student to be updated
