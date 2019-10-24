@@ -1,6 +1,11 @@
 ![](https://i.imgur.com/LN5iFfC.jpg)
 
-  
+![GitHub top language](https://img.shields.io/github/languages/top/apc-unb/apc-api?style=plastic)
+![GitHub language count](https://img.shields.io/github/languages/count/apc-unb/apc-api?color=yellow)
+![GitHub last commit](https://img.shields.io/github/last-commit/apc-unb/apc-api)
+[![GitHub stars](https://img.shields.io/github/stars/apc-unb/apc-api)](https://github.com/apc-unb/apc-api/stargazers)
+![GitHub](https://img.shields.io/github/license/apc-unb/apc-api?color=blue)
+
 
 # Visão Geral
 
