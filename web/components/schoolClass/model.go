@@ -15,7 +15,7 @@ type SchoolClass struct {
 	Year               int                `json:"year"`
 	Season             int                `json:"season"`
 	ContestsIDs        []int 			  `json:"contestsids"`
-	GroupID 		  		string   	   `json:"groupid"`
+	GroupID 		   string   	      `json:"groupid"`
 }
 
 type SchoolClassCreate struct {
