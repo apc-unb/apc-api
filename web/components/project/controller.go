@@ -59,13 +59,16 @@ func GetProjects(db *mongo.Client, studentID primitive.ObjectID, databaseName, c
 	return studentProjects, nil
 }
 
-func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (admin.Admin, error) {
+func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (interface{}, error) {
 
 	//
 	// GETTING RANDOM MONITOR BASED ON
 	// ON LEAST PROJECTS ASSIGNED TO HIS NAME
 	//
 	var monitorInfo admin.Admin
+	var mongoReturn *mongo.InsertOneResult
+	var projectID primitive.ObjectID
+
 
 	collection := db.Database(databaseName).Collection("admin")
 
@@ -109,7 +112,9 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	}
 
 	// Close the cursor once finished
-	cursor.Close(context.TODO())
+	if err := cursor.Close(context.TODO()); err != nil{
+		return monitorInfo, err
+	}
 
 	// Assign current project to the monitor
 	projectInfo.MonitorID = monitorInfo.ID
@@ -136,12 +141,22 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	collection = db.Database(databaseName).Collection("projects")
 
 	projectInfo.CreatedAT = time.Now()
+	projectInfo.Status = "Pending"
 
-	if _, err := collection.InsertOne(context.TODO(), projectInfo); err != nil {
+	if mongoReturn, err = collection.InsertOne(context.TODO(), projectInfo); err != nil {
 		return monitorInfo, err
+	} else {
+		projectID = mongoReturn.InsertedID.(primitive.ObjectID)
 	}
 
-	return monitorInfo, nil
+	ret := map[string]interface{}{
+		"projectID": projectID.Hex(),
+		"monitorID":monitorInfo.ID,
+		"monitorName":  monitorInfo.FirstName + " " + monitorInfo.LastName,
+		"monitorEmail": monitorInfo.Email,
+	}
+
+	return ret, nil
 
 }
 

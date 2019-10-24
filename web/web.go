@@ -414,7 +414,6 @@ func (s *Server) Run() error {
 	router.HandleFunc("/news", s.updateNews).Methods("PUT")
 	router.HandleFunc("/news", s.deleteNews).Methods("DELETE")
 
-
 	router.HandleFunc("/project/type", s.getProjectType).Methods("GET")
 	router.HandleFunc("/project", s.createProject).Methods("POST")
 	router.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
