@@ -60,6 +60,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Year:               2019,
 		Season:             2,
 		ContestsIDs: []int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
+		GroupID: "qpBtprcUFF",
 	}
 
 	classID := s.insert("schoolClass", classDAO)
@@ -72,6 +73,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Year:               2019,
 		Season:             2,
 		ContestsIDs:[]int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
+		GroupID: "qpBtprcUFF",
 	}
 
 	classID2 := s.insert("schoolClass", classDAO2)
@@ -84,6 +86,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Year:               2020,
 		Season:             1,
 		ContestsIDs:[]int{227662, 227824, 229195, 230372, 231393, 231394, 232351},
+		GroupID: "qpBtprcUFF",
 	}
 
 	s.insert("schoolClass", classDAO3)
@@ -365,6 +368,7 @@ func (s *Server) Run() error {
 	router.HandleFunc("/student", s.deleteStudents).Methods("DELETE")
 	router.HandleFunc("/student/file", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/student/file", s.createStudentsFile).Methods("POST")
+	router.HandleFunc("/student/contest/{studentid}", s.getStudentIndividualProgress).Methods("GET")
 
 	router.HandleFunc("/admin/login", s.getOptions).Methods("OPTIONS")
 	router.HandleFunc("/admin/login", s.adminLogin).Methods("POST")
