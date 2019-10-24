@@ -238,6 +238,26 @@ func GetStudentsClass(db *mongo.Client, classID primitive.ObjectID, databaseName
 
 }
 
+func GetStudent(db *mongo.Client, studentID primitive.ObjectID, databaseName, collectionName string) (Student, error) {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	studentDAO := Student{}
+
+	filter := bson.D{
+		{"_id", studentID},
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+	).Decode(&studentDAO); err != nil {
+		return studentDAO, err
+	}
+
+	return studentDAO, nil
+}
+
 // UpdateStudents recieve student (updated)
 // Checks if student old password matches with db to update that student password or email
 // @param	db				pointer to database (updated)
@@ -542,7 +562,6 @@ func GetUserProgress (contestsIds []int, handle string, api *goforces.Client) (i
 	}
 
 	for i := 0; i < len(contestsIds); i++ {
-
 		standings, err := api.GetContestStandings(ctx, contestsIds[i], &opt)
 
 		if err != nil {
@@ -556,9 +575,7 @@ func GetUserProgress (contestsIds []int, handle string, api *goforces.Client) (i
 		for j := 0; j < len(standings.Rows); j++ {
 			for k := 0; k < totalProblems; k++ {
 				score := int(standings.Rows[j].ProblemResults[k].Points)
-				if tasks[k] == 0 && score == 1{
-					done++
-				}
+				done += (score ^ tasks[k]) & (tasks[k] ^ 1)
 				tasks[k] |= score
 			}
 		}
@@ -572,4 +589,46 @@ func GetUserProgress (contestsIds []int, handle string, api *goforces.Client) (i
 
 	return userProgress, nil
 
+}
+
+func GetIndividualUserProgress (contestsIds []int, handle, groupID string, api *goforces.Client) (interface{}, error){
+	ctx := context.Background()
+	opt := goforces.ContestStatndingsOptions{
+		Handles:        []string{handle},
+		ShowUnofficial: true,
+	}
+
+	var contests []interface{}
+
+	for i := 0; i < len(contestsIds); i++ {
+
+		standings, err := api.GetContestStandings(ctx, contestsIds[i], &opt)
+
+		if err != nil {
+			return nil, err
+		}
+
+		total := len(standings.Problems)
+		done := 0
+		tasks := make([]int, total)
+
+		for j := 0; j < len(standings.Rows); j++ {
+			for k := 0; k < total; k++ {
+				score := int(standings.Rows[j].ProblemResults[k].Points)
+				done += (score ^ tasks[k]) & (tasks[k] ^ 1)
+				tasks[k] |= score
+			}
+		}
+
+		userProgress := map[string]interface{}{
+			"name": standings.Contest.Name,
+			"url": "https://codeforces.com/group/" + groupID + "/contest/" + strconv.Itoa(int(standings.Contest.ID)),
+			"done" : done,
+			"total" : total,
+		}
+
+		contests = append(contests, userProgress)
+	}
+
+	return contests, nil
 }
