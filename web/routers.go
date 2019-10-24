@@ -855,7 +855,7 @@ func (s *Server) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if err := admin.UpdateAdmins(s.DataBase, s.GoForces, adminUpdate, "apc_database", "admin"); err != nil {
+	if err := admin.UpdateAdmin(s.DataBase, s.GoForces, adminUpdate, "apc_database", "admin"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
