@@ -5,14 +5,14 @@
 * Send student's data in the request body in the following format 
 
 	``` 
-		[
-			{
-				"classid"   :	ObjectId,
-				"firstname" :	String,
-				"lastname"  :	String,
-				"matricula" :	String
-			},...
-		]
+    [
+        {
+            "classid"   :	ObjectId,
+            "firstname" :	String,
+            "lastname"  :	String,
+            "matricula" :	String
+        },...
+    ]
 	```
 * http StatusCreated (201) will be sent if the student has been created correctly
 
@@ -39,27 +39,27 @@
 * Return a list of object in json format as follow
 
     ``` 
-        [
-			{
-				"_id"       :	ObjectId,
-				"classid"   :	ObjectId,
-				"firstname" :	String,
-				"lastname"  :	String,
-				"matricula" :	String,
-				"password"  :	String,
-				"handles"   :	{
-					"codeforces" :	String,
-					"uri" 	     :	String
-				},
-				"photourl"  :	String,
-				"email"     :	String,
-				"grades"    :	{
-					"exams"    :	[]float64,
-					"projects" :	[]float64,
-					"lists"    :	[]float64
-				}
-			},...
-		]
+    [
+        {
+            "_id"       :	ObjectId,
+            "classid"   :	ObjectId,
+            "firstname" :	String,
+            "lastname"  :	String,
+            "matricula" :	String,
+            "password"  :	String,
+            "handles"   :	{
+                "codeforces" :	String,
+                "uri" 	 :	String
+            },
+            "photourl"  :	String,
+            "email"     :	String,
+            "grades"    :	{
+                "exams"     :	[]float64,
+                "projects"  :	[]float64,
+                "lists"     :	[]float64
+            }
+        },...
+    ]
     ```
 
 ## Get all Students from a class
@@ -67,27 +67,27 @@
 * Return a list of object in json format as follow
 
     ``` 
-        [
-			{
-				"_id"       :	ObjectId,
-				"classid"   :	ObjectId,
-				"firstname" :	String,
-				"lastname"  :	String,
-				"matricula" :	String,
-				"password"  :	String,
-				"handles"   :	{
-					"codeforces" :	String,
-					"uri" 	     :	String
-				},
-				"photourl"  :	String,
-				"email"     :	String,
-				"grades"    :	{
-					"exams"    :	[]float64,
-					"projects" :	[]float64,
-					"lists"    :	[]float64
-				}
-			}...
-		]
+    [
+        {
+            "_id"       :	ObjectId,
+            "classid"   :	ObjectId,
+            "firstname" :	String,
+            "lastname"  :	String,
+            "matricula" :	String,
+            "password"  :	String,
+            "handles"   :	{
+                "codeforces" :	String,
+                "uri" 	 :	String
+            },
+            "photourl"  :	String,
+            "email"     :	String,
+            "grades"    :	{
+                "exams"    :	[]float64,
+                "projects" :	[]float64,
+                "lists"    :	[]float64
+            }
+        }...
+    ]
     ```
 
 ## Update Students
@@ -96,18 +96,18 @@
 * PS : Student can only uptade empty handles
 
 	``` 
-		[
-			{  
-				"_id".      	:   ObjectId,
-				"email" 	:   String,
-				"password"	:   String,
-				"newpassword" 	: 	String,
-				"handles"   	: 	{
-						"codeforces" :	String,
-						"uri" 	     :	String
-				}
-			},...
-		]
+    [
+        {  
+            "_id".      	:   ObjectId,
+            "email" 	:   String,
+            "password"	:   String,
+            "newpassword":   String,
+            "handles"   	: 	{
+                    "codeforces" :	String,
+                    "uri" 	:	String
+            }
+        },...
+    ]
 	```
 * http StatusCreated (201) will be sent if the student has been updated correctly
 
@@ -117,11 +117,11 @@
 * Send data in the request body in the following format
 
 	``` 
-		[
-			{  
-				"_id" : ObjectId
-			},...
-		]
+    [
+        {  
+            "_id" : ObjectId
+        },...
+    ]
 	```
 * http StatusOK (200) will be sent if the students have been deleted correctly
 
@@ -130,18 +130,38 @@
 * HTTP Request : ```POST http://api.com/student/login```
 
     ``` 
-		{
-			"matricula" :	String,
-			"password"  :	String,
-		}
+        {
+            "matricula" :	String,
+            "password"  :	String,
+        }
     ```
 * Return a json format as follow
 
 	```
-	{
-	    "userexist"	:	Boolean,
-	    "student"	:	StudentInfo,
-	    "class"	:	SchoolClass,
-	    "news"	:	[]News 
-	}
+    {
+        "userexist"     :	Boolean,
+        "student"       :	StudentInfo,
+        "class"	       :	SchoolClass,
+        "news"	       :	[]News,
+        "Progress": {
+            "done"  : String,
+            "total" : String
+        },
+    }
 	```
+ 
+ ## Get Student Codeforces Progress
+ * HTTP Request : ```GET /student/contest/{studentid}```
+ 
+ * Return a json format as follow
+ 
+ 	```
+    [
+        {
+            "name": String,
+            "url": String
+            "done": String,
+            "total": String,
+        }...,
+    ]
+ 	```

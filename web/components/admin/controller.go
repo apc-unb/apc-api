@@ -173,10 +173,14 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 // @param	collectionName	name of collection
 // @return 	error 			function error
 // TODO : Update all students at the same time (if possible)
-func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, databaseName, collectionName string) error {
+func UpdateAdmin(db *mongo.Client, api *goforces.Client, admin AdminUpdate, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 	collectionLogin := db.Database(databaseName).Collection(collectionName + "_login")
+
+	if admin.Password == "" {
+		return errors.New("Password can't be empty")
+	}
 
 	var err error
 	adminData := user.UserCredentials{}
@@ -194,7 +198,7 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 	}
 
 	if err = utils.ComparePasswords(adminData.Password, admin.Password); err != nil {
-		return errors.New("mongo: no documents in result")
+		return errors.New("Invalid Password")
 	}
 
 	if admin.NewPassword != "" {
@@ -217,16 +221,30 @@ func UpdateAdmins(db *mongo.Client, api *goforces.Client, admin AdminUpdate, dat
 
 	update := bson.M{}
 
-	if admin.Email != "" {
-		update["email"] = admin.Email
+
+
+	if !admin.ClassID.IsZero() {
+		update["classid"] = admin.ClassID
+	}
+
+	if admin.FirstName != "" {
+		update["firstname"] = admin.FirstName
+	}
+
+	if admin.LastName != "" {
+		update["lastname"] = admin.LastName
+	}
+
+	if admin.Matricula != "" {
+		update["matricula"] = admin.Matricula
 	}
 
 	if admin.PhotoURL != "" {
 		update["photourl"] = admin.PhotoURL
 	}
 
-	if !admin.ClassID.IsZero() {
-		update["classid"] = admin.ClassID
+	if admin.Email != "" {
+		update["email"] = admin.Email
 	}
 
 	updateSet := bson.M{"$set": update}

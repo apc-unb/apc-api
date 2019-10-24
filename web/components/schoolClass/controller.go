@@ -123,6 +123,10 @@ func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, c
 			update["classname"] = schoolClass.ClassName
 		}
 
+		if schoolClass.GroupID != "" {
+			update["groupid"] = schoolClass.GroupID
+		}
+
 		if schoolClass.Address != "" {
 			update["address"] = schoolClass.Address
 		}
