@@ -41,9 +41,7 @@
             "studentid"     :   ObjectID,
             "projecttypeid" :   ObjectID,
             "classid"       :	ObjectId,
-            "createdat"     :	time.Time,
             "filename"      :	String,
-            "status"        :   String
         }
     ```
 

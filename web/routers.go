@@ -917,7 +917,7 @@ func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 
 	var projectInfo project.Project
-	var monitorInfo admin.Admin
+	var projectReturn interface{}
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -929,18 +929,14 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	if monitorInfo, err = project.CreateProject(s.DataBase, projectInfo, "apc_database"); err != nil {
+	if projectReturn, err = project.CreateProject(s.DataBase, projectInfo, "apc_database"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	monitorReturn := map[string]interface{}{
 		"status":       "success",
-		"content" : map[string]interface{}{
-			"monitorID":monitorInfo.ID,
-			"monitorName":  monitorInfo.FirstName + " " + monitorInfo.LastName,
-			"monitorEmail": monitorInfo.Email,
-		},
+		"content" : projectReturn,
 	}
 
 
