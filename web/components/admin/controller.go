@@ -235,10 +235,6 @@ func UpdateAdmin(db *mongo.Client, api *goforces.Client, admin AdminUpdate, data
 		update["lastname"] = admin.LastName
 	}
 
-	if admin.Matricula != "" {
-		update["matricula"] = admin.Matricula
-	}
-
 	if admin.PhotoURL != "" {
 		update["photourl"] = admin.PhotoURL
 	}

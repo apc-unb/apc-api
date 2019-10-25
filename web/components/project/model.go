@@ -6,6 +6,14 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
+
+const (
+	Created = "Created"
+	Pending = "Pending"
+	Received = "Received"
+	Confirmed = "Confirmed"
+)
+
 type ProjectType struct {
 	ID       	*primitive.ObjectID `bson:"_id,omitempty"`
 	Name     	string              `json:"name"`
@@ -23,6 +31,7 @@ type Project struct {
 	ClassID  	primitive.ObjectID  `bson:"classID,omitempty"`
 	MonitorID     primitive.ObjectID  `bson:"monitorID,omitempty"`
 	CreatedAT     time.Time           `json:"createdat,omitempty"`
+	UpdatedAT     time.Time           `json:"updatedat,omitempty"`
 	FileName      string              `json:"filename,omitempty"`
 	Status        string              `json:"status,omitempty"`
 	Score         float64             `json:"score,omitempty"`

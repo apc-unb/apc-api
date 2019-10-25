@@ -2,7 +2,6 @@ package admin
 
 import (
 	"github.com/apc-unb/apc-api/web/components/student"
-	"github.com/apc-unb/apc-api/web/components/user"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
@@ -68,9 +67,4 @@ type AdminUpdateStudent struct {
 	PhotoURL  			string                 `json:"photourl"`
 	Email     			string                 `json:"email"`
 	Grades    			student.StudentGrades  `json:"grades"`
-}
-
-type AdminCreatePage struct {
-	Result string                 `json:"result"`
-	Admins []user.UserCredentials `json:"admins"`
 }
