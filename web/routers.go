@@ -74,6 +74,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ret := map[string]interface{}{
+		"jwt" : "fakejwt",
 		"student":   singleStudent,
 		"class":     class,
 		"news":      newsArray,
@@ -753,6 +754,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ret := map[string]interface{}{
+		"jwt" : "fakejwt",
 		"admin":   singleAdmin,
 		"class":     class,
 		"news":      newsArray,
