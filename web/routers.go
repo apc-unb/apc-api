@@ -947,6 +947,54 @@ func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
+func (s *Server) checkProject(w http.ResponseWriter, r *http.Request) {
+
+	var projectDAO project.Project
+	var ret interface{}
+	var err error
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&projectDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if ret, err = project.CheckProject(s.DataBase, projectDAO, "apc_database", "projects", "admin"); err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			utils.RespondWithError(w, http.StatusNotFound, "Project not found")
+		} else {
+			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, ret)
+
+}
+
+func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
+
+	var projectDAO project.Project
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&projectDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.UpdateProject(s.DataBase, projectDAO, "apc_database", "projects"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
 
 func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 
