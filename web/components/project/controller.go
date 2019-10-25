@@ -61,10 +61,10 @@ func GetProjects(db *mongo.Client, studentID primitive.ObjectID, databaseName, c
 
 func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (interface{}, error) {
 
-	//
-	// GETTING RANDOM MONITOR BASED ON
-	// ON LEAST PROJECTS ASSIGNED TO HIS NAME
-	//
+	//////////////////////////////////////////
+	// GETTING RANDOM MONITOR BASED ON  THE //
+	// LEAST PROJECTS ASSIGNED TO HIS NAME  //
+	//////////////////////////////////////////
 	var monitorInfo admin.Admin
 	var mongoReturn *mongo.InsertOneResult
 	var projectID primitive.ObjectID
@@ -134,14 +134,15 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 		return monitorInfo, err
 	}
 
-	//
-	// Inserting project into DB
-	//
+	///////////////////////////////
+	// Inserting project into DB //
+	///////////////////////////////
 
 	collection = db.Database(databaseName).Collection("projects")
 
 	projectInfo.CreatedAT = time.Now()
-	projectInfo.Status = "Pending"
+	projectInfo.UpdatedAT = time.Now()
+	projectInfo.Status = Created
 
 	if mongoReturn, err = collection.InsertOne(context.TODO(), projectInfo); err != nil {
 		return monitorInfo, err

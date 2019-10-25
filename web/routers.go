@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -44,11 +43,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleStudent, err = student.AuthStudent(s.DataBase, UserCredentials, "apc_database", "student"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := map[string]interface{}{
-				"UserExist": false,
-				"Result":    "Invalid Login or Password",
-			}
-			utils.RespondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithError(w, http.StatusUnauthorized, "Invalid Login or Password")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -57,11 +52,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if class, err = schoolClass.GetClass(s.DataBase, singleStudent.ClassID, "apc_database", "schoolClass"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := map[string]interface{}{
-				"UserExist": false,
-				"Result":    "Invalid student class",
-			}
-			utils.RespondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithError(w, http.StatusUnauthorized, "Invalid student class")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -70,11 +61,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 
 	if newsArray, err = news.GetNewsClass(s.DataBase, singleStudent.ClassID, "apc_database", "news"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := map[string]interface{}{
-				"UserExist": false,
-				"Result":    "Invalid student news",
-			}
-			utils.RespondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithError(w, http.StatusUnauthorized, "Invalid student news")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -87,12 +74,10 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ret := map[string]interface{}{
-		"UserExist" : "true",
-		"Result":    "success",
-		"Student":   singleStudent,
-		"Class":     class,
-		"News":      newsArray,
-		"Progress": userProgress,
+		"student":   singleStudent,
+		"class":     class,
+		"news":      newsArray,
+		"progress": userProgress,
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, ret)
@@ -750,10 +735,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleAdmin, err = admin.AuthAdmin(s.DataBase, UserCredentials, "apc_database", "admin"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			ret := schoolClass.AdminPage{
-				UserExist: false,
-			}
-			utils.RespondWithJSON(w, http.StatusOK, ret)
+			utils.RespondWithError(w, http.StatusUnauthorized,  "Invalid Login or Password")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -770,11 +752,10 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ret := schoolClass.AdminPage{
-		UserExist: true,
-		Admin:     singleAdmin,
-		Class:     class,
-		News:      newsArray,
+	ret := map[string]interface{}{
+		"admin":   singleAdmin,
+		"class":     class,
+		"news":      newsArray,
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, ret)
@@ -800,12 +781,11 @@ func (s *Server) createAdmins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonReturn := admin.AdminCreatePage{
-		Result: "success",
-		Admins: adminsList,
+	ret := map[string]interface{}{
+		"Admins": adminsList,
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
+	utils.RespondWithJSON(w, http.StatusCreated, ret)
 }
 
 func (s *Server) createAdminsFile(w http.ResponseWriter, r *http.Request) {
@@ -822,12 +802,11 @@ func (s *Server) createAdminsFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonReturn := student.StudentCreatePage{
-		Result:   "success",
-		Students: adminList,
+	ret := map[string]interface{}{
+		"students": adminList,
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, jsonReturn)
+	utils.RespondWithJSON(w, http.StatusCreated, ret)
 
 }
 
@@ -839,6 +818,7 @@ func (s *Server) getAdmins(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	utils.RespondWithJSON(w, http.StatusOK, admins)
 }
 
@@ -945,8 +925,6 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("Recebi um request no update")
 
 	var projectInfo project.Project
 
