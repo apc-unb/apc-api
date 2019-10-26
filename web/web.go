@@ -258,7 +258,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		ClassID:       classID,
 		CreatedAT:     time.Now(),
 		FileName:      "Veras hehe",
-		Status:        "Pending",
+		Status:        project.Created,
 		Score:         0.0,
 	}
 
@@ -271,7 +271,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		ClassID:       classID,
 		CreatedAT:     time.Now(),
 		FileName:      "Veras2 hehe",
-		Status:        "Pending",
+		Status:        project.Created,
 		Score:         0.0,
 	}
 
@@ -414,8 +414,11 @@ func (s *Server) Run() error {
 	router.HandleFunc("/news", s.updateNews).Methods("PUT")
 	router.HandleFunc("/news", s.deleteNews).Methods("DELETE")
 
-	router.HandleFunc("/project/type", s.getProjectType).Methods("GET")
 	router.HandleFunc("/project", s.createProject).Methods("POST")
+	router.HandleFunc("/project", s.updateProject).Methods("PUT")
+	router.HandleFunc("/project", s.getOptions).Methods("OPTIONS")
+	router.HandleFunc("/project/type", s.getProjectType).Methods("GET")
+	router.HandleFunc("/project/check", s.checkProject).Methods("POST")
 	router.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
 	router.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")
 

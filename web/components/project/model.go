@@ -9,6 +9,7 @@ import (
 
 const (
 	Created = "Created"
+	Updated = "Updated"
 	Pending = "Pending"
 	Received = "Received"
 	Confirmed = "Confirmed"
