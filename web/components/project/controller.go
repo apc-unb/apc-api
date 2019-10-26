@@ -24,7 +24,7 @@ func GetProjects(db *mongo.Client, studentID primitive.ObjectID, databaseName, c
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{
-			"studentID": studentID,
+			"studentid": studentID,
 		},
 		options.Find(),
 	)
@@ -151,8 +151,8 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 	}
 
 	ret := map[string]interface{}{
-		"projectID": projectID.Hex(),
-		"monitorID":monitorInfo.ID,
+		"projectid": projectID.Hex(),
+		"monitorid":monitorInfo.ID,
 		"monitorName":  monitorInfo.FirstName + " " + monitorInfo.LastName,
 		"monitorEmail": monitorInfo.Email,
 	}
@@ -161,9 +161,78 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 
 }
 
-func UpdateStatusProject(db *mongo.Client, projectStatus Project, database_name, collection_name string) error {
+func CheckProject(db *mongo.Client, project Project, databaseName, collectionName, monitorCollectionName string) (interface{}, error){
 
-	collection := db.Database(database_name).Collection(collection_name)
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	projectDAO := Project{}
+	monitorDAO := admin.Admin{}
+
+	filter := bson.M{
+		"studentid": project.StudentID,
+		"projectypeid" : project.ProjectTypeID,
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+	).Decode(&projectDAO); err != nil {
+		return nil, err
+	}
+
+	collection = db.Database(databaseName).Collection(monitorCollectionName)
+
+	filter = bson.M{
+		"_id": projectDAO.MonitorID,
+	}
+
+	if err := collection.FindOne(
+		context.TODO(),
+		filter,
+	).Decode(&monitorDAO); err != nil {
+		return nil, err
+	}
+
+	ret := map[string]interface{}{
+		"projectid": projectDAO.ID,
+		"filename" : projectDAO.FileName,
+		"status" : projectDAO.Status,
+		"updatedat" : projectDAO.UpdatedAT,
+		"monitorid":monitorDAO.ID,
+		"monitorName":  monitorDAO.FirstName + " " + monitorDAO.LastName,
+		"monitorEmail": monitorDAO.Email,
+	}
+
+	return ret, nil
+}
+
+func UpdateProject(db *mongo.Client, projectStatus Project, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	filter := bson.M{
+		"_id": projectStatus.ID,
+	}
+
+	update := bson.M{}
+
+	update["status"] = Updated
+	update["updatedat"] = time.Now()
+	update["filename"] = projectStatus.FileName
+
+	updateSet := bson.M{"$set": update}
+
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func UpdateStatusProject(db *mongo.Client, projectStatus Project, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
 
 	filter := bson.M{
 		"_id": projectStatus.ID,
@@ -172,7 +241,7 @@ func UpdateStatusProject(db *mongo.Client, projectStatus Project, database_name,
 	update := bson.M{}
 
 	if projectStatus.Status == "" {
-		return errors.New("Empty Status")
+		return errors.New("Status can't be empty")
 	}
 
 	update["status"] = projectStatus.Status

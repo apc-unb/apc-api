@@ -40,7 +40,7 @@
         {
             "studentid"     :   ObjectID,
             "projecttypeid" :   ObjectID,
-            "classid"       :	ObjectId,
+            "classid"       :	ObjectID,
             "filename"      :	String,
         }
     ```
@@ -51,8 +51,34 @@
        {
            "status": "success",
            "content": {
-               "monitorEmail": "email.do.luis@gmail.com",
-               "monitorName": "Luis Gebrim"
+               "monitorEmail": "monitor.email@gmail.com",
+               "monitorName": "Monitor Name"
            }
        } 
     ```
+  
+ ## Check Project
+ 
+ * HTTP Request : ```POST localhost:8080/project/check``` 
+    ```
+        {
+            "studentid": "ObjectID",
+            "projecttypeid": "ObjectID"
+        }
+    ```
+   
+ * http StatusCreated (200) will be sent if the project exist  and will return a JSON in the following format
+                                                              
+    ```
+        {
+            "filename": String,
+            "monitorEmail": String,
+            "monitorName": String,
+            "monitorid": ObjectID,
+            "projectid": ObjectID,
+            "status": String,
+            "updatedat": Time
+        }
+    ```
+   
+  * In case that the project don't exist a http StatusNotFound (404) will be sent if the project don't exist
