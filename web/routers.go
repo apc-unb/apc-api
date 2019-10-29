@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/apc-unb/apc-api/auth"
 	"io/ioutil"
 	"net/http"
 
@@ -31,6 +32,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 	var newsArray []news.News
 	var userProgress interface{}
 	var err error
+	var jwt string
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -73,8 +75,13 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if jwt, err = auth.GenerateToken(s.JwtSecret, []string{"admin", UserCredentials.Matricula, singleStudent.ID.String()}); err != nil{
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	ret := map[string]interface{}{
-		"jwt" : "fakejwt",
+		"jwt" : jwt,
 		"student":   singleStudent,
 		"class":     class,
 		"news":      newsArray,
