@@ -5,24 +5,24 @@
 * Return a list of object in json format as follow
 
     ``` 
-        [
-			{
-				"_id"           :	ObjectId,
-				"studentid"     :   ObjectID,
-				"projecttypeid" :   ObjectID,
-                "monitorid"     :	ObjectId,
-                "classid"       :	ObjectId,
-                "createdat"     :	time.Time,
-				"filename"      :	String,
-                "status"        :   String
-			}...
-		]
+    [
+        {
+            "_id"           :	ObjectId,
+            "studentid"     :       ObjectID,
+            "projecttypeid" :       ObjectID,
+            "monitorid"     :	ObjectId,
+            "classid"       :	ObjectId,
+            "createdat"     :	time.Time,
+            "filename"      :	String,
+            "status"        :       String
+        }...
+    ]
     ```
 
 
 ## Update a project status
 * HTTP Request : ```PUT http://api.com//project/status```
-* Return a list of object in json format as follow
+* Send Project's data in the request body in the following format 
 
     ``` 
         {
@@ -34,12 +34,12 @@
 
 ## Create Project
 * HTTP Request : ```POST http://api.com/project```
-* Send News's data in the request body in the following format 
+* Send Project's data in the request body in the following format 
 
 	``` 
         {
-            "studentid"     :   ObjectID,
-            "projecttypeid" :   ObjectID,
+            "studentid"     :    ObjectID,
+            "projecttypeid" :    ObjectID,
             "classid"       :	ObjectID,
             "filename"      :	String,
         }
@@ -57,28 +57,49 @@
        } 
     ```
   
- ## Check Project
+# Project Type
+
+## Create Project Type
+* HTTP Request : ```POST http://api.com/project/type```
+* Send ProjectType's data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request 
+
+    ```
+        {
+            "name"          :   String,
+            "description"   :   String,
+            "ClassID"       :   ObjectID,
+            "start"         :   Time,
+            "end"           :   Time,
+            "score"         :   Float
+        }
+    ```
+  
+## Update Project Type
+* HTTP Request : ```PUT http://api.com/project/type```
+* Send data in the request body in the following format (`_id` is required)
+* *PS* : Only admin with `Professor` : `True` can make this request
+
+    ```
+        {
+            "_id"           :   ObjectID,
+            "name"          :   String,
+            "description"   :   String,
+            "ClassID"       :   ObjectID,
+            "start"         :   Time,
+            "end"           :   Time,
+            "score"         :   Float
+        }
+    ```
  
- * HTTP Request : ```POST localhost:8080/project/check``` 
-    ```
-        {
-            "studentid": "ObjectID",
-            "projecttypeid": "ObjectID"
+## Delete Project Type
+* HTTP Request : ```DELETE http://api.com/project/type```
+* Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
+
+	``` 
+        {  
+            "_id"	:	ObjectId
         }
-    ```
-   
- * http StatusCreated (200) will be sent if the project exist  and will return a JSON in the following format
-                                                              
-    ```
-        {
-            "filename": String,
-            "monitorEmail": String,
-            "monitorName": String,
-            "monitorid": ObjectID,
-            "projectid": ObjectID,
-            "status": String,
-            "updatedat": Time
-        }
-    ```
-   
-  * In case that the project don't exist a http StatusNotFound (404) will be sent if the project don't exist
+	```
+* http StatusOK (200) will be sent if the Project Type have been deleted correctly

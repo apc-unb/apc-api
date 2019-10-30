@@ -339,31 +339,17 @@ func UpdateAdminStudent(db *mongo.Client, api *goforces.Client, admin AdminUpdat
 	return nil
 }
 
-// DeleteAdminStudents recieve a list of students (to be deleted)
-// Checks if that list is not null (can't delete null list)
-// Delete each student individually
-// @param	db				pointer to database (to be deleted)
-// @param	admins	 		list of students
-// @param	databaseName	name of database
-// @param	collectionName	name of collection
-// @return 	error 			function error
-// TODO : Delete all students at the same time (if possible)
-func DeleteAdminStudents(db *mongo.Client, admins []Admin, databaseName, collectionName string) error {
-
-	if len(admins) == 0 {
-		return nil
-	}
+func DeleteAdmin(db *mongo.Client, admin Admin, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
 
-	for _, admin := range admins {
-		filter := bson.M{"_id": admin.ID}
-		if _, err := collection.DeleteOne(context.TODO(), filter); err != nil {
-			return err
-		}
-	}
-	return nil
+	filter := bson.M{"_id": admin.ID}
 
+	if _, err := collection.DeleteOne(context.TODO(), filter); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // AuthAdmin recieve an admin (to be authenticated)

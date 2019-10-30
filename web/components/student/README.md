@@ -115,6 +115,7 @@
 ## Delete Students
 * HTTP Request : ```DELETE http://api.com/student```
 * Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
 
 	``` 
     [

@@ -3,6 +3,7 @@
 ## Create Admins
 * HTTP Request : ```POST http://api.com/admin```
 * Send admins's data in the request body in the following format 
+* *PS* : Only admin with `Professor` : `True` can make this request
 
 	``` 
 		[
@@ -19,6 +20,7 @@
 ## Create Admins by CSV file
 * HTTP Request : ```POST http://api.com/admin/file```
 * Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
 
 	|    ANO/SEMESTE/TURMA   |             2019/2/A 
 	|------------------------|-------------------------------
@@ -100,18 +102,17 @@
 	```
 * http StatusCreated (201) will be sent if the student has been updated correctly by an admin
 
-## Delete Students from Admin request
-* HTTP Request : ```DELETE http://api.com/admin/student```
+## Delete Admin
+* HTTP Request : ```DELETE http://api.com/admin```
 * Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
 
 	``` 
-		[
-			{  
-				"_id"	:	ObjectId
-			},...
-		]
+        {  
+            "_id"	:	ObjectId
+        }
 	```
-* http StatusOK (200) will be sent if the Students have been deleted correctly by an admin
+* http StatusOK (200) will be sent if the Admin have been deleted correctly
 
 ## Delete Admins
 * HTTP Request : ```DELETE http://api.com/admins```

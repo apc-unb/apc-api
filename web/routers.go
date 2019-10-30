@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/apc-unb/apc-api/auth"
+
 	"github.com/apc-unb/apc-api/web/components/admin"
 	"github.com/apc-unb/apc-api/web/components/exam"
 	"github.com/apc-unb/apc-api/web/components/news"
@@ -31,6 +33,7 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 	var newsArray []news.News
 	var userProgress interface{}
 	var err error
+	var jwt string
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -73,11 +76,16 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if jwt, err = auth.GenerateToken(s.JwtSecret, []string{UserCredentials.Matricula, singleStudent.ID.String()}); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	ret := map[string]interface{}{
-		"jwt" : "fakejwt",
-		"student":   singleStudent,
-		"class":     class,
-		"news":      newsArray,
+		"jwt":      jwt,
+		"student":  singleStudent,
+		"class":    class,
+		"news":     newsArray,
 		"progress": userProgress,
 	}
 
@@ -198,7 +206,7 @@ func (s *Server) getStudentIndividualProgress(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	studentProgress, err = student.GetIndividualUserProgress(classDAO.ContestsIDs, studentDAO.Handles.Codeforces, classDAO.GroupID ,  s.GoForces)
+	studentProgress, err = student.GetIndividualUserProgress(classDAO.ContestsIDs, studentDAO.Handles.Codeforces, classDAO.GroupID, s.GoForces)
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -292,20 +300,42 @@ func (s *Server) getClasses(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) updateClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getClassProfessor(w http.ResponseWriter, r *http.Request) {
 
-	var classes []schoolClass.SchoolClass
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["professorid"])
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Professor ID")
+		return
+	}
+
+	classes , err := schoolClass.GetClassProfessor(s.DataBase, classID, "apc_database", "schoolClass")
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, classes)
+
+}
+
+func (s *Server) updateClass(w http.ResponseWriter, r *http.Request) {
+
+	var classDAO schoolClass.SchoolClass
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&classes); err != nil {
+	if err := decoder.Decode(&classDAO); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := schoolClass.UpdateClasses(s.DataBase, classes, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.UpdateClass(s.DataBase, classDAO, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -723,6 +753,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 	var singleAdmin admin.AdminInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
+	var jwt string
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -736,7 +767,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleAdmin, err = admin.AuthAdmin(s.DataBase, UserCredentials, "apc_database", "admin"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			utils.RespondWithError(w, http.StatusUnauthorized,  "Invalid Login or Password")
+			utils.RespondWithError(w, http.StatusUnauthorized, "Invalid Login or Password")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -753,11 +784,22 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	scopes := []string{UserCredentials.Matricula, singleAdmin.ID.String()}
+
+	if singleAdmin.Professor {
+		scopes = append(scopes, "professor")
+	}
+
+	if jwt, err = auth.GenerateToken(s.JwtSecret, scopes); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	ret := map[string]interface{}{
-		"jwt" : "fakejwt",
-		"admin":   singleAdmin,
-		"class":     class,
-		"news":      newsArray,
+		"jwt":   jwt,
+		"admin": singleAdmin,
+		"class": class,
+		"news":  newsArray,
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, ret)
@@ -867,12 +909,33 @@ func (s *Server) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (s *Server) deleteAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var adminDAO admin.Admin
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&adminDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := admin.DeleteAdmin(s.DataBase, adminDAO, "apc_database", "admin"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
 func (s *Server) getOptions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, nil)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// 								        PROJECTS		 				            		 //
+// 								        PROJECTS		 				                 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
@@ -917,10 +980,9 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	monitorReturn := map[string]interface{}{
-		"status":       "success",
-		"content" : projectReturn,
+		"status":  "success",
+		"content": projectReturn,
 	}
-
 
 	utils.RespondWithJSON(w, http.StatusCreated, monitorReturn)
 
@@ -947,33 +1009,6 @@ func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (s *Server) checkProject(w http.ResponseWriter, r *http.Request) {
-
-	var projectDAO project.Project
-	var ret interface{}
-	var err error
-
-	decoder := json.NewDecoder(r.Body)
-
-	if err := decoder.Decode(&projectDAO); err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	defer r.Body.Close()
-
-	if ret, err = project.CheckProject(s.DataBase, projectDAO, "apc_database", "projects", "admin"); err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			utils.RespondWithError(w, http.StatusNotFound, "Project not found")
-		} else {
-			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		}
-	}
-
-	utils.RespondWithJSON(w, http.StatusOK, ret)
-
-}
-
 func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 
 	var projectDAO project.Project
@@ -995,6 +1030,9 @@ func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// 								        PROJECT TYPE		 				                 //
+///////////////////////////////////////////////////////////////////////////////////////////
 
 func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 
@@ -1007,5 +1045,67 @@ func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, types)
+}
 
+func (s *Server) createProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.CreateProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+func (s *Server) updateProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.UpdateProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+func (s *Server) deleteProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.DeleteProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
