@@ -21,7 +21,8 @@
 
 ## Create Classes
 * HTTP Request : ```POST http://api.com/class```
-* Send Classes's data in the request body in the following format 
+* Send Classes's data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request 
 
 	``` 
     [
@@ -42,6 +43,7 @@
 ## Update Classes
 * HTTP Request : ```PUT http://api.com/class```
 * Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
 
    ``` 
   [
@@ -64,6 +66,7 @@
 ## Delete Classes
 * HTTP Request : ```DELETE http://api.com/class```
 * Send data in the request body in the following format
+* *PS* : Only admin with `Professor` : `True` can make this request
 
 	``` 
     [
