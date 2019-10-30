@@ -381,7 +381,7 @@ func (s *Server) Run() error {
 	////////////////////
 
 
-	secureRouter := router.PathPrefix("/secure").Subrouter()
+	secureRouter := router.NewRoute().Subrouter()
 	secureRouter.Use(middleware.SetMiddlewareAuthentication())
 	secureRouter.Use(middleware.SetMiddlewareJSON())
 
@@ -443,6 +443,10 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/project/check", s.checkProject).Methods("POST")
 	secureRouter.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
 	secureRouter.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")
+
+
+	professorRouter := secureRouter.NewRoute().Subrouter()
+	professorRouter.Use()
 
 	srv := &http.Server{
 		Handler:      router,
