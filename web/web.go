@@ -432,7 +432,6 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/project", s.updateProject).Methods("PUT")
 	secureRouter.HandleFunc("/project", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/project/type", s.getProjectType).Methods("GET")
-	secureRouter.HandleFunc("/project/check", s.checkProject).Methods("POST")
 	secureRouter.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
 	secureRouter.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")
 
@@ -446,6 +445,7 @@ func (s *Server) Run() error {
 
 	professorRouter.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
 	professorRouter.HandleFunc("/admin", s.createAdmins).Methods("POST")
+	professorRouter.HandleFunc("/admin", s.deleteAdmin).Methods("DELETE")
 
 	professorRouter.HandleFunc("/student", s.deleteStudents).Methods("DELETE")
 
@@ -454,6 +454,10 @@ func (s *Server) Run() error {
 	professorRouter.HandleFunc("/class", s.updateClasses).Methods("PUT")
 	professorRouter.HandleFunc("/class", s.deleteClasses).Methods("DELETE")
 
+	professorRouter.HandleFunc("/project/type", s.getOptions).Methods("OPTIONS")
+	professorRouter.HandleFunc("/project/type", s.createProjectType).Methods("POST")
+	professorRouter.HandleFunc("/project/type", s.updateProjectType).Methods("PUT")
+	professorRouter.HandleFunc("/project/type", s.deleteProjectType).Methods("DELETE")
 
 	srv := &http.Server{
 		Handler:      router,

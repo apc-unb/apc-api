@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"errors"
+	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/apc-unb/apc-api/web/components/admin"
@@ -13,7 +14,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo/options"
 )
 
-// Here's an array in which you can store the decoded documents
 func GetProjects(db *mongo.Client, studentID primitive.ObjectID, databaseName, collectionName string) ([]Project, error) {
 
 	collection := db.Database(databaseName).Collection(collectionName)
@@ -161,51 +161,6 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 
 }
 
-func CheckProject(db *mongo.Client, project Project, databaseName, collectionName, monitorCollectionName string) (interface{}, error){
-
-	collection := db.Database(databaseName).Collection(collectionName)
-
-	projectDAO := Project{}
-	monitorDAO := admin.Admin{}
-
-	filter := bson.M{
-		"studentid": project.StudentID,
-		"projectypeid" : project.ProjectTypeID,
-	}
-
-	if err := collection.FindOne(
-		context.TODO(),
-		filter,
-	).Decode(&projectDAO); err != nil {
-		return nil, err
-	}
-
-	collection = db.Database(databaseName).Collection(monitorCollectionName)
-
-	filter = bson.M{
-		"_id": projectDAO.MonitorID,
-	}
-
-	if err := collection.FindOne(
-		context.TODO(),
-		filter,
-	).Decode(&monitorDAO); err != nil {
-		return nil, err
-	}
-
-	ret := map[string]interface{}{
-		"projectid": projectDAO.ID,
-		"filename" : projectDAO.FileName,
-		"status" : projectDAO.Status,
-		"updatedat" : projectDAO.UpdatedAT,
-		"monitorid":monitorDAO.ID,
-		"monitorName":  monitorDAO.FirstName + " " + monitorDAO.LastName,
-		"monitorEmail": monitorDAO.Email,
-	}
-
-	return ret, nil
-}
-
 func UpdateProject(db *mongo.Client, projectStatus Project, databaseName, collectionName string) error {
 
 	collection := db.Database(databaseName).Collection(collectionName)
@@ -256,19 +211,22 @@ func UpdateStatusProject(db *mongo.Client, projectStatus Project, databaseName, 
 
 }
 
+
+	////////////////////
+	//  PROJECT TYPE  //
+	////////////////////
+
 func GetProjectsType (db *mongo.Client, databaseName, collectionName string) ([]ProjectType, error) {
 	collection := db.Database(databaseName).Collection(collectionName)
 
 	// Here's an array in which you can store the decoded documents
 	types := []ProjectType{}
 
-	var options options.FindOptions
-
 	// Passing bson.D{{}} as the filter matches all documents in the collection
 	cursor, err := collection.Find(
 		context.TODO(),
 		bson.M{},
-		&options,
+		nil,
 	)
 
 	if err != nil {
@@ -299,4 +257,72 @@ func GetProjectsType (db *mongo.Client, databaseName, collectionName string) ([]
 	cursor.Close(context.TODO())
 
 	return types, nil
+}
+
+func CreateProjectType(db *mongo.Client, projectTypeDAO ProjectType, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	if _, err := collection.InsertOne(context.TODO(), projectTypeDAO); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func UpdateProjectType(db *mongo.Client, projectTypeDAO ProjectType, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	filter := bson.M{
+		"_id": projectTypeDAO.ID,
+	}
+
+	update := bson.M{}
+
+	if projectTypeDAO.Name != "" {
+		update["name"] = projectTypeDAO.Name
+	}
+
+	if projectTypeDAO.Description != "" {
+		update["description"] = projectTypeDAO.Description
+	}
+
+	if !projectTypeDAO.ClassID.IsZero()  {
+		update["classid"] = projectTypeDAO.ClassID
+	}
+
+	if !projectTypeDAO.Start.IsZero() {
+		update["start"] = projectTypeDAO.Start
+	}
+
+	if !projectTypeDAO.End.IsZero() {
+		update["end"] = projectTypeDAO.End
+	}
+
+	if projectTypeDAO.Score > 0.0 {
+		update["score"] = projectTypeDAO.Score
+	}
+
+	updateSet := bson.M{"$set": update}
+
+	if _, err := collection.UpdateOne(context.TODO(), filter, updateSet, nil); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteProjectType(db *mongo.Client, projectTypeDAO ProjectType, databaseName, collectionName string) error {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	filter := bson.M{"_id": projectTypeDAO.ID}
+
+	if _, err := collection.DeleteOne(context.TODO(), filter); err != nil {
+		return err
+	}
+
+	return nil
 }

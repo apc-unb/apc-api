@@ -18,7 +18,7 @@ const (
 type ProjectType struct {
 	ID       	*primitive.ObjectID `bson:"_id,omitempty"`
 	Name     	string              `json:"name"`
-	Description string              `json:"descripton"`
+	Description string              `json:"description"`
 	ClassID  	primitive.ObjectID  `bson:"classid,omitempty"`
 	Start 		time.Time           `json:"start"`
 	End 		time.Time           `json:"end"`

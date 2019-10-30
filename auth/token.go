@@ -107,7 +107,7 @@ func CheckTokenStudent(r *http.Request, secret string) error {
 		return err
 	}
 
-	return errors.New("Internal Error")
+	return nil
 }
 
 func CheckTokenProfessor(r *http.Request, secret string) error {
@@ -130,7 +130,7 @@ func CheckTokenProfessor(r *http.Request, secret string) error {
 		if strings.Contains(scope, "professor") {
 			return nil
 		} else {
-			return errors.New("User admin scope not found")
+			return errors.New("User professor scope not found")
 		}
 	}
 

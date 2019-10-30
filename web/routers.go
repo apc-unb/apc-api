@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 
@@ -887,12 +888,33 @@ func (s *Server) updateAdminStudent(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (s *Server) deleteAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var adminDAO admin.Admin
+
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&adminDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := admin.DeleteAdmin(s.DataBase, adminDAO, "apc_database", "admin"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
 func (s *Server) getOptions(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, nil)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// 								        PROJECTS		 				            		 //
+// 								        PROJECTS		 				                 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 func (s *Server) getProjectStudent(w http.ResponseWriter, r *http.Request) {
@@ -966,33 +988,6 @@ func (s *Server) updateStatusProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (s *Server) checkProject(w http.ResponseWriter, r *http.Request) {
-
-	var projectDAO project.Project
-	var ret interface{}
-	var err error
-
-	decoder := json.NewDecoder(r.Body)
-
-	if err := decoder.Decode(&projectDAO); err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	defer r.Body.Close()
-
-	if ret, err = project.CheckProject(s.DataBase, projectDAO, "apc_database", "projects", "admin"); err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			utils.RespondWithError(w, http.StatusNotFound, "Project not found")
-		} else {
-			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		}
-	}
-
-	utils.RespondWithJSON(w, http.StatusOK, ret)
-
-}
-
 func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 
 	var projectDAO project.Project
@@ -1014,6 +1009,10 @@ func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// 								        PROJECT TYPE		 				                 //
+///////////////////////////////////////////////////////////////////////////////////////////
+
 func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 
 	var types []project.ProjectType
@@ -1025,5 +1024,67 @@ func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, types)
+}
 
+func (s *Server) createProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.CreateProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+func (s *Server) updateProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.UpdateProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
+}
+
+func (s *Server) deleteProjectType(w http.ResponseWriter, r *http.Request) {
+
+	var projectTypeDAO project.ProjectType
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	if err := json.Unmarshal(body, &projectTypeDAO); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := project.DeleteProjectType(s.DataBase, projectTypeDAO, "apc_database", "projectType"); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
