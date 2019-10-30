@@ -170,7 +170,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Matricula: "1612346666",
 		Email:     "email.do.jose@gmail.com",
 		Projects:  6,
-		Teacher: true,
+		Professor: true,
 	}
 
 	monitorID1 := s.insert("admin", monitorDAO1)
@@ -193,7 +193,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		Matricula: "160146666",
 		Email:     "email.do.luis@gmail.com",
 		Projects:  4,
-		Teacher: false,
+		Professor: false,
 	}
 
 	monitorID2 := s.insert("admin", monitorDAO2)
@@ -213,8 +213,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 		ClassID:   classID2,
 		FirstName: "Vitor",
 		LastName:  "Dullens",
-		Matricula: "1612346666",
+		Matricula: "160146652",
 		Email:     "email.do.dullens@gmail.com",
+		Professor: false,
 		Projects:  2,
 	}
 
@@ -375,14 +376,12 @@ func (s *Server) Run() error {
 	router.Handle("/metrics", promhttp.Handler())
 
 
-
 	////////////////////
 	// SECURE ROUTERS //
 	////////////////////
 
-
 	secureRouter := router.NewRoute().Subrouter()
-	secureRouter.Use(middleware.SetMiddlewareAuthentication())
+	secureRouter.Use(middleware.SetMiddlewareAuthentication(s.JwtSecret))
 	secureRouter.Use(middleware.SetMiddlewareJSON())
 
 	secureRouter.HandleFunc("/student", s.getOptions).Methods("OPTIONS")
@@ -390,24 +389,17 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/student/{classid}", s.getStudentsClass).Methods("GET")
 	secureRouter.HandleFunc("/student", s.createStudents).Methods("POST")
 	secureRouter.HandleFunc("/student", s.updateStudents).Methods("PUT")
-	secureRouter.HandleFunc("/student", s.deleteStudents).Methods("DELETE")
 	secureRouter.HandleFunc("/student/file", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/student/file", s.createStudentsFile).Methods("POST")
 	secureRouter.HandleFunc("/student/contest/{studentid}", s.getStudentIndividualProgress).Methods("GET")
 
-	secureRouter.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/admin", s.getAdmins).Methods("GET")
-	secureRouter.HandleFunc("/admin", s.createAdmins).Methods("POST")
 	secureRouter.HandleFunc("/admin", s.updateAdmins).Methods("PUT")
 	secureRouter.HandleFunc("/admin/file", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/admin/file", s.createAdminsFile).Methods("POST")
 	secureRouter.HandleFunc("/admin/student", s.updateAdminStudent).Methods("PUT")
 
-	secureRouter.HandleFunc("/class", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/class", s.getClasses).Methods("GET")
-	secureRouter.HandleFunc("/class", s.createClasses).Methods("POST")
-	secureRouter.HandleFunc("/class", s.updateClasses).Methods("PUT")
-	secureRouter.HandleFunc("/class", s.deleteClasses).Methods("DELETE")
 
 	secureRouter.HandleFunc("/submission", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/submission", s.getSubmissions).Methods("GET")
@@ -444,9 +436,24 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/project/status", s.updateStatusProject).Methods("PUT")
 	secureRouter.HandleFunc("/project/{studentid}", s.getProjectStudent).Methods("GET")
 
+	////////////////////
+	// SECURE ROUTERS //
+	////////////////////
 
-	professorRouter := secureRouter.NewRoute().Subrouter()
-	professorRouter.Use()
+	professorRouter := router.NewRoute().Subrouter()
+	professorRouter.Use(middleware.SetMiddlewareAuthenticationProfessor(s.JwtSecret))
+	professorRouter.Use(middleware.SetMiddlewareJSON())
+
+	professorRouter.HandleFunc("/admin", s.getOptions).Methods("OPTIONS")
+	professorRouter.HandleFunc("/admin", s.createAdmins).Methods("POST")
+
+	professorRouter.HandleFunc("/student", s.deleteStudents).Methods("DELETE")
+
+	professorRouter.HandleFunc("/class", s.getOptions).Methods("OPTIONS")
+	professorRouter.HandleFunc("/class", s.createClasses).Methods("POST")
+	professorRouter.HandleFunc("/class", s.updateClasses).Methods("PUT")
+	professorRouter.HandleFunc("/class", s.deleteClasses).Methods("DELETE")
+
 
 	srv := &http.Server{
 		Handler:      router,

@@ -21,7 +21,7 @@ func GenerateToken(secret string, scope []string) (string, error) {
 	claims["authorized"] = true
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 	claims["scope"] = strings.Join(scope, " ")
-	tokenString, err := token.SignedString([]byte("SuperSecret"))
+	tokenString, err := token.SignedString([]byte(secret))
 
 	if err != nil {
 		return "", err
@@ -92,7 +92,25 @@ func Pretty(data interface{}) error {
 	return nil
 }
 
-func CheckToken(r *http.Request) error {
+func CheckTokenStudent(r *http.Request, secret string) error {
+
+	tokenString := ExtractToken(r)
+
+	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return errors.New("Internal Error")
+}
+
+func CheckTokenProfessor(r *http.Request, secret string) error {
 
 	tokenString := ExtractToken(r)
 
@@ -100,7 +118,7 @@ func CheckToken(r *http.Request) error {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte("SuperSecret"), nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {
@@ -109,7 +127,7 @@ func CheckToken(r *http.Request) error {
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		scope := fmt.Sprintf("%v", claims["scope"])
-		if strings.Contains(scope, "admin") {
+		if strings.Contains(scope, "professor") {
 			return nil
 		} else {
 			return errors.New("User admin scope not found")

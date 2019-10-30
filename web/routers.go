@@ -2,9 +2,10 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/apc-unb/apc-api/auth"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/apc-unb/apc-api/auth"
 
 	"github.com/apc-unb/apc-api/web/components/admin"
 	"github.com/apc-unb/apc-api/web/components/exam"
@@ -75,16 +76,16 @@ func (s *Server) studentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if jwt, err = auth.GenerateToken(s.JwtSecret, []string{"admin", UserCredentials.Matricula, singleStudent.ID.String()}); err != nil{
+	if jwt, err = auth.GenerateToken(s.JwtSecret, []string{UserCredentials.Matricula, singleStudent.ID.String()}); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	ret := map[string]interface{}{
-		"jwt" : jwt,
-		"student":   singleStudent,
-		"class":     class,
-		"news":      newsArray,
+		"jwt":      jwt,
+		"student":  singleStudent,
+		"class":    class,
+		"news":     newsArray,
 		"progress": userProgress,
 	}
 
@@ -205,7 +206,7 @@ func (s *Server) getStudentIndividualProgress(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	studentProgress, err = student.GetIndividualUserProgress(classDAO.ContestsIDs, studentDAO.Handles.Codeforces, classDAO.GroupID ,  s.GoForces)
+	studentProgress, err = student.GetIndividualUserProgress(classDAO.ContestsIDs, studentDAO.Handles.Codeforces, classDAO.GroupID, s.GoForces)
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -730,6 +731,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 	var singleAdmin admin.AdminInfo
 	var class schoolClass.SchoolClass
 	var newsArray []news.News
+	var jwt string
 	var err error
 
 	decoder := json.NewDecoder(r.Body)
@@ -743,7 +745,7 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 
 	if singleAdmin, err = admin.AuthAdmin(s.DataBase, UserCredentials, "apc_database", "admin"); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			utils.RespondWithError(w, http.StatusUnauthorized,  "Invalid Login or Password")
+			utils.RespondWithError(w, http.StatusUnauthorized, "Invalid Login or Password")
 		} else {
 			utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -760,11 +762,22 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	scopes := []string{UserCredentials.Matricula, singleAdmin.ID.String()}
+
+	if singleAdmin.Professor {
+		scopes = append(scopes, "professor")
+	}
+
+	if jwt, err = auth.GenerateToken(s.JwtSecret, scopes); err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	ret := map[string]interface{}{
-		"jwt" : "fakejwt",
-		"admin":   singleAdmin,
-		"class":     class,
-		"news":      newsArray,
+		"jwt":   jwt,
+		"admin": singleAdmin,
+		"class": class,
+		"news":  newsArray,
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, ret)
@@ -924,10 +937,9 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	monitorReturn := map[string]interface{}{
-		"status":       "success",
-		"content" : projectReturn,
+		"status":  "success",
+		"content": projectReturn,
 	}
-
 
 	utils.RespondWithJSON(w, http.StatusCreated, monitorReturn)
 
@@ -1001,7 +1013,6 @@ func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
-
 
 func (s *Server) getProjectType(w http.ResponseWriter, r *http.Request) {
 
