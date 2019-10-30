@@ -322,20 +322,20 @@ func (s *Server) getClassProfessor(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) updateClasses(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateClass(w http.ResponseWriter, r *http.Request) {
 
-	var classes []schoolClass.SchoolClass
+	var classDAO schoolClass.SchoolClass
 
 	decoder := json.NewDecoder(r.Body)
 
-	if err := decoder.Decode(&classes); err != nil {
+	if err := decoder.Decode(&classDAO); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if err := schoolClass.UpdateClasses(s.DataBase, classes, "apc_database", "schoolClass"); err != nil {
+	if err := schoolClass.UpdateClass(s.DataBase, classDAO, "apc_database", "schoolClass"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

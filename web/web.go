@@ -465,7 +465,7 @@ func (s *Server) Run() error {
 
 	professorRouter.HandleFunc("/class", s.getOptions).Methods("OPTIONS")
 	professorRouter.HandleFunc("/class", s.createClasses).Methods("POST")
-	professorRouter.HandleFunc("/class", s.updateClasses).Methods("PUT")
+	professorRouter.HandleFunc("/class", s.updateClass).Methods("PUT")
 	professorRouter.HandleFunc("/class", s.deleteClasses).Methods("DELETE")
 
 	professorRouter.HandleFunc("/project/type", s.getOptions).Methods("OPTIONS")
