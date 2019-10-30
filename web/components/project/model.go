@@ -26,14 +26,16 @@ type ProjectType struct {
 }
 
 type Project struct {
-	ID            *primitive.ObjectID `bson:"_id,omitempty"`
-	StudentID     primitive.ObjectID  `bson:"studentid,omitempty"`
-	ProjectTypeID primitive.ObjectID  `bson:"projectypeid,omitempty"`
-	ClassID  	primitive.ObjectID  `bson:"classid,omitempty"`
-	MonitorID     primitive.ObjectID  `bson:"monitorid,omitempty"`
-	CreatedAT     time.Time           `json:"createdat,omitempty"`
-	UpdatedAT     time.Time           `json:"updatedat,omitempty"`
-	FileName      string              `json:"filename,omitempty"`
-	Status        string              `json:"status,omitempty"`
-	Score         float64             `json:"score,omitempty"`
+	ID            	*primitive.ObjectID `bson:"_id,omitempty"`
+	StudentID    	primitive.ObjectID  `bson:"studentid,omitempty"`
+	ProjectTypeID 	primitive.ObjectID  `bson:"projectypeid,omitempty"`
+	ClassID  		primitive.ObjectID  `bson:"classid,omitempty"`
+	MonitorID     	primitive.ObjectID  `bson:"monitorid,omitempty"`
+    MonitorName		string              `json:"monitorname,omitempty"`
+	MonitorEmail 	string 				`json:"monitoremail,omitempty"`
+	CreatedAT     	time.Time           `json:"createdat,omitempty"`
+	UpdatedAT     	time.Time           `json:"updatedat,omitempty"`
+	FileName      	string              `json:"filename,omitempty"`
+	Status        	string              `json:"status,omitempty"`
+	Score         	float64             `json:"score,omitempty"`
 }

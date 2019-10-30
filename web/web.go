@@ -269,7 +269,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	studentProject1 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType1ID,
-		MonitorID:     monitorID1,
+		MonitorID:     monitorID2,
+		MonitorName:   monitorDAO2.FirstName + " " + monitorDAO2.LastName,
+		MonitorEmail:  monitorDAO2.Email,
 		ClassID:       classID,
 		CreatedAT:     time.Now(),
 		UpdatedAT:     time.Now(),
@@ -283,7 +285,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	studentProject2 := project.Project{
 		StudentID:     studentID,
 		ProjectTypeID: projectType2ID,
-		MonitorID:     monitorID1,
+		MonitorID:     monitorID2,
+		MonitorName:   monitorDAO2.FirstName + " " + monitorDAO2.LastName,
+		MonitorEmail:  monitorDAO2.Email,
 		ClassID:       classID,
 		CreatedAT:     time.Now(),
 		UpdatedAT:     time.Now(),

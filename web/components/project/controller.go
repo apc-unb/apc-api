@@ -86,6 +86,7 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 		context.TODO(),
 		bson.M{
 			"classid": projectInfo.ClassID,
+			"professor" : false,
 		},
 		options.Find().SetProjection(projection).SetSort(sortMethod).SetLimit(1),
 	)
@@ -117,6 +118,8 @@ func CreateProject(db *mongo.Client, projectInfo Project, databaseName string) (
 
 	// Assign current project to the monitor
 	projectInfo.MonitorID = monitorInfo.ID
+	projectInfo.MonitorName = monitorInfo.FirstName + " " + monitorInfo.LastName
+	projectInfo.MonitorEmail = monitorInfo.Email
 
 	// Updating amount of projects
 	update := bson.D{
