@@ -94,6 +94,56 @@ func GetClasses(db *mongo.Client, database_name, collection_name string) ([]Scho
 
 }
 
+func GetClassProfessor(db *mongo.Client, professorID primitive.ObjectID,  database_name, collection_name string) ([]SchoolClass, error) {
+
+	collection := db.Database(database_name).Collection(collection_name)
+
+	// Here's an array in which you can store the decoded documents
+	classes := []SchoolClass{}
+
+	var options options.FindOptions
+
+	options.SetSort(bson.D{{"year", -1}, {"season", -1}, {"classname", 1}})
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{
+			"professorid": professorID,
+		},
+		&options,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem SchoolClass
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push school class inside student array
+		classes = append(classes, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return classes, nil
+
+}
+
 func UpdateClasses(db *mongo.Client, schoolClass []SchoolClass, database_name, collection_name string) error {
 
 	if len(schoolClass) == 0 {

@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 
@@ -297,6 +296,28 @@ func (s *Server) getClasses(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	utils.RespondWithJSON(w, http.StatusOK, classes)
+
+}
+
+func (s *Server) getClassProfessor(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["professorid"])
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Professor ID")
+		return
+	}
+
+	classes , err := schoolClass.GetClassProfessor(s.DataBase, classID, "apc_database", "schoolClass")
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	utils.RespondWithJSON(w, http.StatusOK, classes)
 
 }

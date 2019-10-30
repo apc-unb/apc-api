@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"errors"
-	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/apc-unb/apc-api/web/components/admin"

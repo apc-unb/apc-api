@@ -52,7 +52,11 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
+	monitorID1 := primitive.NewObjectID()
+	monitorID3 := primitive.NewObjectID()
+
 	classDAO := schoolClass.SchoolClassCreate{
+		ProfessorID: monitorID1,
 		ProfessorFirstName: "Carla",
 		ProfessorLastName:  "Castanho",
 		ClassName:          "H",
@@ -66,6 +70,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	classID := s.insert("schoolClass", classDAO)
 
 	classDAO2 := schoolClass.SchoolClassCreate{
+		ProfessorID: monitorID3,
 		ProfessorFirstName: "Caetano",
 		ProfessorLastName:  "Veloso",
 		ClassName:          "A",
@@ -79,6 +84,7 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	classID2 := s.insert("schoolClass", classDAO2)
 
 	classDAO3 := schoolClass.SchoolClassCreate{
+		ProfessorID: monitorID3,
 		ProfessorFirstName: "Caetano",
 		ProfessorLastName:  "Veloso",
 		ClassName:          "A",
@@ -163,17 +169,20 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	s.insert("student_login", studentCredentialsDAO3)
 
-	monitorDAO1 := admin.AdminCreate{
+	monitorDAO1 := admin.Admin{
+		ID: monitorID1,
 		ClassID:   classID,
-		FirstName: "Jose",
-		LastName:  "Leite",
+		FirstName: "Carla",
+		LastName:  "Castanho",
 		Matricula: "1612346666",
 		Email:     "email.do.jose@gmail.com",
 		Projects:  6,
 		Professor: true,
 	}
 
-	monitorID1 := s.insert("admin", monitorDAO1)
+	if s.insert("admin", monitorDAO1) != monitorID1 {
+		logrus.Errorf("Deu diff no MonitorID1")
+	}
 
 	adminCredentialsDAO1 := user.UserCredentials{
 		ID:        monitorID1,
@@ -209,17 +218,20 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 
 	s.insert("admin_login", adminCredentialsDAO2)
 
-	monitorDAO3 := admin.AdminCreate{
+	monitorDAO3 := admin.Admin{
+		ID : monitorID3,
 		ClassID:   classID2,
-		FirstName: "Vitor",
-		LastName:  "Dullens",
+		FirstName: "Caetano",
+		LastName:  "Veloso",
 		Matricula: "160146652",
 		Email:     "email.do.dullens@gmail.com",
-		Professor: false,
+		Professor: true,
 		Projects:  2,
 	}
 
-	monitorID3 := s.insert("admin", monitorDAO3)
+	if s.insert("admin", monitorDAO3) != monitorID3 {
+		logrus.Errorf("Deu diff no MonitorID3")
+	}
 
 	adminCredentialsDAO3 := user.UserCredentials{
 		ID:        monitorID3,
@@ -400,6 +412,8 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/admin/student", s.updateAdminStudent).Methods("PUT")
 
 	secureRouter.HandleFunc("/class", s.getClasses).Methods("GET")
+	secureRouter.HandleFunc("/class/{professorid}", s.getClassProfessor).Methods("GET")
+
 
 	secureRouter.HandleFunc("/submission", s.getOptions).Methods("OPTIONS")
 	secureRouter.HandleFunc("/submission", s.getSubmissions).Methods("GET")
