@@ -19,7 +19,7 @@ func GetCorsMiddleware() mux.MiddlewareFunc {
 			w.Header().Set("Access-Control-Expose-Headers", "X-Container-Id")
 			if r.Method == http.MethodOptions {
 				w.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")
-				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Requested-With")
+				w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 				return
 			}
 			next.ServeHTTP(w, r)
