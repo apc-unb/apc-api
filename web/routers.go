@@ -934,10 +934,6 @@ func (s *Server) deleteAdmin(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]string{"result": "success"})
 }
 
-func (s *Server) getOptions(w http.ResponseWriter, r *http.Request) {
-	utils.RespondWithJSON(w, http.StatusOK, nil)
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 // 								        PROJECTS		 				                 //
 ///////////////////////////////////////////////////////////////////////////////////////////
