@@ -7,7 +7,7 @@
     ``` 
         [
                 {
-                    "_id"                   :	ObjectId,
+                    "id"                   :	ObjectId,
                     "professorfirstname"    :	String,
                     "professorlastname"     :	String,
                     "classname"             :	String,
@@ -48,7 +48,7 @@
    ``` 
   [
 			{
-				"_id"                   :	ObjectId,
+				"id"                   :	ObjectId,
 				"professorfirstname"    :	String,
 				"professorlastname"     :	String,
 				"classname"             :	String,
@@ -71,7 +71,7 @@
 	``` 
     [
         {  
-            "_id" : ObjectId
+            "id" : ObjectId
         },...
     ]
 	```

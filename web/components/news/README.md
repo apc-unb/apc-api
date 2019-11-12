@@ -8,7 +8,7 @@
     ``` 
         [
 			{
-				"_id"           :	ObjectId,
+				"id"           :	ObjectId,
 				"classid"       :	ObjectId,
 				"title"         :	String,
 				"description"   :	String
@@ -25,7 +25,7 @@
     ``` 
         [
 			{
-				"_id"           :	ObjectId,
+				"id"           :	ObjectId,
 				"classid"       :	ObjectId,
 				"title"         :	String,
 				"description"   :	String
@@ -60,7 +60,7 @@
     ``` 
         [
 			{
-				"_id"           :	ObjectId,
+				"id"           :	ObjectId,
 				"classid"       :	ObjectId,
 				"title"         :	String,
 				"description"   :	String
@@ -79,7 +79,7 @@
 	``` 
 		[
 			{  
-				"_id" : ObjectId
+				"id" : ObjectId
 			},...
 		]
 	```

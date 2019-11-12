@@ -7,7 +7,7 @@
     ``` 
     [
         {
-            "_id"           :	ObjectId,
+            "id"           :	ObjectId,
             "studentid"     :       ObjectID,
             "projecttypeid" :       ObjectID,
             "monitorid"     :	ObjectId,
@@ -21,12 +21,12 @@
 
 
 ## Update a project status
-* HTTP Request : ```PUT http://api.com//project/status```
+* HTTP Request : ```PUT http://api.com/project/status```
 * Send Project's data in the request body in the following format 
 
     ``` 
         {
-            "_id"           :   ObjectId,
+            "id"           :   ObjectId,
             "status"        :   String
         }
     ```
@@ -82,7 +82,7 @@
 
     ```
         {
-            "_id"           :   ObjectID,
+            "id"           :   ObjectID,
             "name"          :   String,
             "description"   :   String,
             "ClassID"       :   ObjectID,
@@ -99,7 +99,7 @@
 
 	``` 
         {  
-            "_id"	:	ObjectId
+            "id"	:	ObjectId
         }
 	```
 * http StatusOK (200) will be sent if the Project Type have been deleted correctly

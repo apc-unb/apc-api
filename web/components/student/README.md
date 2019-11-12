@@ -41,7 +41,7 @@
     ``` 
     [
         {
-            "_id"       :	ObjectId,
+            "id"       :	ObjectId,
             "classid"   :	ObjectId,
             "firstname" :	String,
             "lastname"  :	String,
@@ -69,7 +69,7 @@
     ``` 
     [
         {
-            "_id"       :	ObjectId,
+            "id"       :	ObjectId,
             "classid"   :	ObjectId,
             "firstname" :	String,
             "lastname"  :	String,
@@ -98,7 +98,7 @@
 	``` 
     [
         {  
-            "_id".      	:   ObjectId,
+            "id".      	:   ObjectId,
             "email" 	:   String,
             "password"	:   String,
             "newpassword":   String,
@@ -120,7 +120,7 @@
 	``` 
     [
         {  
-            "_id" : ObjectId
+            "id" : ObjectId
         },...
     ]
 	```

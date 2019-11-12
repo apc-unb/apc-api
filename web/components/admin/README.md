@@ -43,7 +43,7 @@
     ``` 
 		[
 			{
-				"_id"       :	ObjectId,
+				"id"       :	ObjectId,
 				"classid"   :	ObjectId,
 				"firstname" :	String,
 				"lastname"  :	String,
@@ -63,7 +63,7 @@
 	``` 
 		[
 			{  
-				"_id"      	:   ObjectId,
+				"id"      	:   ObjectId,
 				"classid"   	:   ObjectId,
 				"email" 	:   String,
 				"password"	:   String,
@@ -109,7 +109,7 @@
 
 	``` 
         {  
-            "_id"	:	ObjectId
+            "id"	:	ObjectId
         }
 	```
 * http StatusOK (200) will be sent if the Admin have been deleted correctly
@@ -121,7 +121,7 @@
 	``` 
 		[
 			{  
-				"_id"	:	ObjectId
+				"id"	:	ObjectId
 			},...
 		]
 	```
