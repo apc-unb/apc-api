@@ -73,10 +73,10 @@ func (s *Server) Run() error {
 	secureRouter.HandleFunc("/admin", s.updateAdmins).Methods("PUT", "OPTIONS")
 	secureRouter.HandleFunc("/admin/file", s.createAdminsFile).Methods("POST", "OPTIONS")
 	secureRouter.HandleFunc("/admin/student", s.updateAdminStudent).Methods("PUT", "OPTIONS")
+	secureRouter.HandleFunc("/admin/{classid}", s.getAdminsClass).Methods("GET", "OPTIONS")
 
 	secureRouter.HandleFunc("/class", s.getClasses).Methods("GET", "OPTIONS")
 	secureRouter.HandleFunc("/class/{professorid}", s.getClassProfessor).Methods("GET", "OPTIONS")
-
 
 	secureRouter.HandleFunc("/submission", s.getSubmissions).Methods("GET", "OPTIONS")
 	secureRouter.HandleFunc("/submission", s.createSubmissions).Methods("POST", "OPTIONS")
