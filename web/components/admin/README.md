@@ -43,13 +43,35 @@
     ``` 
 		[
 			{
-				"id"       :	ObjectId,
-				"classid"   :	ObjectId,
-				"firstname" :	String,
-				"lastname"  :	String,
-				"matricula" :	String,
-				"photourl"  :	String,
-				"email"     :	String
+                "id"        :   ObjectId,
+                "classid"   :   ObjectId,
+                "firstname" :   String,
+                "lastname"  :   String,
+                "matricula" :   String,
+                "photourl"  :   String,
+                "email"     :   String,
+                "projects"  :   Integer,
+                "professor" :   Bool
+			},...
+		]
+    ```
+
+## Get all Admins from a specif class
+* HTTP Request : ```GET http://api.com/admin/{classid}```
+* Return a list of object in json format as follow
+
+    ``` 
+		[
+			{
+                "id"        :   ObjectId,
+                "classid"   :   ObjectId,
+                "firstname" :   String,
+                "lastname"  :   String,
+                "matricula" :   String,
+                "photourl"  :   String,
+                "email"     :   String,
+                "projects"  :   Integer,
+                "professor" :   Bool
 			},...
 		]
     ```
@@ -61,17 +83,18 @@
 **PS:** (`id` and `password` required)
 
 	``` 
-		[
-			{  
-				"id"      	:   ObjectId,
-				"classid"   	:   ObjectId,
-				"email" 	:   String,
-				"password"	:   String,
-				"newpassword"	:   String,
-				"photourl"  	:   String
-			},...
-		]
+    [
+        {  
+            "id"            :   ObjectId,
+            "classid"       :   ObjectId,
+            "email"         :   String,
+            "password"      :   String,
+            "newpassword"   :   String,
+            "photourl"      :   String
+        },...
+    ]
 	```
+	
 * http StatusCreated (201) will be sent if the admin has been updated correctly
 
 ## Update Students from Admin request
@@ -80,23 +103,22 @@
 
 	``` 
         {  
-            "adminid"      	:   ObjectId,                
-            "studentid"          :   ObjectId,
-            "classid"   	        :   ObjectId,
-            "adminpassword"      :   String,
-            "firstname" 	        :   String,
-            "lastname"           :   String,
-            "matricula" 	        :   String,
-            "handles"   	        :	{
-                "codeforces"	    :	String,
-                "uri"		    :	String
+            "adminid"           :   ObjectId,                
+            "studentid"         :   ObjectId,
+            "classid"           :   ObjectId,
+            "adminpassword"     :   String,
+            "firstname"         :   String,
+            "lastname"          :   String,
+            "matricula"         :   String,
+            "handles"           :	{
+                "codeforces"        :	String,
+                "uri"               :	String
             },
-            "photourl"  	        :   String,
-            "email"  	        :   String,
-            "grades"    	        :	{
-                "exams"		    :	[]float64,
-                "projects" 	    :	[]float64,
-                "lists"    	    :	[]float64
+            "photourl"          :   String,
+            "email"             :   String,
+            "grades"            :   StudentGrades {
+                "exams"             :   []float64
+                "lists"             :   []float64
             }
         }
 	```
@@ -133,17 +155,16 @@
 
     ``` 
 		{
-			"matricula" :	String,
-			"password"  :	String,
+            "matricula"     :   String,
+            "password"      :   String,
 		}
     ```
-* Return a json format as follow
+* Return a json format as follow with http StatusOK (200) if login was succeeded
 
 	```
 	{
-	    "userexist"	:	Boolean,
-	    "admin"	:	AdminInfo,
-	    "class"	:	SchoolClass,
-	    "news"	:	[]News 
+        "admin"         :   Admin,
+        "class"         :   SchoolClass,
+        "news"          :   []News 
 	}
 	```

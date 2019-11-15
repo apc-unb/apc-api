@@ -870,6 +870,28 @@ func (s *Server) getAdmins(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, admins)
 }
 
+func (s *Server) getAdminsClass(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	classID, err := primitive.ObjectIDFromHex(vars["classid"])
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid Class ID")
+		return
+	}
+
+	students, err := admin.GetAdminsClass(s.DataBase, classID, "apc_database", "admin")
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, students)
+
+}
+
 func (s *Server) updateAdmins(w http.ResponseWriter, r *http.Request) {
 
 	var adminUpdate admin.AdminUpdate

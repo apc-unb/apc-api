@@ -164,6 +164,57 @@ func GetAdmins(db *mongo.Client, databaseName, collectionName string) ([]AdminIn
 	return admins, nil
 }
 
+func GetAdminsClass(db *mongo.Client, classID primitive.ObjectID, databaseName, collectionName string) ([]Admin, error) {
+
+	collection := db.Database(databaseName).Collection(collectionName)
+
+	// Here's an array in which you can store the decoded documents
+	admins := []Admin{}
+
+	var options options.FindOptions
+
+	options.SetSort(bson.D{{"firstname", 1}, {"lastname", 1}})
+
+	// Passing bson.D{{}} as the filter matches all documents in the collection
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{
+			"classid": classID,
+		},
+		&options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Finding multiple documents returns a cursor
+	// Iterating through the cursor allows us to decode documents one at a time
+	for cursor.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem Admin
+
+		// Checks if decoding method didn't return any errors
+		if err := cursor.Decode(&elem); err != nil {
+			return nil, err
+		}
+
+		// Push school class inside student array
+		admins = append(admins, elem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Close the cursor once finished
+	cursor.Close(context.TODO())
+
+	return admins, nil
+
+}
+
 // UpdateAdmins receive admin (updated)
 // Checks if admin old password matches with db to update that admin password or email
 // @param	db				pointer to database (updated)
