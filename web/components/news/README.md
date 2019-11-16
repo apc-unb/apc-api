@@ -6,17 +6,21 @@
 * Return a list of object in json format as follow
 
     ``` 
-        [
-			{
-				"id"           :	ObjectId,
-				"classid"       :	ObjectId,
-				"title"         :	String,
-				"description"   :	String
-                "tags"          :   []String
-			}...
-		]
+    [
+        {
+            "id"            :   ObjectId,
+            "classid"       :   ObjectId,
+            "authorID"      :   ObjectId,
+            "authorName"    :   String,
+            "admin"         :   Bool,
+            "title"         :   String,
+            "description"   :   String,
+            "tags"          :   []String,
+            "createdAT"     :   Time,
+            "updatedAT"     :   Time
+        }...,
+    ]
     ```
-
 
 ## Get all News from a class
 * HTTP Request : ```GET http://api.com/news/{classID}```
@@ -25,12 +29,17 @@
     ``` 
         [
 			{
-				"id"           :	ObjectId,
-				"classid"       :	ObjectId,
-				"title"         :	String,
-				"description"   :	String
-                "tags"          :   []String
-			}...
+                "id"            :   ObjectId,
+                "classid"       :   ObjectId,
+                "authorID"      :   ObjectId,
+                "authorName"    :   String,
+                "admin"         :   Bool,
+                "title"         :   String,
+                "description"   :   String,
+                "tags"          :   []String,
+                "createdAT"     :   Time,
+                "updatedAT"     :   Time
+            }...,
 		]
     ```
 
@@ -42,10 +51,13 @@
 	``` 
         [
 			{
-				"classid"       :	ObjectId,
-				"title"         :	String,
-				"description"   :	String
-                "tags"          :   []String
+                "classid"       :   ObjectId,
+                "authorID"      :   ObjectId,
+                "authorName"    :   String,
+                "admin"         :   Bool,
+                "title"         :   String,
+                "description"   :   String,
+                "tags"          :   []String,
 			}...
 		]
     ```

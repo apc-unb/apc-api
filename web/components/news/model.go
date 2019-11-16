@@ -9,6 +9,9 @@ import (
 type News struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	ClassID     primitive.ObjectID `bson:"classid,omitempty"`
+	AuthorID	primitive.ObjectID `bson:"authorID,omitempty"`
+	AuthorName  string             `json:"authorName,omitempty"`
+	Admin       bool 			   `bson:"admin,omitempty"`
 	Title       string             `json:"title"`
 	Description string             `json:"description"`
 	Tags        []string           `json:"tags"`
@@ -18,6 +21,9 @@ type News struct {
 
 type NewsCreate struct {
 	ClassID     primitive.ObjectID `bson:"classid,omitempty"`
+	AuthorID	primitive.ObjectID `bson:"authorID,omitempty"`
+	AuthorName  string             `json:"authorName,omitempty"`
+	Admin       bool 			   `bson:"admin,omitempty"`
 	Title       string             `json:"title"`
 	Description string             `json:"description"`
 	Tags        []string           `json:"tags"`
