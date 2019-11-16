@@ -1397,6 +1397,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	newsDAO := news.NewsCreate{
 		ClassID:     classID,
 		Title:       "Aula cancelada",
+		AuthorID: monitorDAO1.ID,
+		AuthorName: monitorDAO1.FirstName + " " + monitorDAO1.LastName,
+		Admin: monitorDAO1.Professor,
 		Description: "Devido ao alinhamento da lua, hoje nao teremos aula",
 		Tags:        []string{"Horóscopo", "É verdade esse bilhete"},
 		CreatedAT:   time.Now(),
@@ -1408,6 +1411,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	newsDAO2 := news.NewsCreate{
 		ClassID:     classID,
 		Title:       "Cancelamento do cancelamento da aula",
+		AuthorID: monitorID2,
+		AuthorName: monitorDAO2.FirstName + " " + monitorDAO2.LastName,
+		Admin: monitorDAO2.Professor,
 		Description: "A lua voltou ao seu local normal, teremos aula",
 		Tags:        []string{"Horóscopo", "É verdade esse bilhete"},
 		CreatedAT:   time.Now(),
@@ -1419,6 +1425,9 @@ func (s *Server) insertData(w http.ResponseWriter, r *http.Request) {
 	newsDAO3 := news.NewsCreate{
 		ClassID:     classID,
 		Title:       "Prova 1",
+		AuthorID: monitorDAO1.ID,
+		AuthorName: monitorDAO1.FirstName + " " + monitorDAO1.LastName,
+		Admin: monitorDAO1.Professor,
 		Description: "Se ligue na prova 1 galera",
 		Tags:        []string{"Prova 1", "Rumo ao MM"},
 		CreatedAT:   time.Now(),
