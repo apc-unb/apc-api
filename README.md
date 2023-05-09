@@ -7,6 +7,9 @@
 ![GitHub](https://img.shields.io/github/license/apc-unb/apc-api?color=blue)
 
 
+# Comunicado [IMPORTANTE]
+Infelizmente, o projeto foi descontinuado e não foi concluído, o que significa que não é possível realizar uma simulação completa do mesmo. Agradecemos a todos os envolvidos pelo tempo dedicado. É importante ressaltar que a ideia principal do projeto era aprender um pouco mais sobre Go, e que, se tivesse sido concluído, teria sido útil para os alunos do curso de Ciência da Computação da UnB, especialmente na disciplina de APC (Algoritmos e Programação de Computadores).
+
 # Visão Geral
 
 DragonT é uma plataforma que centraliza o acesso à materiais do curso. Fornece relatórios automáticos do progresso de cada aluno individualmente e da turma como um todo.
